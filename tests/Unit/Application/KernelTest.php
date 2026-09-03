@@ -3,6 +3,7 @@ namespace GreatMarketrealmExpansions\Tests\Unit\Application;
 
 use GreatMarketrealmExpansions\Application\Container;
 use GreatMarketrealmExpansions\Application\Kernel;
+use GreatMarketrealmExpansions\Catalogue\Catalogue;
 use GreatMarketrealmExpansions\Content\ContentRegistry;
 use GreatMarketrealmExpansions\Content\Schema\SchemaRegistry;
 use GreatMarketrealmExpansions\Content\Types\ContentTypeCatalogue;
@@ -20,8 +21,14 @@ final class KernelTest extends TestCase
         self::assertTrue($k->isBooted()); self::assertInstanceOf(Container::class, $k->container());
         self::assertInstanceOf(ExpansionRegistry::class, $k->expansions()); self::assertInstanceOf(ContentRegistry::class, $k->content());
         self::assertInstanceOf(ContentTypeCatalogue::class, $k->contentTypes()); self::assertInstanceOf(SchemaRegistry::class, $k->schemas());
-        self::assertInstanceOf(ExpansionFileLoader::class, $k->loader());
+        self::assertInstanceOf(ExpansionFileLoader::class, $k->loader()); self::assertInstanceOf(Catalogue::class, $k->catalogue());
         self::assertCount(20, $k->contentTypes()->all()); self::assertCount(20, $k->schemas()->all());
+    }
+
+    public function test_public_catalogue_helper_returns_kernel_catalogue(): void
+    {
+        $k = Kernel::instance(); $k->boot();
+        self::assertSame($k->catalogue(), \GreatMarketrealmExpansions\catalogue());
     }
 
     public function test_boot_is_idempotent(): void

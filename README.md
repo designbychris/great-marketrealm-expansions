@@ -6,15 +6,15 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
-**Phase I.3 — The First Almanac**
+**Phase I.4 — The Keeper Opens the Catalogue**
 
-The plugin now has a deterministic, file-backed Almanac loader. Expansion packs provide a manifest plus individual content-definition files. A complete pack is discovered, provenance-stamped, schema-validated, collision-checked and only then committed atomically to the expansion/content registries.
+GMREXP now exposes a stable, read-only Catalogue boundary over the registries populated by the Almanac loader. Sibling plugins can use the PHP `catalogue()` helper, while browser/client consumers can use the read-only WordPress REST surface under `great-marketrealm-expansions/v1`.
 
-The first bundled proving pack, **The First Almanac**, loads two lightweight foundation entries: **Iron Stomach** and **Milk Carton Mimic**. They exist to certify the ingestion pipeline rather than to define their full game mechanics yet.
+Catalogue results are immutable view objects, content keeps its fully qualified `expansion:type:key` identity, unqualified ambiguous lookups are rejected, and fluent queries can filter by type, expansion, key and tags. API-version and capability discovery let Companion/Tabletop feature-detect integrations without coupling themselves to a GMREXP plugin release number.
 
-WordPress automatically loads bundled packs from `content/expansions/` during `plugins_loaded`. Consumers can also obtain the loader from the Kernel or the `loader()` helper.
+The bundled **First Almanac** remains the proving pack, supplying Iron Stomach and Milk Carton Mimic through the full file → validation → registry → catalogue pipeline.
 
-See `docs/ALMANAC-FORMAT.md` for the pack format and trust boundary.
+See `docs/CATALOGUE-API.md` for the consumer contract and `docs/ALMANAC-FORMAT.md` for the source-pack format.
 
 ## Development
 

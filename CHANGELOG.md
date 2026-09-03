@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.0-alpha4 — Phase I.4 — The Keeper Opens the Catalogue
+
+- Added the stable read-only `Catalogue` consumer service and public `catalogue()` helper.
+- Added immutable `CatalogueEntry` and `CatalogueExpansion` view objects.
+- Added fully qualified `expansion:type:key` content identity and ambiguity-safe unqualified lookup.
+- Added immutable fluent catalogue queries for type, expansion, key and tag filters.
+- Added deterministic catalogue ordering plus convenience reads by type/expansion.
+- Added Catalogue API version `1.0.0`, capability discovery and feature detection.
+- Added read-only WordPress REST endpoints under `great-marketrealm-expansions/v1`.
+- Added consumer/API documentation and Catalogue regression coverage.
+
 ## 0.1.0-alpha3 — Phase I.3 — The First Almanac
 
 - Added deterministic file-backed expansion discovery and loading.

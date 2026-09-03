@@ -24,4 +24,10 @@ The kernel-provided `ContentRegistry` receives a `ContentValidator`, so definiti
 
 `provenance` is reserved for source-book/source-document metadata such as source title, page/reference and authorship notes. `compatibility` is reserved for consumer/ruleset/version constraints. Their internal keys remain intentionally extensible until real expansion packs exercise them.
 
-A future integration layer will expose read-only views to Companion and Tabletop without requiring either consumer to know how expansion files are stored.
+## Catalogue boundary
+
+`Catalogue` is the supported consumer boundary. It reads from the registries but returns immutable view objects rather than the mutable domain objects themselves. Content IDs remain fully qualified as `expansion:type:key`; unqualified lookups are allowed only when unique.
+
+`CatalogueQuery` supplies immutable fluent filtering and deterministic results. `apiVersion()`, `capabilities()` and `supports()` provide integration feature discovery independently of the WordPress plugin version.
+
+`CatalogueRestApi` adapts the same Catalogue to public read-only WordPress REST routes. It contains no separate content store or rules logic. Companion and Tabletop should consume the Catalogue contract rather than Almanac files or registries directly.

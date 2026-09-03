@@ -3,6 +3,7 @@ namespace GreatMarketrealmExpansions\Application;
 
 defined('ABSPATH') || exit;
 
+use GreatMarketrealmExpansions\Catalogue\Catalogue;
 use GreatMarketrealmExpansions\Content\ContentRegistry;
 use GreatMarketrealmExpansions\Content\Schema\SchemaRegistry;
 use GreatMarketrealmExpansions\Content\Types\ContentTypeCatalogue;
@@ -52,6 +53,7 @@ final class Kernel
     public function content(): ContentRegistry { return $this->container->get(ContentRegistry::class); }
     public function contentTypes(): ContentTypeCatalogue { return $this->container->get(ContentTypeCatalogue::class); }
     public function schemas(): SchemaRegistry { return $this->container->get(SchemaRegistry::class); }
+    public function catalogue(): Catalogue { return $this->container->get(Catalogue::class); }
     public function loader(): ExpansionFileLoader { return $this->container->get(ExpansionFileLoader::class); }
     public function isBooted(): bool { return $this->booted; }
 }

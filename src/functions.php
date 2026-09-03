@@ -3,6 +3,7 @@ namespace GreatMarketrealmExpansions;
 
 
 use GreatMarketrealmExpansions\Application\Kernel;
+use GreatMarketrealmExpansions\Catalogue\Catalogue;
 use GreatMarketrealmExpansions\Content\ContentRegistry;
 use GreatMarketrealmExpansions\Content\Schema\SchemaRegistry;
 use GreatMarketrealmExpansions\Content\Types\ContentTypeCatalogue;
@@ -42,4 +43,11 @@ function loader(): ExpansionFileLoader
     $kernel = Kernel::instance();
     $kernel->boot();
     return $kernel->loader();
+}
+
+function catalogue(): Catalogue
+{
+    $kernel = Kernel::instance();
+    $kernel->boot();
+    return $kernel->catalogue();
 }
