@@ -1,5 +1,10 @@
 # Changelog
 
+## Phase I.2 Hotfix — CLI bootstrap
+
+- Allow Composer to load `src/functions.php` before WordPress defines `ABSPATH`.
+- Fix silent early exit when running PHPUnit or `phpunit --version` from CLI.
+
 ## 0.1.0-alpha1 — Phase I.1
 
 - Created initial WordPress plugin bootstrap.

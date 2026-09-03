@@ -1,7 +1,6 @@
 <?php
 namespace GreatMarketrealmExpansions;
 
-defined('ABSPATH') || exit;
 
 use GreatMarketrealmExpansions\Application\Kernel;
 use GreatMarketrealmExpansions\Content\ContentRegistry;
