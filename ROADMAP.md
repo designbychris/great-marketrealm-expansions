@@ -3,7 +3,7 @@
 ## Phase I — Foundations
 
 - **I.1 — The Shelves Are Built**: plugin bootstrap, kernel/container, expansion registry, generic content registry, tests. ✅
-- **I.2 — Labels on Every Jar**: canonical content-type catalogue, schemas/validation, provenance and compatibility metadata.
+- **I.2 — Labels on Every Jar**: canonical content-type catalogue, schemas/validation, provenance and compatibility metadata. ✅
 - **I.3 — The First Almanac**: first real expansion pack and file-based content loader.
 - **I.4 — The Keeper Opens the Catalogue**: read-only REST/API surfaces for consumers.
 - **I.5 — Bridges Between Kingdoms**: formal Companion and Tabletop integration contracts/adapters.

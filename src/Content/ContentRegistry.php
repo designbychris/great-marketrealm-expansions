@@ -3,6 +3,7 @@ namespace GreatMarketrealmExpansions\Content;
 
 defined('ABSPATH') || exit;
 
+use GreatMarketrealmExpansions\Content\Schema\ContentValidator;
 use InvalidArgumentException;
 
 final class ContentRegistry
@@ -10,11 +11,17 @@ final class ContentRegistry
     /** @var array<string, array<string, array<string, ContentDefinition>>> */
     private array $content = [];
 
+    public function __construct(private ?ContentValidator $validator = null) {}
+
     public function add(string $expansionKey, ContentDefinition $definition): void
     {
         $expansionKey = trim($expansionKey);
         if ($expansionKey === '') {
             throw new InvalidArgumentException('Content must belong to an expansion pack.');
+        }
+
+        if ($this->validator !== null) {
+            $this->validator->assertValid($definition);
         }
 
         $type = $definition->type();

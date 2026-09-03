@@ -26,6 +26,10 @@ final class ContentDefinition
     /** @return array<string, mixed> */
     public function data(): array { return $this->data; }
     public function value(string $field, mixed $default = null): mixed { return $this->data[$field] ?? $default; }
+    /** @return array<string, mixed> */
+    public function provenance(): array { return is_array($this->value('provenance', [])) ? $this->value('provenance', []) : []; }
+    /** @return array<string, mixed> */
+    public function compatibility(): array { return is_array($this->value('compatibility', [])) ? $this->value('compatibility', []) : []; }
 
     private static function normalize(string $value): string
     {

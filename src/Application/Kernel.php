@@ -4,6 +4,8 @@ namespace GreatMarketrealmExpansions\Application;
 defined('ABSPATH') || exit;
 
 use GreatMarketrealmExpansions\Content\ContentRegistry;
+use GreatMarketrealmExpansions\Content\Schema\SchemaRegistry;
+use GreatMarketrealmExpansions\Content\Types\ContentTypeCatalogue;
 use GreatMarketrealmExpansions\Expansions\ExpansionRegistry;
 use GreatMarketrealmExpansions\Providers\ExpansionServiceProvider;
 use GreatMarketrealmExpansions\Providers\ServiceProvider;
@@ -47,5 +49,7 @@ final class Kernel
     public function container(): Container { return $this->container; }
     public function expansions(): ExpansionRegistry { return $this->container->get(ExpansionRegistry::class); }
     public function content(): ContentRegistry { return $this->container->get(ContentRegistry::class); }
+    public function contentTypes(): ContentTypeCatalogue { return $this->container->get(ContentTypeCatalogue::class); }
+    public function schemas(): SchemaRegistry { return $this->container->get(SchemaRegistry::class); }
     public function isBooted(): bool { return $this->booted; }
 }

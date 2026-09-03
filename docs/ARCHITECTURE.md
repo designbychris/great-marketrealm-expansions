@@ -14,4 +14,14 @@ GMREXP begins as a registry-driven content provider rather than a second charact
 
 `ExpansionRegistry` identifies installed/available packs. `ContentRegistry` stores definitions beneath an expansion key, content type and content key. These are deliberately PHP-domain objects without WordPress dependencies.
 
-A future schema layer will validate content types before real expansion data is introduced. A future integration layer will expose read-only views to Companion and Tabletop without requiring either consumer to know how expansion files are stored.
+## Content types and schemas
+
+`ContentTypeCatalogue` is the canonical list of content categories understood by GMREXP. Phase I.2 begins with 20 types spanning player options, rules, equipment, Keeper content and adventures. Third-party or later first-party code may extend the catalogue through the same domain objects rather than changing registry internals.
+
+Every canonical type has a `ContentSchema`. All definitions require a non-empty `name`; common optional interoperable fields include `description`, `provenance`, `compatibility` and `tags`. Relationship-bearing types can add requirements without imposing mechanics prematurely: `subrace` requires `parent_race`, while `subclass` requires `parent_class`.
+
+The kernel-provided `ContentRegistry` receives a `ContentValidator`, so definitions entering the official registry must have a known type and satisfy its schema. Validation returns structured `ValidationResult` / `ValidationError` objects, and registration failures raise `ContentValidationException`.
+
+`provenance` is reserved for source-book/source-document metadata such as source title, page/reference and authorship notes. `compatibility` is reserved for consumer/ruleset/version constraints. Their internal keys remain intentionally extensible until real expansion packs exercise them.
+
+A future integration layer will expose read-only views to Companion and Tabletop without requiring either consumer to know how expansion files are stored.

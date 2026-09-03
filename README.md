@@ -6,16 +6,11 @@ It is intended to own canonical expansion packs and structured content definitio
 
 ## Current milestone
 
-**Phase I.1 — The Shelves Are Built**
+**Phase I.2 — Labels on Every Jar**
 
-The initial foundation provides:
+The foundation now provides a canonical 20-type content catalogue, reusable schemas, typed fields, structured validation errors, provenance/compatibility metadata, and registration-time validation. Subraces and subclasses also carry canonical parent references without prematurely hard-coding every game mechanic.
 
-- a lightweight application kernel and service container;
-- an `ExpansionRegistry` for source/expansion packs;
-- a generic `ContentRegistry` for expansion-owned definitions;
-- framework-neutral domain objects suitable for use by Companion/Tabletop integrations;
-- a PHPUnit 10 test foundation;
-- no database schema and no front-end/admin UI yet.
+There is still no database schema or front-end/admin UI: expansion content remains a framework-light domain layer ready for the first real file-backed expansion pack in Phase I.3.
 
 ## Development
 
