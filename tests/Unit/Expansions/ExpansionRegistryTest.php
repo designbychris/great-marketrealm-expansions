@@ -16,6 +16,12 @@ final class ExpansionRegistryTest extends TestCase
 
     public function test_missing_pack_returns_null(): void { self::assertNull((new ExpansionRegistry())->get('missing')); }
 
+    public function test_pack_can_be_removed_for_atomic_loader_rollback(): void
+    {
+        $r = new ExpansionRegistry(); $r->add(new ExpansionPack('pantry', 'Pantry')); $r->remove('pantry');
+        self::assertFalse($r->has('pantry'));
+    }
+
     public function test_duplicate_pack_keys_are_rejected(): void
     {
         $r = new ExpansionRegistry(); $r->add(new ExpansionPack('pantry', 'One'));

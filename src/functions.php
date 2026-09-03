@@ -7,6 +7,7 @@ use GreatMarketrealmExpansions\Content\ContentRegistry;
 use GreatMarketrealmExpansions\Content\Schema\SchemaRegistry;
 use GreatMarketrealmExpansions\Content\Types\ContentTypeCatalogue;
 use GreatMarketrealmExpansions\Expansions\ExpansionRegistry;
+use GreatMarketrealmExpansions\Expansions\Loading\ExpansionFileLoader;
 
 function expansions(): ExpansionRegistry
 {
@@ -34,4 +35,11 @@ function schemas(): SchemaRegistry
     $kernel = Kernel::instance();
     $kernel->boot();
     return $kernel->schemas();
+}
+
+function loader(): ExpansionFileLoader
+{
+    $kernel = Kernel::instance();
+    $kernel->boot();
+    return $kernel->loader();
 }

@@ -9,11 +9,13 @@ final class ExpansionPack
 {
     private string $key;
 
+    /** @param array<string, mixed> $metadata */
     public function __construct(
         string $key,
         private string $name,
         private string $version = '1.0.0',
-        private string $description = ''
+        private string $description = '',
+        private array $metadata = []
     ) {
         $this->key = self::normalizeKey($key);
         $this->name = trim($name);
@@ -35,6 +37,9 @@ final class ExpansionPack
     public function name(): string { return $this->name; }
     public function version(): string { return $this->version; }
     public function description(): string { return $this->description; }
+    /** @return array<string, mixed> */
+    public function metadata(): array { return $this->metadata; }
+    public function meta(string $key, mixed $default = null): mixed { return $this->metadata[$key] ?? $default; }
 
     private static function normalizeKey(string $key): string
     {

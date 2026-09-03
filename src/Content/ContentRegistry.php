@@ -54,4 +54,9 @@ final class ContentRegistry
     {
         return $this->content[$expansionKey] ?? [];
     }
+
+    public function removeExpansion(string $expansionKey): void
+    {
+        unset($this->content[$expansionKey]);
+    }
 }

@@ -1,19 +1,23 @@
 # Changelog
 
+## 0.1.0-alpha3 — Phase I.3 — The First Almanac
+
+- Added deterministic file-backed expansion discovery and loading.
+- Added manifest parsing with preserved expansion metadata.
+- Added per-definition source provenance stamping without absolute server paths.
+- Added whole-pack schema preflight and duplicate/collision detection.
+- Added atomic registry commit with rollback support.
+- Added structured `ExpansionLoadResult` reporting.
+- Added Kernel and helper access to the expansion loader.
+- Added automatic loading of bundled packs from `content/expansions/`.
+- Added the bundled `first-almanac` proving pack with Iron Stomach and Milk Carton Mimic sample entries.
+- Added Almanac format/trust-boundary documentation and loader regression coverage.
+
 ## Phase I.2 Hotfix — CLI bootstrap
 
 - Allow Composer to load `src/functions.php` before WordPress defines `ABSPATH`.
 - Fix silent early exit when running PHPUnit or `phpunit --version` from CLI.
 
-## 0.1.0-alpha1 — Phase I.1
-
-- Created initial WordPress plugin bootstrap.
-- Added application kernel and lightweight service container.
-- Added expansion-pack model and registry.
-- Added generic content definition and registry.
-- Added public registry helper functions.
-- Added PHPUnit 10 test foundation.
-- Added initial architecture and roadmap documentation.
 ## 0.1.0-alpha2 — Phase I.2 — Labels on Every Jar
 
 - Added the canonical 20-type content catalogue.
@@ -24,3 +28,12 @@
 - Exposed content-type and schema registries through the kernel and helper API.
 - Added schema architecture documentation and regression coverage.
 
+## 0.1.0-alpha1 — Phase I.1
+
+- Created initial WordPress plugin bootstrap.
+- Added application kernel and lightweight service container.
+- Added expansion-pack model and registry.
+- Added generic content definition and registry.
+- Added public registry helper functions.
+- Added PHPUnit 10 test foundation.
+- Added initial architecture and roadmap documentation.

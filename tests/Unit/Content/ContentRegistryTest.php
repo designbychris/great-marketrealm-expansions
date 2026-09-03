@@ -37,4 +37,12 @@ final class ContentRegistryTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class); (new ContentRegistry())->add(' ', new ContentDefinition('feat', 'x'));
     }
+
+    public function test_expansion_content_can_be_removed_for_atomic_loader_rollback(): void
+    {
+        $registry = new ContentRegistry();
+        $registry->add('pantry', new ContentDefinition('feat', 'test', ['name' => 'Test']));
+        $registry->removeExpansion('pantry');
+        self::assertSame([], $registry->forExpansion('pantry'));
+    }
 }

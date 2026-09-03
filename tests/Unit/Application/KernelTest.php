@@ -7,6 +7,7 @@ use GreatMarketrealmExpansions\Content\ContentRegistry;
 use GreatMarketrealmExpansions\Content\Schema\SchemaRegistry;
 use GreatMarketrealmExpansions\Content\Types\ContentTypeCatalogue;
 use GreatMarketrealmExpansions\Expansions\ExpansionRegistry;
+use GreatMarketrealmExpansions\Expansions\Loading\ExpansionFileLoader;
 use PHPUnit\Framework\TestCase;
 
 final class KernelTest extends TestCase
@@ -19,6 +20,7 @@ final class KernelTest extends TestCase
         self::assertTrue($k->isBooted()); self::assertInstanceOf(Container::class, $k->container());
         self::assertInstanceOf(ExpansionRegistry::class, $k->expansions()); self::assertInstanceOf(ContentRegistry::class, $k->content());
         self::assertInstanceOf(ContentTypeCatalogue::class, $k->contentTypes()); self::assertInstanceOf(SchemaRegistry::class, $k->schemas());
+        self::assertInstanceOf(ExpansionFileLoader::class, $k->loader());
         self::assertCount(20, $k->contentTypes()->all()); self::assertCount(20, $k->schemas()->all());
     }
 

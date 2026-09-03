@@ -33,4 +33,9 @@ final class ExpansionRegistry
     {
         return $this->packs;
     }
+
+    public function remove(string $key): void
+    {
+        unset($this->packs[$key]);
+    }
 }
