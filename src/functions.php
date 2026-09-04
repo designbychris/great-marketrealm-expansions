@@ -9,6 +9,7 @@ use GreatMarketrealmExpansions\Content\Schema\SchemaRegistry;
 use GreatMarketrealmExpansions\Content\Types\ContentTypeCatalogue;
 use GreatMarketrealmExpansions\Expansions\ExpansionRegistry;
 use GreatMarketrealmExpansions\Expansions\Loading\ExpansionFileLoader;
+use GreatMarketrealmExpansions\Integration\Bridge;
 
 function expansions(): ExpansionRegistry
 {
@@ -50,4 +51,11 @@ function catalogue(): Catalogue
     $kernel = Kernel::instance();
     $kernel->boot();
     return $kernel->catalogue();
+}
+
+function bridge(): Bridge
+{
+    $kernel = Kernel::instance();
+    $kernel->boot();
+    return $kernel->bridge();
 }
