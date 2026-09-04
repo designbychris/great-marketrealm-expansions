@@ -6,7 +6,7 @@
 - **I.2 — Labels on Every Jar**: canonical content-type catalogue, schemas/validation, provenance and compatibility metadata. ✅
 - **I.3 — The First Almanac**: first bundled expansion pack, deterministic file discovery, provenance stamping, atomic validation/loading and load reports. ✅
 - **I.4 — The Keeper Opens the Catalogue**: immutable catalogue views, fluent read queries, API/capability discovery and read-only REST surfaces for consumers. ✅
-- **I.5 — Bridges Between Kingdoms**: formal Companion and Tabletop integration contracts/adapters.
+- **I.5 — Bridges Between Kingdoms**: versioned consumer identity, capability negotiation, graceful connection/refusal contracts and the stable sibling-plugin Bridge. ✅
 
 ## Phase II — Player Rules & Character Options
 
