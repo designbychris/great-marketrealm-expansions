@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.0-alpha5 — Phase I.5 — Bridges Between Kingdoms
+
+- Added the stable `Bridge` service and public `bridge()` helper for sibling-plugin integration.
+- Added immutable consumer declarations with semantic Bridge/Catalogue API requirements.
+- Added required-versus-optional capability negotiation and graceful degradation.
+- Added structured `BridgeConnection` and `BridgeIssue` results instead of routine compatibility exceptions crossing plugin boundaries.
+- Refused incompatible connections now deliberately expose no Catalogue object.
+- Added request-lifetime consumer registration with idempotent identical registration and conflict detection.
+- Kept GMREXP optional for Companion/Tabletop through documented feature-detection and no hard plugin dependency.
+- Added the Integration Bridge contract documentation and regression coverage.
+
 ## 0.1.0-alpha4 — Phase I.4 — The Keeper Opens the Catalogue
 
 - Added the stable read-only `Catalogue` consumer service and public `catalogue()` helper.
