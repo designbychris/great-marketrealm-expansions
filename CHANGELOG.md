@@ -2,6 +2,17 @@
 
 
 
+## 0.2.0-alpha5 — Phase II.5: The Expanded Spellbook
+
+- Added a dedicated spell schema and structural constraint.
+- Added spell levels, open school keys, casting time, range, components and duration.
+- Added ritual/concentration flags and canonical spell-list membership.
+- Added structured targeting, attack, saving throw, effects and scaling containers.
+- Kept custom schools extensible and execution semantics reserved for the Phase II.7 Rules Engine.
+- Added Phase II.5 PHPUnit coverage and spellbook documentation.
+- Certified Phase II.4 at 131 tests / 316 assertions.
+- Kept Catalogue API and Bridge API at 1.0.0.
+
 ## 0.2.0-alpha4 — Phase II.4: Gifts, Knacks & Questionable Talents
 
 - Added a dedicated playable-feat schema and structural constraint.

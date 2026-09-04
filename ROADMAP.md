@@ -14,7 +14,7 @@
 - **II.2 — Callings from Distant Shelves**: class/subclass levels, granted features, choices, prerequisites and parent-class relationships. ✅
 - **II.3 — Lives Before Adventure**: backgrounds, proficiencies, languages, equipment, features and generation choices. ✅
 - **II.4 — Gifts, Knacks & Questionable Talents**: feats, prerequisites, repeatability, grants, choices and modifiers. ✅
-- **II.5 — The Expanded Spellbook**: spell definitions, spell lists, levels, schools, components, ranges, durations and scaling.
+- **II.5 — The Expanded Spellbook**: spell definitions, spell lists, levels, schools, components, ranges, durations and scaling. ✅
 - **II.6 — The Adventurer's Cupboard**: weapons, armour, equipment and magic items.
 - **II.7 — The Rules Engine**: neutral structured grants, choices and modifiers that consumers can interpret without content-specific PHP.
 
@@ -54,5 +54,19 @@ GMREXP owns expansion content and its meaning. Companion owns character/user wor
 - [x] Structured modifiers.
 - [x] Optional ability-score rules.
 - [x] Compatibility with simple named feats and the First Almanac proving fixture.
+- [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 131 tests / 316 assertions.
+
+
+## Phase II.5 — The Expanded Spellbook
+
+- [x] Dedicated spell schema.
+- [x] Levels 0–9 and open canonical school keys.
+- [x] Structured casting time, range, components and duration.
+- [x] Ritual and concentration flags.
+- [x] Canonical spell-list membership.
+- [x] Structured targeting, spell attacks and saving throws.
+- [x] Structured effects and scaling containers for the future Rules Engine.
+- [x] Extensible custom schools without schema changes.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

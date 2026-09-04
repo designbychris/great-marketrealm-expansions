@@ -42,3 +42,8 @@ Phase II.3 adds canonical expansion background definitions with structured profi
 ## Playable feats
 
 Phase II.4 adds canonical feat definitions with prerequisites, repeatability, grants, choices, modifiers and ability-score rules while reserving execution semantics for the later Rules Engine. See `docs/PLAYABLE-FEATS.md`.
+
+
+## Expanded Spellbook
+
+Phase II.5 adds canonical expansion spell definitions with structured casting metadata, components, targeting, effects and scaling while keeping custom magic schools open-ended. See `docs/EXPANDED-SPELLBOOK.md`.

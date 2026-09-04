@@ -17,6 +17,7 @@ final class CoreSchemas
                 'subclass' => PlayableClassSchemaFactory::subclass(),
                 'background' => BackgroundSchemaFactory::background(),
                 'feat' => FeatSchemaFactory::feat(),
+                'spell' => SpellSchemaFactory::spell(),
                 default => CoreSchemaFactory::make($type->key()),
             };
             $schemas->add($schema);
