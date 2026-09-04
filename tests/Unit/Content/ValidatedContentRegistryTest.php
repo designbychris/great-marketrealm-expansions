@@ -24,15 +24,41 @@ final class ValidatedContentRegistryTest extends TestCase
 
     public function test_valid_content_is_accepted(): void
     {
-        $definition = new ContentDefinition('subclass', 'circle-freezer', ['name' => 'Circle of the Freezer', 'parent_class' => 'druid']);
+        $definition = new ContentDefinition('subclass', 'circle-freezer', [
+            'name' => 'Circle of the Freezer',
+            'parent_class' => 'druid',
+            'entry_level' => 2,
+            'features' => [
+                [
+                    'key' => 'frozen-shape',
+                    'name' => 'Frozen Shape',
+                ],
+            ],
+            'progression' => [
+                [
+                    'level' => 2,
+                    'features' => ['frozen-shape'],
+                ],
+            ],
+        ]);
+
         $registry = $this->registry();
         $registry->add('frozen-aisles', $definition);
-        self::assertSame($definition, $registry->get('frozen-aisles', 'subclass', 'circle-freezer'));
+
+        self::assertSame(
+            $definition,
+            $registry->get('frozen-aisles', 'subclass', 'circle-freezer')
+        );
     }
 
     public function test_invalid_content_is_rejected_before_registration(): void
     {
         $this->expectException(ContentValidationException::class);
-        $this->registry()->add('frozen-aisles', new ContentDefinition('subclass', 'circle-freezer', ['name' => 'Circle of the Freezer']));
+        $this->registry()->add(
+            'frozen-aisles',
+            new ContentDefinition('subclass', 'circle-freezer', [
+                'name' => 'Circle of the Freezer',
+            ])
+        );
     }
 }
