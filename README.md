@@ -6,15 +6,15 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
-**Phase I.4 — The Keeper Opens the Catalogue**
+**Phase I.5 — Bridges Between Kingdoms**
 
-GMREXP now exposes a stable, read-only Catalogue boundary over the registries populated by the Almanac loader. Sibling plugins can use the PHP `catalogue()` helper, while browser/client consumers can use the read-only WordPress REST surface under `great-marketrealm-expansions/v1`.
+GMREXP now exposes a formal, versioned integration Bridge for sibling Great MarketRealm plugins. Consumers identify themselves, declare minimum Bridge/Catalogue API versions, distinguish required from optional capabilities, and receive a negotiated `BridgeConnection` rather than reaching into GMREXP internals.
 
-Catalogue results are immutable view objects, content keeps its fully qualified `expansion:type:key` identity, unqualified ambiguous lookups are rejected, and fluent queries can filter by type, expansion, key and tags. API-version and capability discovery let Companion/Tabletop feature-detect integrations without coupling themselves to a GMREXP plugin release number.
+A compatible connection exposes the read-only Catalogue. Missing optional capabilities degrade cleanly; missing required capabilities or incompatible API versions return structured refusal reasons and no Catalogue object. Consumer discovery remains optional by design, so Companion and Tabletop can continue to boot and operate when GMREXP is absent.
 
-The bundled **First Almanac** remains the proving pack, supplying Iron Stomach and Milk Carton Mimic through the full file → validation → registry → catalogue pipeline.
+The bundled **First Almanac** still proves the complete file → validation → registry → catalogue pipeline, while the new Bridge completes the supported path from that catalogue into neighbouring plugins.
 
-See `docs/CATALOGUE-API.md` for the consumer contract and `docs/ALMANAC-FORMAT.md` for the source-pack format.
+See `docs/INTEGRATION-BRIDGE.md` for the sibling-plugin contract, `docs/CATALOGUE-API.md` for catalogue reads, and `docs/ALMANAC-FORMAT.md` for source packs.
 
 ## Development
 
