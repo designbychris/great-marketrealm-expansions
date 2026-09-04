@@ -9,6 +9,7 @@ use GreatMarketrealmExpansions\Content\Schema\SchemaRegistry;
 use GreatMarketrealmExpansions\Content\Types\ContentTypeCatalogue;
 use GreatMarketrealmExpansions\Expansions\ExpansionRegistry;
 use GreatMarketrealmExpansions\Expansions\Loading\ExpansionFileLoader;
+use GreatMarketrealmExpansions\Integration\Bridge;
 use PHPUnit\Framework\TestCase;
 
 final class KernelTest extends TestCase
@@ -21,7 +22,7 @@ final class KernelTest extends TestCase
         self::assertTrue($k->isBooted()); self::assertInstanceOf(Container::class, $k->container());
         self::assertInstanceOf(ExpansionRegistry::class, $k->expansions()); self::assertInstanceOf(ContentRegistry::class, $k->content());
         self::assertInstanceOf(ContentTypeCatalogue::class, $k->contentTypes()); self::assertInstanceOf(SchemaRegistry::class, $k->schemas());
-        self::assertInstanceOf(ExpansionFileLoader::class, $k->loader()); self::assertInstanceOf(Catalogue::class, $k->catalogue());
+        self::assertInstanceOf(ExpansionFileLoader::class, $k->loader()); self::assertInstanceOf(Catalogue::class, $k->catalogue()); self::assertInstanceOf(Bridge::class, $k->bridge());
         self::assertCount(20, $k->contentTypes()->all()); self::assertCount(20, $k->schemas()->all());
     }
 
@@ -29,6 +30,13 @@ final class KernelTest extends TestCase
     {
         $k = Kernel::instance(); $k->boot();
         self::assertSame($k->catalogue(), \GreatMarketrealmExpansions\catalogue());
+    }
+
+
+    public function test_public_bridge_helper_returns_kernel_bridge(): void
+    {
+        $k = Kernel::instance(); $k->boot();
+        self::assertSame($k->bridge(), \GreatMarketrealmExpansions\bridge());
     }
 
     public function test_boot_is_idempotent(): void
