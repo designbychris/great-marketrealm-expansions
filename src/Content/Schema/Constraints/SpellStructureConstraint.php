@@ -22,24 +22,15 @@ final class SpellStructureConstraint implements ContentConstraint
             $errors[] = new ValidationError('school', 'Spell school must be a non-empty canonical key.');
         }
 
-        foreach (['casting_time', 'range', 'components', 'duration'] as $field) {
-            if (isset($data[$field]) && is_array($data[$field]) && $data[$field] === []) {
-                $errors[] = new ValidationError($field, sprintf('Spell "%s" must be a non-empty map.', $field));
-            }
-        }
-
-        if (isset($data['components']) && is_array($data['components'])) {
+        // FieldDefinition owns top-level type/emptiness validation. This
+        // constraint only adds spell-specific semantics so each bad field is
+        // reported once.
+        if (isset($data['components']) && is_array($data['components']) && $data['components'] !== []) {
             $errors = array_merge($errors, $this->validateComponents($data['components']));
         }
 
         if (isset($data['spell_lists']) && is_array($data['spell_lists'])) {
             $errors = array_merge($errors, $this->validateStringList('spell_lists', $data['spell_lists']));
-        }
-
-        foreach (['targeting', 'attack', 'saving_throw'] as $field) {
-            if (isset($data[$field]) && is_array($data[$field]) && $data[$field] === []) {
-                $errors[] = new ValidationError($field, sprintf('Spell "%s" metadata must be a non-empty map when supplied.', $field));
-            }
         }
 
         foreach (['effects', 'scaling'] as $field) {
