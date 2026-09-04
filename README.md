@@ -37,3 +37,8 @@ Canonical mechanics should come from approved source material. Future Google Doc
 ## Playable backgrounds
 
 Phase II.3 adds canonical expansion background definitions with structured proficiencies, equipment, features, languages, generation choices, and characteristic prompts. See `docs/PLAYABLE-BACKGROUNDS.md`.
+
+
+## Playable feats
+
+Phase II.4 adds canonical feat definitions with prerequisites, repeatability, grants, choices, modifiers and ability-score rules while reserving execution semantics for the later Rules Engine. See `docs/PLAYABLE-FEATS.md`.

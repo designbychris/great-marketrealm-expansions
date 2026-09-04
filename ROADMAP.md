@@ -12,8 +12,8 @@
 
 - **II.1 — Peoples Beyond the Pantry**: structured playable race/subrace schemas, nested race validation and read-only Keeper's Catalogue wp-admin visibility. ✅
 - **II.2 — Callings from Distant Shelves**: class/subclass levels, granted features, choices, prerequisites and parent-class relationships. ✅
-- **II.3 — Lives Before Adventure**: backgrounds, proficiencies, languages, equipment, features and generation choices.
-- **II.4 — Gifts, Knacks & Questionable Talents**: feats, prerequisites, repeatability, grants, choices and modifiers.
+- **II.3 — Lives Before Adventure**: backgrounds, proficiencies, languages, equipment, features and generation choices. ✅
+- **II.4 — Gifts, Knacks & Questionable Talents**: feats, prerequisites, repeatability, grants, choices and modifiers. ✅
 - **II.5 — The Expanded Spellbook**: spell definitions, spell lists, levels, schools, components, ranges, durations and scaling.
 - **II.6 — The Adventurer's Cupboard**: weapons, armour, equipment and magic items.
 - **II.7 — The Rules Engine**: neutral structured grants, choices and modifiers that consumers can interpret without content-specific PHP.
@@ -40,5 +40,19 @@ GMREXP owns expansion content and its meaning. Companion owns character/user wor
 - [x] Optional feats and ability-score rules.
 - [x] Personality traits, ideals, bonds, and flaws.
 - [x] Generic character-generation choices.
+- [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 120 tests / 290 assertions.
+
+
+## Phase II.4 — Gifts, Knacks & Questionable Talents
+
+- [x] Dedicated feat schema.
+- [x] Structured prerequisites.
+- [x] Explicit repeatability and optional maximum selections.
+- [x] Structured grants.
+- [x] Structured character-generation choices.
+- [x] Structured modifiers.
+- [x] Optional ability-score rules.
+- [x] Compatibility with simple named feats and the First Almanac proving fixture.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

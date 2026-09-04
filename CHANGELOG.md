@@ -1,6 +1,17 @@
 # Changelog
 
 
+
+## 0.2.0-alpha4 — Phase II.4: Gifts, Knacks & Questionable Talents
+
+- Added a dedicated playable-feat schema and structural constraint.
+- Added structured prerequisites, grants, choices, modifiers and ability-score rules.
+- Added explicit feat repeatability and positive maximum-selection validation.
+- Preserved compatibility with simple named feats and the bundled First Almanac proving fixture.
+- Added Phase II.4 PHPUnit coverage and playable-feat documentation.
+- Certified Phase II.3 at 120 tests / 290 assertions.
+- Kept Catalogue API and Bridge API at 1.0.0.
+
 ## 0.2.0-alpha3 — Phase II.3: Lives Before Adventure
 
 - Added a dedicated playable-background schema and structural constraint.

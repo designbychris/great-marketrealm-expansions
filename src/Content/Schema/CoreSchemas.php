@@ -16,6 +16,7 @@ final class CoreSchemas
                 'class' => PlayableClassSchemaFactory::classDefinition(),
                 'subclass' => PlayableClassSchemaFactory::subclass(),
                 'background' => BackgroundSchemaFactory::background(),
+                'feat' => FeatSchemaFactory::feat(),
                 default => CoreSchemaFactory::make($type->key()),
             };
             $schemas->add($schema);
