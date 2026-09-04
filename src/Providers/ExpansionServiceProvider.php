@@ -14,6 +14,8 @@ use GreatMarketrealmExpansions\Content\Types\ContentTypeCatalogue;
 use GreatMarketrealmExpansions\Content\Types\CoreContentTypes;
 use GreatMarketrealmExpansions\Expansions\ExpansionRegistry;
 use GreatMarketrealmExpansions\Expansions\Loading\ExpansionFileLoader;
+use GreatMarketrealmExpansions\Integration\Bridge;
+use GreatMarketrealmExpansions\Integration\ConsumerRegistry;
 
 final class ExpansionServiceProvider extends ServiceProvider
 {
@@ -41,6 +43,11 @@ final class ExpansionServiceProvider extends ServiceProvider
         ));
         $this->container->singleton(CatalogueRestApi::class, static fn (Container $container): CatalogueRestApi => new CatalogueRestApi(
             $container->get(Catalogue::class)
+        ));
+        $this->container->singleton(ConsumerRegistry::class, static fn (Container $container): ConsumerRegistry => new ConsumerRegistry());
+        $this->container->singleton(Bridge::class, static fn (Container $container): Bridge => new Bridge(
+            $container->get(Catalogue::class),
+            $container->get(ConsumerRegistry::class)
         ));
         $this->container->singleton(ExpansionFileLoader::class, static fn (Container $container): ExpansionFileLoader => new ExpansionFileLoader(
             $container->get(ExpansionRegistry::class),
