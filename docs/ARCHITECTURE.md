@@ -55,3 +55,8 @@ The format intentionally stops short of interpreting those rules. GMREXP describ
 ## Keeper's Catalogue wp-admin view
 
 `CatalogueAdminPage` is a read-only diagnostic surface registered as **MarketRealm Expansions** in wp-admin. It reports plugin/Catalogue/Bridge versions, installed Almanacs, total catalogue content, counts by type and canonical content IDs. It adapts the existing Catalogue and introduces no editable store or second source of truth.
+
+
+## Playable class schemas
+
+Phase II.2 specializes `class` and `subclass` validation through `PlayableClassSchemaFactory` and `PlayableClassStructureConstraint`. Feature definitions are canonical reusable records; level progression references feature keys and remains data rather than class-specific PHP. See `PLAYABLE-CLASSES.md`.

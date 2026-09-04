@@ -11,7 +11,7 @@
 ## Phase II — The Adventurer's Annex
 
 - **II.1 — Peoples Beyond the Pantry**: structured playable race/subrace schemas, nested race validation and read-only Keeper's Catalogue wp-admin visibility. ✅
-- **II.2 — Callings from Distant Shelves**: class/subclass levels, granted features, choices, prerequisites and parent-class relationships.
+- **II.2 — Callings from Distant Shelves**: class/subclass levels, granted features, choices, prerequisites and parent-class relationships. ✅
 - **II.3 — Lives Before Adventure**: backgrounds, proficiencies, languages, equipment, features and generation choices.
 - **II.4 — Gifts, Knacks & Questionable Talents**: feats, prerequisites, repeatability, grants, choices and modifiers.
 - **II.5 — The Expanded Spellbook**: spell definitions, spell lists, levels, schools, components, ranges, durations and scaling.
@@ -24,7 +24,7 @@ Monsters, NPCs, encounters, hazards, treasure, optional DM rules and adventure/s
 
 ## Phase IV — The Living Library
 
-Expansion catalogue management, entitlement/availability rules if ever required, pack activation, compatibility reporting, import/export and content migrations.
+Expansion catalogue management, entitlement/availability rules if ever required, pack activation, compatibility reporting, Google Docs/sourcebook-to-Almanac import/export, reviewed transformations and content migrations.
 
 ### Architectural rule
 

@@ -13,9 +13,8 @@ final class CoreSchemas
             $schema = match ($type->key()) {
                 'race' => PlayableRaceSchemaFactory::race(),
                 'subrace' => PlayableRaceSchemaFactory::subrace(),
-                'subclass' => CoreSchemaFactory::make('subclass', [
-                    new FieldDefinition('parent_class', FieldDefinition::STRING, true),
-                ]),
+                'class' => PlayableClassSchemaFactory::classDefinition(),
+                'subclass' => PlayableClassSchemaFactory::subclass(),
                 default => CoreSchemaFactory::make($type->key()),
             };
             $schemas->add($schema);

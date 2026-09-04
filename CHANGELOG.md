@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.0-alpha2 — Phase II.2 — Callings from Distant Shelves
+
+- Added canonical playable `class` and `subclass` schema vocabulary.
+- Added class hit-die, maximum-level, saving-throw, proficiency, starting-equipment and primary-ability validation.
+- Separated reusable feature definitions from level progression and validate progression feature references.
+- Added complete class level coverage, duplicate-level detection and subclass entry-level boundaries.
+- Added structured class resources, spellcasting metadata, subclass selection, prerequisites and generation choices.
+- Kept Phase II.2 canon-neutral: production ships the model while PHPUnit uses synthetic class/subclass fixtures.
+- Documented the class/subclass format and its future Google Docs-to-Almanac import boundary.
+- Kept Catalogue API and Bridge API stable at `1.0.0`.
+
 ## 0.2.0-alpha1 — Phase II.1 — Peoples Beyond the Pantry
 
 - Added full playable `race` and inheriting `subrace` schema vocabulary.

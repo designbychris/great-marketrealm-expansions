@@ -24,3 +24,11 @@ php vendor/bin/phpunit --display-warnings
 ```
 
 Requires PHP 8.1 or newer.
+
+
+## Phase II player-option schemas
+
+- Playable races/subraces: see `docs/PLAYABLE-RACES.md`.
+- Playable classes/subclasses: see `docs/PLAYABLE-CLASSES.md`.
+
+Canonical mechanics should come from approved source material. Future Google Docs import should transform source documents into reviewed Almanac definitions rather than making runtime gameplay depend on live Docs.
