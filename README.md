@@ -32,3 +32,8 @@ Requires PHP 8.1 or newer.
 - Playable classes/subclasses: see `docs/PLAYABLE-CLASSES.md`.
 
 Canonical mechanics should come from approved source material. Future Google Docs import should transform source documents into reviewed Almanac definitions rather than making runtime gameplay depend on live Docs.
+
+
+## Playable backgrounds
+
+Phase II.3 adds canonical expansion background definitions with structured proficiencies, equipment, features, languages, generation choices, and characteristic prompts. See `docs/PLAYABLE-BACKGROUNDS.md`.

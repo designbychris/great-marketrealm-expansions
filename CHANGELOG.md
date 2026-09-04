@@ -1,5 +1,14 @@
 # Changelog
 
+
+## 0.2.0-alpha3 — Phase II.3: Lives Before Adventure
+
+- Added a dedicated playable-background schema and structural constraint.
+- Added structured proficiencies, starting equipment, features, languages, generation choices, feats, ability-score rules, and characteristics.
+- Added validation for keyed background features and canonical characteristic groups.
+- Added Phase II.3 PHPUnit coverage and playable-background documentation.
+- Kept Catalogue API and Bridge API at 1.0.0.
+
 ## 0.2.0-alpha2 — Phase II.2 — Callings from Distant Shelves
 
 - Added canonical playable `class` and `subclass` schema vocabulary.

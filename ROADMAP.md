@@ -29,3 +29,16 @@ Expansion catalogue management, entitlement/availability rules if ever required,
 ### Architectural rule
 
 GMREXP owns expansion content and its meaning. Companion owns character/user workflows. Tabletop owns live play/VTT state. Consumers should reference canonical expansion IDs rather than duplicate expansion mechanics.
+
+## Phase II.3 — Lives Before Adventure
+
+- [x] Dedicated background schema.
+- [x] Grouped skill/tool/weapon-style proficiency representation.
+- [x] Structured starting equipment and equipment choices.
+- [x] Keyed background features with future rules payloads.
+- [x] Languages and language choices.
+- [x] Optional feats and ability-score rules.
+- [x] Personality traits, ideals, bonds, and flaws.
+- [x] Generic character-generation choices.
+- [x] Regression coverage and documentation.
+- [ ] Server-side PHPUnit certification.

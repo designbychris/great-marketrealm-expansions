@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Great MarketRealm Expansions
  * Description: Expansion rules, data, and content packs for The Great MarketRealm.
- * Version: 0.2.0-alpha2
+ * Version: 0.2.0-alpha3
  * Requires PHP: 8.1
  * Text Domain: great-marketrealm-expansions
  */
 
 defined('ABSPATH') || exit;
 
-define('GMREXP_VERSION', '0.2.0-alpha2');
+define('GMREXP_VERSION', '0.2.0-alpha3');
 define('GMREXP_FILE', __FILE__);
 define('GMREXP_PATH', plugin_dir_path(__FILE__));
 

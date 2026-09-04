@@ -15,6 +15,7 @@ final class CoreSchemas
                 'subrace' => PlayableRaceSchemaFactory::subrace(),
                 'class' => PlayableClassSchemaFactory::classDefinition(),
                 'subclass' => PlayableClassSchemaFactory::subclass(),
+                'background' => BackgroundSchemaFactory::background(),
                 default => CoreSchemaFactory::make($type->key()),
             };
             $schemas->add($schema);
