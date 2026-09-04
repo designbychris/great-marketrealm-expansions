@@ -15,7 +15,7 @@
 - **II.3 — Lives Before Adventure**: backgrounds, proficiencies, languages, equipment, features and generation choices. ✅
 - **II.4 — Gifts, Knacks & Questionable Talents**: feats, prerequisites, repeatability, grants, choices and modifiers. ✅
 - **II.5 — The Expanded Spellbook**: spell definitions, spell lists, levels, schools, components, ranges, durations and scaling. ✅
-- **II.6 — The Adventurer's Cupboard**: weapons, armour, equipment and magic items.
+- **II.6 — The Adventurer's Cupboard**: weapons, armour, equipment and magic items. ✅
 - **II.7 — The Rules Engine**: neutral structured grants, choices and modifiers that consumers can interpret without content-specific PHP.
 
 ## Phase III — Keeper Content
@@ -68,5 +68,18 @@ GMREXP owns expansion content and its meaning. Companion owns character/user wor
 - [x] Structured targeting, spell attacks and saving throws.
 - [x] Structured effects and scaling containers for the future Rules Engine.
 - [x] Extensible custom schools without schema changes.
+- [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 145 tests / 357 assertions.
+
+
+## Phase II.6 — The Adventurer's Cupboard
+
+- [x] Dedicated schemas for weapons, armour, equipment and magic items.
+- [x] Structured weapon damage, properties and range.
+- [x] Structured armour class, requirements and stealth behaviour.
+- [x] General equipment quantities, consumables, charges, cost and weight.
+- [x] Magic-item rarity, attunement, charges, effects, modifiers and choices.
+- [x] Open canonical category/rarity/property vocabularies for future MarketRealm oddities.
+- [x] Rules Engine boundary retained for executable effects.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

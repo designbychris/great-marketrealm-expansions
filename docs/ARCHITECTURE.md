@@ -60,3 +60,8 @@ The format intentionally stops short of interpreting those rules. GMREXP describ
 ## Playable class schemas
 
 Phase II.2 specializes `class` and `subclass` validation through `PlayableClassSchemaFactory` and `PlayableClassStructureConstraint`. Feature definitions are canonical reusable records; level progression references feature keys and remains data rather than class-specific PHP. See `PLAYABLE-CLASSES.md`.
+
+
+### Phase II.6 item boundary
+
+Weapons, armour, equipment, and magic items now use dedicated schemas. Item definitions own descriptive/statistical structure; executable effects, modifiers, choices, and other rule statements remain neutral payloads until the Phase II.7 Rules Engine defines their semantics.

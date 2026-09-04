@@ -47,3 +47,8 @@ Phase II.4 adds canonical feat definitions with prerequisites, repeatability, gr
 ## Expanded Spellbook
 
 Phase II.5 adds canonical expansion spell definitions with structured casting metadata, components, targeting, effects and scaling while keeping custom magic schools open-ended. See `docs/EXPANDED-SPELLBOOK.md`.
+
+
+## The Adventurer's Cupboard
+
+Phase II.6 adds canonical expansion definitions for weapons, armour, equipment, and magic items, including structured item statistics and future Rules Engine payloads. See `docs/ADVENTURERS-CUPBOARD.md`.

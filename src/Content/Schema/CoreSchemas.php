@@ -18,6 +18,10 @@ final class CoreSchemas
                 'background' => BackgroundSchemaFactory::background(),
                 'feat' => FeatSchemaFactory::feat(),
                 'spell' => SpellSchemaFactory::spell(),
+                'weapon' => AdventurersCupboardSchemaFactory::weapon(),
+                'armour' => AdventurersCupboardSchemaFactory::armour(),
+                'equipment' => AdventurersCupboardSchemaFactory::equipment(),
+                'magic-item' => AdventurersCupboardSchemaFactory::magicItem(),
                 default => CoreSchemaFactory::make($type->key()),
             };
             $schemas->add($schema);

@@ -2,6 +2,19 @@
 
 
 
+
+## 0.2.0-alpha6 — Phase II.6: The Adventurer's Cupboard
+
+- Added dedicated schemas for weapons, armour, equipment, and magic items.
+- Added structured weapon damage, range, properties, proficiency, cost, and weight.
+- Added structured armour class, strength requirements, stealth behaviour, properties, cost, and weight.
+- Added equipment quantities, consumable state, charges, properties, cost, weight, and effects.
+- Added magic-item rarity, attunement, charges, effects, modifiers, and choices.
+- Kept categories, rarities, properties, currencies, and similar identifiers extensible rather than hard-coded.
+- Preserved the Phase II.7 boundary by validating mechanical payload containers without executing them.
+- Recorded the certified Phase II.5 baseline: 145 tests / 357 assertions.
+- Kept Catalogue API and Bridge API at 1.0.0.
+
 ## 0.2.0-alpha5 — Phase II.5: The Expanded Spellbook
 
 - Added a dedicated spell schema and structural constraint.
