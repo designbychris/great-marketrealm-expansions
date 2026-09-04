@@ -3,6 +3,7 @@ namespace GreatMarketrealmExpansions\Providers;
 
 defined('ABSPATH') || exit;
 
+use GreatMarketrealmExpansions\Admin\CatalogueAdminPage;
 use GreatMarketrealmExpansions\Application\Container;
 use GreatMarketrealmExpansions\Catalogue\Catalogue;
 use GreatMarketrealmExpansions\Catalogue\Rest\CatalogueRestApi;
@@ -54,6 +55,10 @@ final class ExpansionServiceProvider extends ServiceProvider
             $container->get(ContentRegistry::class),
             $container->get(ContentValidator::class)
         ));
+        $this->container->singleton(CatalogueAdminPage::class, static fn (Container $container): CatalogueAdminPage => new CatalogueAdminPage(
+            $container->get(Catalogue::class),
+            $container->get(Bridge::class)
+        ));
     }
 
     public function boot(): void
@@ -61,6 +66,9 @@ final class ExpansionServiceProvider extends ServiceProvider
         if (function_exists('add_action')) {
             $api = $this->container->get(CatalogueRestApi::class);
             add_action('rest_api_init', static function () use ($api): void { $api->registerRoutes(); });
+
+            $admin = $this->container->get(CatalogueAdminPage::class);
+            add_action('admin_menu', static function () use ($admin): void { $admin->registerMenu(); });
         }
     }
 }

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0-alpha1 — Phase II.1 — Peoples Beyond the Pantry
+
+- Added full playable `race` and inheriting `subrace` schema vocabulary.
+- Added schema-level structural constraints for fixed-or-choice size, movement speeds, language lists and structured traits.
+- Added validation for proficiencies, resistances, senses, ability-score rule maps, language choices and character-generation choice maps.
+- Extended `ContentSchema` with reusable domain constraints so future content families can enforce nested rules without hard-coding them into the registry.
+- Kept Phase II.1 canon-neutral: production ships the model while tests use synthetic race fixtures.
+- Added the read-only **MarketRealm Expansions** wp-admin Keeper's Catalogue with Almanac/API/content diagnostics.
+- Added playable-race and admin-catalogue documentation plus regression coverage.
+
 ## 0.1.0-alpha5 — Phase I.5 — Bridges Between Kingdoms
 
 - Added the stable `Bridge` service and public `bridge()` helper for sibling-plugin integration.

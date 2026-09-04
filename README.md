@@ -2,19 +2,19 @@
 
 **Great MarketRealm Expansions (GMREXP)** is the expansion-content and optional-rules layer for The Great MarketRealm ecosystem.
 
-It owns canonical expansion packs and structured content definitions — races, subclasses, backgrounds, feats, spells, equipment, monsters, optional rules, adventures and future source-book material — while allowing the **Great MarketRealm Companion** and **Great MarketRealm Tabletop** plugins to consume that content through stable registries and integration contracts.
+It owns canonical expansion packs and structured content definitions — races, subclasses, backgrounds, feats, spells, equipment, monsters, optional rules, adventures and future source-book material — while allowing the **Great MarketRealm Companion** and **Great MarketRealm Tabletop** plugins to consume that content through stable catalogues and integration contracts.
 
 ## Current milestone
 
-**Phase I.5 — Bridges Between Kingdoms**
+**Phase II.1 — Peoples Beyond the Pantry**
 
-GMREXP now exposes a formal, versioned integration Bridge for sibling Great MarketRealm plugins. Consumers identify themselves, declare minimum Bridge/Catalogue API versions, distinguish required from optional capabilities, and receive a negotiated `BridgeConnection` rather than reaching into GMREXP internals.
+Phase I is complete. Phase II begins by teaching GMREXP how to describe a complete playable race or subrace as structured expansion data without race-specific PHP. The race schema now understands creature type, fixed-or-choice size, movement speeds, languages, traits, ability-score rules, language choices, proficiencies, resistances, senses and character-generation choices. Subraces identify a canonical parent race and supply their own traits plus optional overrides.
 
-A compatible connection exposes the read-only Catalogue. Missing optional capabilities degrade cleanly; missing required capabilities or incompatible API versions return structured refusal reasons and no Catalogue object. Consumer discovery remains optional by design, so Companion and Tabletop can continue to boot and operate when GMREXP is absent.
+The first Phase II push remains canon-neutral: production code defines the format, while PHPUnit fixtures prove it. Real Great MarketRealm race mechanics should be entered only from an approved canonical source.
 
-The bundled **First Almanac** still proves the complete file → validation → registry → catalogue pipeline, while the new Bridge completes the supported path from that catalogue into neighbouring plugins.
+A new read-only **MarketRealm Expansions** wp-admin page also provides a visible Keeper's Catalogue showing loaded Almanacs, API versions, content counts and canonical IDs. It is diagnostic/catalogue UI, not an editor.
 
-See `docs/INTEGRATION-BRIDGE.md` for the sibling-plugin contract, `docs/CATALOGUE-API.md` for catalogue reads, and `docs/ALMANAC-FORMAT.md` for source packs.
+See `docs/PLAYABLE-RACES.md`, `docs/ADMIN-CATALOGUE.md`, `docs/INTEGRATION-BRIDGE.md`, `docs/CATALOGUE-API.md` and `docs/ALMANAC-FORMAT.md`.
 
 ## Development
 

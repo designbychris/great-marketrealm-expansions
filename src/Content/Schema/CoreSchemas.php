@@ -10,12 +10,15 @@ final class CoreSchemas
     public static function register(SchemaRegistry $schemas, ContentTypeCatalogue $types): void
     {
         foreach ($types->all() as $type) {
-            $extra = match ($type->key()) {
-                'subrace' => [new FieldDefinition('parent_race', FieldDefinition::STRING, true)],
-                'subclass' => [new FieldDefinition('parent_class', FieldDefinition::STRING, true)],
-                default => [],
+            $schema = match ($type->key()) {
+                'race' => PlayableRaceSchemaFactory::race(),
+                'subrace' => PlayableRaceSchemaFactory::subrace(),
+                'subclass' => CoreSchemaFactory::make('subclass', [
+                    new FieldDefinition('parent_class', FieldDefinition::STRING, true),
+                ]),
+                default => CoreSchemaFactory::make($type->key()),
             };
-            $schemas->add(CoreSchemaFactory::make($type->key(), $extra));
+            $schemas->add($schema);
         }
     }
 }

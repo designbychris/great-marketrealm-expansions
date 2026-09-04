@@ -42,3 +42,16 @@ The Bridge negotiates that declaration against its own integration capabilities 
 `ConsumerRegistry` is request-lifetime integration state only. It exists to detect conflicting declarations inside one runtime and is not persistent content or user data.
 
 Consumers must feature-detect the public `bridge()` function so GMREXP remains an optional enhancement rather than a boot dependency. Plugin release version, Bridge API version and Catalogue API version are intentionally independent contracts.
+
+
+## Phase II playable character-option schemas
+
+Phase II introduces domain constraints layered on top of typed fields. `ContentSchema` may now receive `ContentConstraint` objects that validate nested structures after the ordinary top-level field checks. This keeps `ContentRegistry` generic while allowing content families to become semantically richer.
+
+`PlayableRaceSchemaFactory` defines the canonical `race` and `subrace` contracts. A complete race describes creature type, size, movement, languages and structured traits, with optional ability-score rules, language choices, proficiencies, resistances, senses and other character-generation choices. A subrace identifies `parent_race`, requires its own traits, and may override the same vocabulary without copying the parent definition.
+
+The format intentionally stops short of interpreting those rules. GMREXP describes canonical expansion mechanics; the later Rules Engine and consumer adapters will decide how structured grants/choices affect a character.
+
+## Keeper's Catalogue wp-admin view
+
+`CatalogueAdminPage` is a read-only diagnostic surface registered as **MarketRealm Expansions** in wp-admin. It reports plugin/Catalogue/Bridge versions, installed Almanacs, total catalogue content, counts by type and canonical content IDs. It adapts the existing Catalogue and introduces no editable store or second source of truth.

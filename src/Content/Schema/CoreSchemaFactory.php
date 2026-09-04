@@ -3,6 +3,8 @@ namespace GreatMarketrealmExpansions\Content\Schema;
 
 defined('ABSPATH') || exit;
 
+use GreatMarketrealmExpansions\Content\Schema\Constraints\ContentConstraint;
+
 final class CoreSchemaFactory
 {
     /** @return list<FieldDefinition> */
@@ -17,9 +19,9 @@ final class CoreSchemaFactory
         ];
     }
 
-    /** @param list<FieldDefinition> $extra */
-    public static function make(string $type, array $extra = []): ContentSchema
+    /** @param list<FieldDefinition> $extra @param list<ContentConstraint> $constraints */
+    public static function make(string $type, array $extra = [], array $constraints = []): ContentSchema
     {
-        return new ContentSchema($type, array_merge(self::commonFields(), $extra));
+        return new ContentSchema($type, array_merge(self::commonFields(), $extra), $constraints);
     }
 }

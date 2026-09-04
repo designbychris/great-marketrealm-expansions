@@ -1,6 +1,6 @@
 # Great MarketRealm Expansions Roadmap
 
-## Phase I — Foundations
+## Phase I — Foundations ✅
 
 - **I.1 — The Shelves Are Built**: plugin bootstrap, kernel/container, expansion registry, generic content registry, tests. ✅
 - **I.2 — Labels on Every Jar**: canonical content-type catalogue, schemas/validation, provenance and compatibility metadata. ✅
@@ -8,9 +8,15 @@
 - **I.4 — The Keeper Opens the Catalogue**: immutable catalogue views, fluent read queries, API/capability discovery and read-only REST surfaces for consumers. ✅
 - **I.5 — Bridges Between Kingdoms**: versioned consumer identity, capability negotiation, graceful connection/refusal contracts and the stable sibling-plugin Bridge. ✅
 
-## Phase II — Player Rules & Character Options
+## Phase II — The Adventurer's Annex
 
-Structured expansion support for races/subraces, classes/subclasses, backgrounds, feats, spells, equipment and optional character rules.
+- **II.1 — Peoples Beyond the Pantry**: structured playable race/subrace schemas, nested race validation and read-only Keeper's Catalogue wp-admin visibility. ✅
+- **II.2 — Callings from Distant Shelves**: class/subclass levels, granted features, choices, prerequisites and parent-class relationships.
+- **II.3 — Lives Before Adventure**: backgrounds, proficiencies, languages, equipment, features and generation choices.
+- **II.4 — Gifts, Knacks & Questionable Talents**: feats, prerequisites, repeatability, grants, choices and modifiers.
+- **II.5 — The Expanded Spellbook**: spell definitions, spell lists, levels, schools, components, ranges, durations and scaling.
+- **II.6 — The Adventurer's Cupboard**: weapons, armour, equipment and magic items.
+- **II.7 — The Rules Engine**: neutral structured grants, choices and modifiers that consumers can interpret without content-specific PHP.
 
 ## Phase III — Keeper Content
 
@@ -18,7 +24,7 @@ Monsters, NPCs, encounters, hazards, treasure, optional DM rules and adventure/s
 
 ## Phase IV — The Living Library
 
-Expansion catalogue UI, entitlement/availability rules if ever required, pack activation, compatibility reporting, import/export and content migrations.
+Expansion catalogue management, entitlement/availability rules if ever required, pack activation, compatibility reporting, import/export and content migrations.
 
 ### Architectural rule
 

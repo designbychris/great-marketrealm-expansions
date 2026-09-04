@@ -1,6 +1,7 @@
 <?php
 namespace GreatMarketrealmExpansions\Tests\Unit\Application;
 
+use GreatMarketrealmExpansions\Admin\CatalogueAdminPage;
 use GreatMarketrealmExpansions\Application\Container;
 use GreatMarketrealmExpansions\Application\Kernel;
 use GreatMarketrealmExpansions\Catalogue\Catalogue;
@@ -23,6 +24,7 @@ final class KernelTest extends TestCase
         self::assertInstanceOf(ExpansionRegistry::class, $k->expansions()); self::assertInstanceOf(ContentRegistry::class, $k->content());
         self::assertInstanceOf(ContentTypeCatalogue::class, $k->contentTypes()); self::assertInstanceOf(SchemaRegistry::class, $k->schemas());
         self::assertInstanceOf(ExpansionFileLoader::class, $k->loader()); self::assertInstanceOf(Catalogue::class, $k->catalogue()); self::assertInstanceOf(Bridge::class, $k->bridge());
+        self::assertInstanceOf(CatalogueAdminPage::class, $k->adminPage());
         self::assertCount(20, $k->contentTypes()->all()); self::assertCount(20, $k->schemas()->all());
     }
 
