@@ -31,3 +31,14 @@ The kernel-provided `ContentRegistry` receives a `ContentValidator`, so definiti
 `CatalogueQuery` supplies immutable fluent filtering and deterministic results. `apiVersion()`, `capabilities()` and `supports()` provide integration feature discovery independently of the WordPress plugin version.
 
 `CatalogueRestApi` adapts the same Catalogue to public read-only WordPress REST routes. It contains no separate content store or rules logic. Companion and Tabletop should consume the Catalogue contract rather than Almanac files or registries directly.
+
+
+## Integration Bridge
+
+`Bridge` is the supported in-process doorway for sibling Great MarketRealm plugins. A consumer supplies an immutable `Consumer` declaration containing its identity/version, minimum Bridge and Catalogue API versions, and required/optional capabilities.
+
+The Bridge negotiates that declaration against its own integration capabilities plus the capabilities advertised by the Catalogue. A compatible request receives a `BridgeConnection` with read-only Catalogue access. Missing optional capabilities are recorded but tolerated; incompatible API versions, missing required capabilities and conflicting consumer identities produce structured `BridgeIssue` values and no Catalogue object.
+
+`ConsumerRegistry` is request-lifetime integration state only. It exists to detect conflicting declarations inside one runtime and is not persistent content or user data.
+
+Consumers must feature-detect the public `bridge()` function so GMREXP remains an optional enhancement rather than a boot dependency. Plugin release version, Bridge API version and Catalogue API version are intentionally independent contracts.
