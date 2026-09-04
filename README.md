@@ -52,3 +52,8 @@ Phase II.5 adds canonical expansion spell definitions with structured casting me
 ## The Adventurer's Cupboard
 
 Phase II.6 adds canonical expansion definitions for weapons, armour, equipment, and magic items, including structured item statistics and future Rules Engine payloads. See `docs/ADVENTURERS-CUPBOARD.md`.
+
+
+## The Rules Engine
+
+Phase II.7 adds Rules API `1.0.0`: a neutral mechanical language for grants, choices, modifiers, effects, and requirements. Consumers can access it through `rules()` or the Integration Bridge. See `docs/RULES-ENGINE.md`.

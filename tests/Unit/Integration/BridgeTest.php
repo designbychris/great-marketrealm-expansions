@@ -108,4 +108,20 @@ final class BridgeTest extends TestCase
         self::assertContains('catalogue.query.tag', $data['negotiated_capabilities']);
         self::assertSame(['missing.optional'], $data['missing_optional_capabilities']);
     }
+
+    public function test_bridge_exposes_rules_engine_capabilities_and_connected_engine(): void
+    {
+        $bridge = $this->bridge();
+        self::assertTrue($bridge->supports('rules.validate'));
+
+        $connection = $bridge->connect(new Consumer(
+            'rules-client', 'Rules Client', '1.0.0', '1.0.0', '1.0.0', ['rules.validate']
+        ));
+
+        self::assertTrue($connection->connected());
+        self::assertNotNull($connection->rules());
+        self::assertSame('1.0.0', $connection->rules()?->apiVersion());
+        self::assertSame('1.0.0', $connection->toArray()['rules_api_version']);
+    }
+
 }

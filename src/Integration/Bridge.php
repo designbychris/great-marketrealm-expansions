@@ -4,6 +4,7 @@ namespace GreatMarketrealmExpansions\Integration;
 defined('ABSPATH') || exit;
 
 use GreatMarketrealmExpansions\Catalogue\Catalogue;
+use GreatMarketrealmExpansions\Rules\RuleEngine;
 use InvalidArgumentException;
 
 final class Bridge
@@ -19,14 +20,23 @@ final class Bridge
         'bridge.catalogue.read',
     ];
 
-    public function __construct(private Catalogue $catalogue, private ConsumerRegistry $consumers) {}
+    private RuleEngine $rules;
+
+    public function __construct(private Catalogue $catalogue, private ConsumerRegistry $consumers, ?RuleEngine $rules = null)
+    {
+        $this->rules = $rules ?? new RuleEngine();
+    }
 
     public function apiVersion(): string { return self::API_VERSION; }
 
     /** @return list<string> */
     public function capabilities(): array
     {
-        $capabilities = array_values(array_unique(array_merge(self::CAPABILITIES, $this->catalogue->capabilities())));
+        $capabilities = array_values(array_unique(array_merge(
+            self::CAPABILITIES,
+            $this->catalogue->capabilities(),
+            $this->rules->capabilities()
+        )));
         sort($capabilities);
         return $capabilities;
     }
@@ -83,7 +93,8 @@ final class Bridge
             $missingRequired,
             $missingOptional,
             $issues,
-            $issues === [] ? $this->catalogue : null
+            $issues === [] ? $this->catalogue : null,
+            $issues === [] ? $this->rules : null
         );
     }
 

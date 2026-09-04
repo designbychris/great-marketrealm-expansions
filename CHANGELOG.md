@@ -3,6 +3,20 @@
 
 
 
+
+## 0.2.0-alpha7 — Phase II.7: The Rules Engine
+
+- Added Rules API `1.0.0`.
+- Added canonical grant, choice, modifier, effect, and requirement statements.
+- Added RuleStatement plus dedicated rule validation result/error/exception types.
+- Added shared Rules Engine validation to existing content rule containers.
+- Added recursive validation for explicit nested `rules[]` structures.
+- Added public `rules()` helper and Kernel/container service.
+- Exposed Rules Engine capabilities and access through the Integration Bridge.
+- Added Rules API visibility to the read-only Keeper's Catalogue.
+- Recorded the certified Phase II.6 baseline: 161 tests / 385 assertions.
+- Kept Catalogue API and Bridge API at `1.0.0`.
+
 ## 0.2.0-alpha6 — Phase II.6: The Adventurer's Cupboard
 
 - Added dedicated schemas for weapons, armour, equipment, and magic items.

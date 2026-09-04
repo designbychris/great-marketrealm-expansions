@@ -17,6 +17,7 @@ use GreatMarketrealmExpansions\Expansions\ExpansionRegistry;
 use GreatMarketrealmExpansions\Expansions\Loading\ExpansionFileLoader;
 use GreatMarketrealmExpansions\Integration\Bridge;
 use GreatMarketrealmExpansions\Integration\ConsumerRegistry;
+use GreatMarketrealmExpansions\Rules\RuleEngine;
 
 final class ExpansionServiceProvider extends ServiceProvider
 {
@@ -36,6 +37,7 @@ final class ExpansionServiceProvider extends ServiceProvider
             return $schemas;
         });
 
+        $this->container->singleton(RuleEngine::class, static fn (Container $container): RuleEngine => new RuleEngine());
         $this->container->singleton(ContentValidator::class, static fn (Container $container): ContentValidator => new ContentValidator($container->get(SchemaRegistry::class)));
         $this->container->singleton(ContentRegistry::class, static fn (Container $container): ContentRegistry => new ContentRegistry($container->get(ContentValidator::class)));
         $this->container->singleton(Catalogue::class, static fn (Container $container): Catalogue => new Catalogue(
@@ -48,7 +50,8 @@ final class ExpansionServiceProvider extends ServiceProvider
         $this->container->singleton(ConsumerRegistry::class, static fn (Container $container): ConsumerRegistry => new ConsumerRegistry());
         $this->container->singleton(Bridge::class, static fn (Container $container): Bridge => new Bridge(
             $container->get(Catalogue::class),
-            $container->get(ConsumerRegistry::class)
+            $container->get(ConsumerRegistry::class),
+            $container->get(RuleEngine::class)
         ));
         $this->container->singleton(ExpansionFileLoader::class, static fn (Container $container): ExpansionFileLoader => new ExpansionFileLoader(
             $container->get(ExpansionRegistry::class),
@@ -57,7 +60,8 @@ final class ExpansionServiceProvider extends ServiceProvider
         ));
         $this->container->singleton(CatalogueAdminPage::class, static fn (Container $container): CatalogueAdminPage => new CatalogueAdminPage(
             $container->get(Catalogue::class),
-            $container->get(Bridge::class)
+            $container->get(Bridge::class),
+            $container->get(RuleEngine::class)
         ));
     }
 

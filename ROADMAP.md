@@ -16,7 +16,7 @@
 - **II.4 — Gifts, Knacks & Questionable Talents**: feats, prerequisites, repeatability, grants, choices and modifiers. ✅
 - **II.5 — The Expanded Spellbook**: spell definitions, spell lists, levels, schools, components, ranges, durations and scaling. ✅
 - **II.6 — The Adventurer's Cupboard**: weapons, armour, equipment and magic items. ✅
-- **II.7 — The Rules Engine**: neutral structured grants, choices and modifiers that consumers can interpret without content-specific PHP.
+- **II.7 — The Rules Engine**: neutral structured grants, choices and modifiers that consumers can interpret without content-specific PHP. ✅
 
 ## Phase III — Keeper Content
 
@@ -81,5 +81,20 @@ GMREXP owns expansion content and its meaning. Companion owns character/user wor
 - [x] Magic-item rarity, attunement, charges, effects, modifiers and choices.
 - [x] Open canonical category/rarity/property vocabularies for future MarketRealm oddities.
 - [x] Rules Engine boundary retained for executable effects.
+- [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 161 tests / 385 assertions.
+
+
+## Phase II.7 — The Rules Engine
+
+- [x] Rules API `1.0.0`.
+- [x] Neutral `grant`, `choice`, `modifier`, `effect`, and `requirement` statements.
+- [x] Canonical `RuleStatement` representation.
+- [x] Dedicated validation results, errors, and validation exception.
+- [x] Shared rule validation across grants, choices, modifiers, effects, and prerequisites.
+- [x] Recursive validation of nested `rules[]` in traits/features and future structures.
+- [x] Public `rules()` helper and Kernel service.
+- [x] Bridge capability negotiation and connected Rules Engine access.
+- [x] Rules API visibility in the Keeper's Catalogue.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

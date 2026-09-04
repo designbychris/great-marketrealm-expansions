@@ -65,3 +65,8 @@ Phase II.2 specializes `class` and `subclass` validation through `PlayableClassS
 ### Phase II.6 item boundary
 
 Weapons, armour, equipment, and magic items now use dedicated schemas. Item definitions own descriptive/statistical structure; executable effects, modifiers, choices, and other rule statements remain neutral payloads until the Phase II.7 Rules Engine defines their semantics.
+
+
+### Phase II.7 rules boundary
+
+The Rules Engine is a read/validate/interpret contract, not a state mutation service. GMREXP owns canonical mechanical statements and validation. Consumer plugins decide how those statements affect their own state. Generic nested `rules[]` statements and established domain containers (`grants`, `choices`, `modifiers`, `effects`, `prerequisites`) converge on the same Rules API.

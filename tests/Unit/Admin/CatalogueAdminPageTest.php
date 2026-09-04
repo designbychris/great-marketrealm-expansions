@@ -26,6 +26,7 @@ final class CatalogueAdminPageTest extends TestCase
         $summary = $page->summary();
         self::assertSame('1.0.0', $summary['catalogue_api_version']);
         self::assertSame('1.0.0', $summary['bridge_api_version']);
+        self::assertSame('1.0.0', $summary['rules_api_version']);
         self::assertSame(1, $summary['expansion_count']);
         self::assertSame(2, $summary['content_count']);
         self::assertSame(['feat' => 1, 'monster' => 1], $summary['content_types']);

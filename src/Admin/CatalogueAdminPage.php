@@ -5,12 +5,18 @@ defined('ABSPATH') || exit;
 
 use GreatMarketrealmExpansions\Catalogue\Catalogue;
 use GreatMarketrealmExpansions\Integration\Bridge;
+use GreatMarketrealmExpansions\Rules\RuleEngine;
 
 final class CatalogueAdminPage
 {
     public const MENU_SLUG = 'great-marketrealm-expansions';
 
-    public function __construct(private Catalogue $catalogue, private Bridge $bridge) {}
+    private RuleEngine $rules;
+
+    public function __construct(private Catalogue $catalogue, private Bridge $bridge, ?RuleEngine $rules = null)
+    {
+        $this->rules = $rules ?? new RuleEngine();
+    }
 
     public function registerMenu(): void
     {
@@ -43,6 +49,7 @@ final class CatalogueAdminPage
             'plugin_version' => defined('GMREXP_VERSION') ? GMREXP_VERSION : 'unknown',
             'catalogue_api_version' => $this->catalogue->apiVersion(),
             'bridge_api_version' => $this->bridge->apiVersion(),
+            'rules_api_version' => $this->rules->apiVersion(),
             'expansion_count' => count($this->catalogue->expansions()),
             'content_count' => count($entries),
             'content_types' => $types,
@@ -74,6 +81,7 @@ final class CatalogueAdminPage
                     <tr><th scope="row">Plugin version</th><td><?php echo esc_html((string) $summary['plugin_version']); ?></td></tr>
                     <tr><th scope="row">Catalogue API</th><td><?php echo esc_html((string) $summary['catalogue_api_version']); ?></td></tr>
                     <tr><th scope="row">Bridge API</th><td><?php echo esc_html((string) $summary['bridge_api_version']); ?></td></tr>
+                    <tr><th scope="row">Rules API</th><td><?php echo esc_html((string) $summary['rules_api_version']); ?></td></tr>
                     <tr><th scope="row">Installed expansion packs</th><td><?php echo esc_html((string) $summary['expansion_count']); ?></td></tr>
                     <tr><th scope="row">Catalogue entries</th><td><?php echo esc_html((string) $summary['content_count']); ?></td></tr>
                 </tbody>

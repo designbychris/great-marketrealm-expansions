@@ -12,6 +12,7 @@ use GreatMarketrealmExpansions\Content\Types\ContentTypeCatalogue;
 use GreatMarketrealmExpansions\Expansions\ExpansionRegistry;
 use GreatMarketrealmExpansions\Expansions\Loading\ExpansionFileLoader;
 use GreatMarketrealmExpansions\Integration\Bridge;
+use GreatMarketrealmExpansions\Rules\RuleEngine;
 use GreatMarketrealmExpansions\Providers\ExpansionServiceProvider;
 use GreatMarketrealmExpansions\Providers\ServiceProvider;
 
@@ -59,6 +60,7 @@ final class Kernel
     public function catalogue(): Catalogue { return $this->container->get(Catalogue::class); }
     public function loader(): ExpansionFileLoader { return $this->container->get(ExpansionFileLoader::class); }
     public function bridge(): Bridge { return $this->container->get(Bridge::class); }
+    public function rules(): RuleEngine { return $this->container->get(RuleEngine::class); }
     public function adminPage(): CatalogueAdminPage { return $this->container->get(CatalogueAdminPage::class); }
     public function isBooted(): bool { return $this->booted; }
 }
