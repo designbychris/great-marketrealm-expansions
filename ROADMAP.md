@@ -20,7 +20,13 @@
 
 ## Phase III — Keeper Content
 
-Monsters, NPCs, encounters, hazards, treasure, optional DM rules and adventure/source-book content.
+- **III.1 — The Keeper Opens the Bestiary**: structured monster stat blocks, traits, actions, challenge metadata and Rules Engine integration. ✅
+- **III.2 — Faces Behind the Counter**: NPC identities, roles, relationships, dialogue/lore hooks and optional combat references.
+- **III.3 — The Encounter Ledger**: encounter compositions, participants, environments, objectives and rewards.
+- **III.4 — Things That Bite Back**: hazards, traps, environmental dangers and neutral mechanical effects.
+- **III.5 — The Keeper's Strongbox**: structured treasure, parcels, tables and rewards.
+- **III.6 — Marginalia in the Keeper's Handbook**: optional DM rules, conditions and expansion-scoped rule modules.
+- **III.7 — The Adventure Shelf**: adventures/source-book structures, chapters, scenes and canonical content references.
 
 ## Phase IV — The Living Library
 
@@ -96,5 +102,20 @@ GMREXP owns expansion content and its meaning. Companion owns character/user wor
 - [x] Public `rules()` helper and Kernel service.
 - [x] Bridge capability negotiation and connected Rules Engine access.
 - [x] Rules API visibility in the Keeper's Catalogue.
+- [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 183 tests / 432 assertions.
+
+
+## Phase III.1 — The Keeper Opens the Bestiary
+
+- [x] Dedicated monster schema.
+- [x] Backwards compatibility with lightweight First Almanac monster fixtures.
+- [x] Structured armour class, hit points, movement and abilities.
+- [x] Saving throws, skills, vulnerabilities, resistances, immunities, senses and languages.
+- [x] Challenge rating, XP and proficiency metadata.
+- [x] Traits, actions, bonus actions, reactions, legendary actions and lair actions.
+- [x] Optional spellcasting container.
+- [x] Nested Rules Engine validation for trait/action mechanics.
+- [x] Open canonical vocabularies for MarketRealm creature oddities.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

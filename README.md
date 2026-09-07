@@ -57,3 +57,8 @@ Phase II.6 adds canonical expansion definitions for weapons, armour, equipment, 
 ## The Rules Engine
 
 Phase II.7 adds Rules API `1.0.0`: a neutral mechanical language for grants, choices, modifiers, effects, and requirements. Consumers can access it through `rules()` or the Integration Bridge. See `docs/RULES-ENGINE.md`.
+
+
+## Keeper Content
+
+Phase III begins with **The Keeper Opens the Bestiary**, adding canonical monster stat-block structures with nested Rules Engine mechanics. See `docs/KEEPERS-BESTIARY.md`.

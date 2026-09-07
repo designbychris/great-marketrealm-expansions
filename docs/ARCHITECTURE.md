@@ -70,3 +70,8 @@ Weapons, armour, equipment, and magic items now use dedicated schemas. Item defi
 ### Phase II.7 rules boundary
 
 The Rules Engine is a read/validate/interpret contract, not a state mutation service. GMREXP owns canonical mechanical statements and validation. Consumer plugins decide how those statements affect their own state. Generic nested `rules[]` statements and established domain containers (`grants`, `choices`, `modifiers`, `effects`, `prerequisites`) converge on the same Rules API.
+
+
+### Phase III.1 Keeper content boundary
+
+Monster definitions now have a dedicated schema but remain content, not live encounter state. GMREXP owns the canonical monster record and mechanical rule statements. Tabletop may instantiate those records into encounter tokens/actors without duplicating the source mechanics.

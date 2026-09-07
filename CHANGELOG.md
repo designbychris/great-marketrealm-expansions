@@ -4,6 +4,18 @@
 
 
 
+
+## 0.3.0-alpha1 — Phase III.1: The Keeper Opens the Bestiary
+
+- Added a dedicated monster schema for Keeper-facing expansion content.
+- Added structured armour class, hit points, movement, abilities, saves, skills, senses, languages, challenge metadata, and defensive traits.
+- Added keyed traits, actions, bonus actions, reactions, legendary actions, and lair actions.
+- Connected monster trait/action `rules[]` to Rules API `1.0.0`.
+- Preserved compatibility with the lightweight First Almanac Milk Carton Mimic proving fixture.
+- Kept creature types, alignments, damage types, movement modes, and similar identifiers extensible.
+- Recorded the certified Phase II.7 baseline: 183 tests / 432 assertions.
+- Kept Catalogue API, Bridge API, and Rules API at `1.0.0`.
+
 ## 0.2.0-alpha7 — Phase II.7: The Rules Engine
 
 - Added Rules API `1.0.0`.
