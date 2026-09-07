@@ -115,13 +115,14 @@ final class ReadingRoomPageTest extends TestCase
         self::assertStringContainsString('fixture-book', $html);
     }
 
-    public function test_browse_route_shows_content_family_counts_without_detail_page(): void
+    public function test_browse_route_shows_content_family_counts_and_v4_open_link(): void
     {
         $html = $this->page()->render('browse');
 
         self::assertStringContainsString('Contents', $html);
         self::assertStringContainsString('Feat', $html);
-        self::assertStringContainsString('Expansion detail pages open in V.4.', $html);
+        self::assertStringContainsString('Open Almanac', $html);
+        self::assertStringContainsString('gmrexp_expansion=fixture-book', $html);
     }
 
     public function test_browse_route_exposes_read_only_state_labels(): void
