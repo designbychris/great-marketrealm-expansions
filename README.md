@@ -62,3 +62,8 @@ Phase II.7 adds Rules API `1.0.0`: a neutral mechanical language for grants, cho
 ## Keeper Content
 
 Phase III begins with **The Keeper Opens the Bestiary**, adding canonical monster stat-block structures with nested Rules Engine mechanics. See `docs/KEEPERS-BESTIARY.md`.
+
+
+### Faces Behind the Counter
+
+Phase III.2 adds canonical NPC dossiers for identity, roles, relationships, dialogue, lore hooks, and optional monster-backed combat identity. See `docs/FACES-BEHIND-THE-COUNTER.md`.

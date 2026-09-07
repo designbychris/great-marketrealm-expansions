@@ -23,6 +23,7 @@ final class CoreSchemas
                 'equipment' => AdventurersCupboardSchemaFactory::equipment(),
                 'magic-item' => AdventurersCupboardSchemaFactory::magicItem(),
                 'monster' => MonsterSchemaFactory::monster(),
+                'npc' => NpcSchemaFactory::npc(),
                 default => CoreSchemaFactory::make($type->key()),
             };
             $schemas->add($schema);

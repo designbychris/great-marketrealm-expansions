@@ -5,6 +5,19 @@
 
 
 
+
+## 0.3.0-alpha2 — Phase III.2: Faces Behind the Counter
+
+- Added a dedicated NPC schema for Keeper-facing expansion content.
+- Added structured identity metadata, roles, affiliations, locations, relationships, personality notes, goals, secrets, and mannerisms.
+- Added stable keyed dialogue entries and lore hooks.
+- Added canonical cross-content references for affiliations, relationships, locations, lore hooks, and combat identities.
+- Added optional monster-backed combat identity without duplicating stat blocks.
+- Connected NPC-specific `combat.rules[]` to Rules API `1.0.0`.
+- Kept social roles, species, relationship types, affiliation roles, and references extensible.
+- Recorded the certified Phase III.1 baseline: 198 tests / 481 assertions.
+- Kept Catalogue API, Bridge API, and Rules API at `1.0.0`.
+
 ## 0.3.0-alpha1 — Phase III.1: The Keeper Opens the Bestiary
 
 - Added a dedicated monster schema for Keeper-facing expansion content.

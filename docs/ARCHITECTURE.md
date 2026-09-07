@@ -75,3 +75,8 @@ The Rules Engine is a read/validate/interpret contract, not a state mutation ser
 ### Phase III.1 Keeper content boundary
 
 Monster definitions now have a dedicated schema but remain content, not live encounter state. GMREXP owns the canonical monster record and mechanical rule statements. Tabletop may instantiate those records into encounter tokens/actors without duplicating the source mechanics.
+
+
+### Phase III.2 NPC boundary
+
+NPC definitions are canonical narrative/content records, not WordPress users, Companion characters, or live Tabletop actors. An NPC can reference a canonical monster for combat without duplicating that stat block. Relationships and lore hooks similarly reference content by stable identifiers so later campaign/adventure systems can connect records without embedding copies.
