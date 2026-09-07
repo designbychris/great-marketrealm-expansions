@@ -428,3 +428,61 @@
         width: 100%;
     }
 }
+
+
+/* Phase V.3 — The Keeper Turns the Key */
+.gmrexp-reading-room__notice {
+    margin-bottom: 1rem;
+    padding: .75rem .9rem;
+    background: #fffaf0;
+    border: 1px solid var(--gmrexp-line);
+    border-left-width: 4px;
+    border-radius: 8px;
+    font-family: system-ui, sans-serif;
+    font-size: .82rem;
+    font-weight: 700;
+}
+
+.gmrexp-reading-room__activation {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding: .9rem;
+    background: rgba(232, 220, 196, .35);
+    border: 1px solid var(--gmrexp-line);
+    border-radius: 10px;
+}
+
+.gmrexp-reading-room__activation-copy {
+    max-width: 620px;
+    margin: .3rem 0 0;
+    color: var(--gmrexp-muted);
+    font-family: system-ui, sans-serif;
+    font-size: .76rem;
+    line-height: 1.45;
+}
+
+.gmrexp-reading-room__activation-form {
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+.gmrexp-reading-room__button--compact {
+    margin: 0;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+@media (max-width: 620px) {
+    .gmrexp-reading-room__activation {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .gmrexp-reading-room__activation-form,
+    .gmrexp-reading-room__button--compact {
+        width: 100%;
+    }
+}

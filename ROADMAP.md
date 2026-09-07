@@ -357,7 +357,7 @@ Planned sequence:
 
 - **V.1 — The Reading Room Opens**: front-end shell, Keeper access, stable navigation/routes, read-only Library summary. ✅
 - **V.2 — Books Upon the Shelves**: browse installed Expansion packs. ✅
-- **V.3 — The Keeper Turns the Key**: front-end Expansion activation controls.
+- **V.3 — The Keeper Turns the Key**: front-end Expansion activation controls. ✅
 - **V.4 — What Exactly Is in This Book?**: Expansion detail and content-family views.
 - **V.5 — The Librarian Raises an Eyebrow**: human-readable compatibility/dependency diagnostics.
 - **V.6 — The Keeper's Import Desk**: structured source-material staging UI.
@@ -432,5 +432,27 @@ Planned sequence:
 - [x] Unrelated query arguments preserved when switching Reading Room desks.
 - [x] Reading Room route version remains `1.0.0`; rewrite patterns did not change.
 - [x] No Catalogue, Library, compatibility, import, review, migration or publication mutation.
+- [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 491 tests / 1226 assertions.
+
+
+## Phase V.3 — The Keeper Turns the Key
+
+- [x] Plugin version `0.5.0-alpha3`.
+- [x] Front-end Activate/Deactivate controls on Browse cards.
+- [x] Reuse `Library::setActive()` as the single activation authority.
+- [x] Existing `ActivationStore` remains the persistence boundary.
+- [x] Secure WordPress `admin-post.php` action.
+- [x] Existing Keeper `manage_options` capability required.
+- [x] WordPress nonce protection.
+- [x] Submitted Expansion key normalized and checked as installed.
+- [x] Only literal `1` requests activation.
+- [x] Redirect back to the Browse desk after mutation.
+- [x] Inactive copy explicitly states the Almanac remains installed/canonical.
+- [x] Deactivation does not remove Catalogue records or rewrite canonical content.
+- [x] Responsive activation-control styling.
+- [x] No V.4 detail-page behavior.
+- [x] No V.5 expanded compatibility diagnostics.
+- [x] No import, review, migration or publication mutation.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

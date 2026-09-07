@@ -12,6 +12,8 @@ final class ReadingRoomPage
     public const QUERY_VAR = 'gmrexp_reading_room';
     public const SECTION_QUERY_ARG = 'gmrexp_section';
     public const HOST_PAGE_OPTION = 'gmrexp_reading_room_host_page_id';
+    public const ACTIVATION_ACTION = 'gmrexp_reading_room_activation';
+    public const ACTIVATION_NONCE_ACTION = 'gmrexp_reading_room_activation';
     public const STYLE_HANDLE = 'gmrexp-reading-room';
     public const ROUTE_VERSION = '1.0.0';
 
@@ -37,6 +39,7 @@ final class ReadingRoomPage
             add_action('init', [$this, 'maybeFlushRewriteRules'], 99);
             add_action('template_redirect', [$this, 'maybeRenderRoute']);
             add_action('wp_enqueue_scripts', [$this, 'registerAssets']);
+            add_action('admin_post_' . self::ACTIVATION_ACTION, [$this, 'handleActivation']);
         }
     }
 
@@ -157,6 +160,46 @@ final class ReadingRoomPage
 
         echo $this->render($section);
         exit;
+    }
+
+    public function handleActivation(): void
+    {
+        if (function_exists('current_user_can') && !current_user_can('manage_options')) {
+            if (function_exists('wp_die')) {
+                wp_die('You do not have permission to manage Great MarketRealm expansion activation.');
+            }
+            return;
+        }
+
+        if (function_exists('check_admin_referer')) {
+            check_admin_referer(self::ACTIVATION_NONCE_ACTION);
+        }
+
+        $expansion = isset($_POST['expansion']) && is_string($_POST['expansion'])
+            ? $this->normalizeExpansionKey($this->unslash($_POST['expansion']))
+            : '';
+
+        $active = isset($_POST['active']) && (string) $_POST['active'] === '1';
+
+        if ($expansion !== '' && $this->library->isInstalled($expansion)) {
+            $this->library->setActive($expansion, $active);
+        }
+
+        $hostUrl = $this->rememberedHostUrl() ?? $this->currentHostUrl() ?? $this->urlFor('browse');
+        $target = $this->sectionUrl($hostUrl, 'browse');
+
+        if (function_exists('add_query_arg')) {
+            $target = (string) add_query_arg(
+                'gmrexp_activation_updated',
+                $expansion !== '' ? $expansion : '1',
+                $target
+            );
+        }
+
+        if (function_exists('wp_safe_redirect')) {
+            wp_safe_redirect($target, 303);
+            exit;
+        }
     }
 
     /** @param array<string,mixed>|string $attributes */
@@ -313,6 +356,11 @@ final class ReadingRoomPage
         ob_start();
         ?>
         <section class="gmrexp-reading-room__section" aria-labelledby="gmrexp-browse-heading">
+            <?php if (isset($_GET['gmrexp_activation_updated'])): ?>
+                <div class="gmrexp-reading-room__notice" role="status">
+                    The Living Library has been updated.
+                </div>
+            <?php endif; ?>
             <div class="gmrexp-reading-room__section-heading">
                 <div>
                     <p class="gmrexp-reading-room__kicker">Books upon the shelves</p>
@@ -366,6 +414,18 @@ final class ReadingRoomPage
                                 <div><dt>Compatibility</dt><dd><?php echo $this->escHtml(ucfirst($entry->compatibilityStatus())); ?></dd></div>
                             </dl>
 
+                            <div class="gmrexp-reading-room__activation">
+                                <div>
+                                    <p class="gmrexp-reading-room__book-label">Library activation</p>
+                                    <p class="gmrexp-reading-room__activation-copy">
+                                        <?php echo $this->escHtml($entry->active()
+                                            ? 'This Almanac is currently active for consumers of the Living Library.'
+                                            : 'This Almanac remains installed and canonical, but consumers should currently treat it as inactive.'); ?>
+                                    </p>
+                                </div>
+                                <?php echo $this->renderActivationForm($entry->key(), $entry->active()); ?>
+                            </div>
+
                             <div class="gmrexp-reading-room__contents" aria-label="<?php echo $this->escAttr($entry->name() . ' content types'); ?>">
                                 <p class="gmrexp-reading-room__book-label">Contents</p>
                                 <?php if ($entry->contentTypes() === []): ?>
@@ -390,6 +450,43 @@ final class ReadingRoomPage
         </section>
         <?php
         return trim((string) ob_get_clean());
+    }
+
+    private function renderActivationForm(string $expansionKey, bool $active): string
+    {
+        $actionUrl = function_exists('admin_url') ? admin_url('admin-post.php') : '#';
+        $nextState = $active ? '0' : '1';
+        $buttonLabel = $active ? 'Deactivate' : 'Activate';
+        $nonce = '';
+
+        if (function_exists('wp_nonce_field')) {
+            ob_start();
+            wp_nonce_field(self::ACTIVATION_NONCE_ACTION);
+            $nonce = (string) ob_get_clean();
+        }
+
+        return sprintf(
+            '<form class="gmrexp-reading-room__activation-form" method="post" action="%s">' .
+            '<input type="hidden" name="action" value="%s">' .
+            '<input type="hidden" name="expansion" value="%s">' .
+            '<input type="hidden" name="active" value="%s">' .
+            '%s' .
+            '<button class="gmrexp-reading-room__button gmrexp-reading-room__button--compact" type="submit">%s</button>' .
+            '</form>',
+            $this->escAttr($actionUrl),
+            $this->escAttr(self::ACTIVATION_ACTION),
+            $this->escAttr($expansionKey),
+            $this->escAttr($nextState),
+            $nonce,
+            $this->escHtml($buttonLabel)
+        );
+    }
+
+    private function normalizeExpansionKey(string $key): string
+    {
+        $key = strtolower(trim($key));
+        $key = preg_replace('/[^a-z0-9_\-]+/', '-', $key) ?? '';
+        return trim(preg_replace('/-+/', '-', $key) ?? '', '-');
     }
 
     private function contentTypeLabel(string $type): string

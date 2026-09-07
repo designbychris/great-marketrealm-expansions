@@ -173,3 +173,10 @@ The WordPress page containing `[great_marketrealm_expansions]` is the preferred 
 Reading Room desk navigation therefore uses the host page permalink plus `gmrexp_section`, rather than navigating away to a second standalone page hierarchy. The host page is remembered by WordPress page ID solely so the earlier virtual routes can redirect into the canonical shortcode host once known.
 
 Legacy virtual routes remain fallback-compatible; this hotfix changes no Catalogue, Library or content ownership boundary.
+
+
+### Phase V.3 activation boundary
+
+The Reading Room now exposes a secure WordPress POST adapter over `Library::setActive()`. The frontend does not own activation state; `ActivationStore` remains the persistence boundary and Catalogue remains complete regardless of active/inactive status.
+
+Deactivating a pack changes consumer availability only. Canonical content identity and installed records are untouched.

@@ -146,3 +146,8 @@ The Browse desk now lists installed Almanacs, their Library/compatibility labels
 The WordPress page containing `[great_marketrealm_expansions]` is now the primary Reading Room host. Navigation swaps desks with `?gmrexp_section=...` on that same permalink, preserving the site's normal theme/page rendering.
 
 The earlier `/marketrealm-expansions/...` routes remain backwards-compatible and redirect to the remembered shortcode host when available. See `TWO-FRONT-DOORS.md`.
+
+
+## Phase V.3
+
+Browse cards now provide secure Activate/Deactivate controls backed by the Living Library. Deactivation leaves the Almanac installed and canonical. See `KEEPER-TURNS-THE-KEY.md`.

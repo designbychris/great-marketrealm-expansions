@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.0-alpha3 — Phase V.3: The Keeper Turns the Key
+
+- Added front-end Activate/Deactivate controls to Reading Room Browse cards.
+- Reused `Library::setActive()` and the existing ActivationStore rather than introducing a second activation model.
+- Added secure WordPress admin-post handling with Keeper capability and nonce protection.
+- Normalized submitted Expansion keys and ignored unknown packs.
+- Added redirect-back-to-Browse behavior after activation changes.
+- Clarified that inactive Almanacs remain installed and canonical.
+- Added responsive activation-control styling and update feedback.
+- Deliberately left V.4 detail pages and V.5 expanded compatibility diagnostics out of scope.
+- Changed no Catalogue content, import, review, migration or publication semantics.
+- Recorded the certified Phase V.2A baseline: 491 tests / 1226 assertions.
+
 ## 0.5.0-alpha2.1 — Phase V.2A: The Librarian Realises There Are Two Front Doors
 
 - Fixed Reading Room navigation leaving the WordPress page that hosts `[great_marketrealm_expansions]`.
