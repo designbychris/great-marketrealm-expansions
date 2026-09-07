@@ -187,3 +187,8 @@ Deactivating a pack changes consumer availability only. Canonical content identi
 The Reading Room host page contains dynamic Living Library state and must not be treated as immutable page HTML. Once the shortcode host is known, GMREXP marks that page `DONOTCACHEPAGE` during early `template_redirect`; shortcode rendering applies the same boundary for the first request.
 
 Successful activation changes invalidate the remembered WordPress host page through `clean_post_cache()` (or the object-cache fallback) while leaving `ActivationStore` as the sole state authority. Optional hooks allow installation-specific cache layers to participate without introducing a core dependency on any cache vendor.
+
+
+### Phase V.4 detail boundary
+
+`ExpansionDetail` is a read model only. It groups `CatalogueEntry` objects returned by the canonical Catalogue and decorates Expansion identity with current Living Library labels. No content is copied into frontend persistence, and no mechanics are interpreted by the Reading Room.

@@ -140,3 +140,8 @@ This is preferable to Pippin discovering the shelf brackets.
 ## V.2A routing note
 
 The Browse UI itself is unchanged by V.2A. When embedded on a WordPress page, Browse now opens inside that same shortcode host using `?gmrexp_section=browse` rather than navigating to the standalone legacy route. See `TWO-FRONT-DOORS.md`.
+
+
+## V.4 detail opening
+
+The V.2 future boundary is now fulfilled: Browse cards and content-family chips open the installed Almanac detail view inside the same shortcode host.

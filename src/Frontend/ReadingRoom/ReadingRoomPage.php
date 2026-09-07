@@ -11,6 +11,8 @@ final class ReadingRoomPage
     public const SHORTCODE = 'great_marketrealm_expansions';
     public const QUERY_VAR = 'gmrexp_reading_room';
     public const SECTION_QUERY_ARG = 'gmrexp_section';
+    public const EXPANSION_QUERY_ARG = 'gmrexp_expansion';
+    public const CONTENT_TYPE_QUERY_ARG = 'gmrexp_type';
     public const HOST_PAGE_OPTION = 'gmrexp_reading_room_host_page_id';
     public const ACTIVATION_ACTION = 'gmrexp_reading_room_activation';
     public const ACTIVATION_NONCE_ACTION = 'gmrexp_reading_room_activation';
@@ -259,7 +261,7 @@ final class ReadingRoomPage
             <?php echo $this->renderNavigation($section, $baseUrl); ?>
 
             <?php if ($section === 'browse'): ?>
-                <?php echo $this->renderBrowse(); ?>
+                <?php echo $this->renderBrowse($baseUrl); ?>
             <?php elseif ($section !== 'library'): ?>
                 <?php echo $this->renderPlaceholder($section, $baseUrl); ?>
             <?php else: ?>
@@ -353,8 +355,16 @@ final class ReadingRoomPage
         return trim((string) ob_get_clean());
     }
 
-    private function renderBrowse(): string
+    private function renderBrowse(?string $baseUrl = null): string
     {
+        $requestedExpansion = isset($_GET[self::EXPANSION_QUERY_ARG]) && is_string($_GET[self::EXPANSION_QUERY_ARG])
+            ? $this->normalizeExpansionKey($this->unslash($_GET[self::EXPANSION_QUERY_ARG]))
+            : '';
+
+        if ($requestedExpansion !== '') {
+            return $this->renderExpansionDetail($requestedExpansion, $baseUrl);
+        }
+
         $shelf = new BrowseShelf($this->catalogue, $this->library);
         $entries = $shelf->entries();
 
@@ -439,15 +449,17 @@ final class ReadingRoomPage
                                     <ul class="gmrexp-reading-room__type-list">
                                         <?php foreach ($entry->contentTypes() as $type => $count): ?>
                                             <li>
-                                                <span><?php echo $this->escHtml($this->contentTypeLabel($type)); ?></span>
-                                                <strong><?php echo $this->escHtml((string) $count); ?></strong>
+                                                <a href="<?php echo $this->escAttr($this->expansionUrl($baseUrl, $entry->key(), $type)); ?>">
+                                                    <span><?php echo $this->escHtml($this->contentTypeLabel($type)); ?></span>
+                                                    <strong><?php echo $this->escHtml((string) $count); ?></strong>
+                                                </a>
                                             </li>
                                         <?php endforeach; ?>
                                     </ul>
                                 <?php endif; ?>
                             </div>
 
-                            <p class="gmrexp-reading-room__future-note">Expansion detail pages open in V.4.</p>
+                            <p class="gmrexp-reading-room__future-note"><a class="gmrexp-reading-room__book-open" href="<?php echo $this->escAttr($this->expansionUrl($baseUrl, $entry->key())); ?>">Open Almanac <span aria-hidden="true">→</span></a></p>
                         </article>
                     <?php endforeach; ?>
                 </div>
@@ -455,6 +467,129 @@ final class ReadingRoomPage
         </section>
         <?php
         return trim((string) ob_get_clean());
+    }
+
+    private function renderExpansionDetail(string $expansionKey, ?string $baseUrl = null): string
+    {
+        $detail = new ExpansionDetail($this->catalogue, $this->library, $expansionKey);
+        $expansion = $detail->expansion();
+        $browseUrl = $this->navigationUrl('browse', $baseUrl);
+
+        if ($expansion === null) {
+            return sprintf(
+                '<section class="gmrexp-reading-room__section"><p class="gmrexp-reading-room__kicker">Book not found</p><h2>That Almanac is not on the shelf.</h2><p>The requested Expansion is not installed in the canonical Catalogue.</p><a class="gmrexp-reading-room__back" href="%s">Return to Browse</a></section>',
+                $this->escAttr($browseUrl)
+            );
+        }
+
+        $requestedType = isset($_GET[self::CONTENT_TYPE_QUERY_ARG]) && is_string($_GET[self::CONTENT_TYPE_QUERY_ARG])
+            ? $this->normalizeContentType($this->unslash($_GET[self::CONTENT_TYPE_QUERY_ARG]))
+            : '';
+        $families = $detail->families();
+        if ($requestedType !== '' && !array_key_exists($requestedType, $families)) {
+            $requestedType = '';
+        }
+        $visibleFamilies = $requestedType === '' ? $families : [$requestedType => $families[$requestedType]];
+
+        ob_start();
+        ?>
+        <section class="gmrexp-reading-room__section gmrexp-reading-room__detail" aria-labelledby="gmrexp-detail-heading">
+            <a class="gmrexp-reading-room__back" href="<?php echo $this->escAttr($browseUrl); ?>">← Back to Browse</a>
+
+            <div class="gmrexp-reading-room__detail-masthead">
+                <div>
+                    <p class="gmrexp-reading-room__kicker">Open Almanac</p>
+                    <h2 id="gmrexp-detail-heading"><?php echo $this->escHtml((string) $expansion['name']); ?></h2>
+                    <p class="gmrexp-reading-room__version">Version <?php echo $this->escHtml((string) $expansion['version']); ?></p>
+                </div>
+                <div class="gmrexp-reading-room__detail-statuses">
+                    <span class="gmrexp-reading-room__pill"><?php echo $this->escHtml($expansion['active'] ? 'Active' : 'Inactive'); ?></span>
+                    <span class="gmrexp-reading-room__compatibility" data-status="<?php echo $this->escAttr((string) $expansion['compatibility_status']); ?>"><?php echo $this->escHtml(ucfirst((string) $expansion['compatibility_status'])); ?></span>
+                </div>
+            </div>
+
+            <?php if ($expansion['description'] !== ''): ?>
+                <p class="gmrexp-reading-room__detail-description"><?php echo $this->escHtml((string) $expansion['description']); ?></p>
+            <?php endif; ?>
+
+            <dl class="gmrexp-reading-room__book-facts gmrexp-reading-room__detail-facts">
+                <div><dt>Canonical key</dt><dd><code><?php echo $this->escHtml((string) $expansion['key']); ?></code></dd></div>
+                <div><dt>Catalogue entries</dt><dd><?php echo $this->escHtml((string) $expansion['entry_count']); ?></dd></div>
+                <div><dt>Library state</dt><dd><?php echo $this->escHtml($expansion['active'] ? 'Active' : 'Inactive'); ?></dd></div>
+            </dl>
+
+            <div class="gmrexp-reading-room__family-nav" aria-label="Almanac content families">
+                <p class="gmrexp-reading-room__book-label">Contents</p>
+                <?php if ($families === []): ?>
+                    <p class="gmrexp-reading-room__contents-empty">No canonical content entries are currently loaded for this Almanac.</p>
+                <?php else: ?>
+                    <ul>
+                        <li><a <?php echo $requestedType === '' ? 'aria-current="page"' : ''; ?> href="<?php echo $this->escAttr($this->expansionUrl($baseUrl, $expansionKey)); ?>">All <strong><?php echo $this->escHtml((string) $expansion['entry_count']); ?></strong></a></li>
+                        <?php foreach ($detail->familyCounts() as $type => $count): ?>
+                            <li><a <?php echo $requestedType === $type ? 'aria-current="page"' : ''; ?> href="<?php echo $this->escAttr($this->expansionUrl($baseUrl, $expansionKey, $type)); ?>"><span><?php echo $this->escHtml($this->contentTypeLabel($type)); ?></span><strong><?php echo $this->escHtml((string) $count); ?></strong></a></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+            </div>
+
+            <?php foreach ($visibleFamilies as $type => $entries): ?>
+                <section class="gmrexp-reading-room__family" aria-labelledby="gmrexp-family-<?php echo $this->escAttr($type); ?>">
+                    <div class="gmrexp-reading-room__family-heading">
+                        <div>
+                            <p class="gmrexp-reading-room__book-label">Content family</p>
+                            <h3 id="gmrexp-family-<?php echo $this->escAttr($type); ?>"><?php echo $this->escHtml($this->contentTypeLabel($type)); ?></h3>
+                        </div>
+                        <span><?php echo $this->escHtml((string) count($entries)); ?> <?php echo count($entries) === 1 ? 'entry' : 'entries'; ?></span>
+                    </div>
+                    <div class="gmrexp-reading-room__entry-list">
+                        <?php foreach ($entries as $content): ?>
+                            <article class="gmrexp-reading-room__content-entry" data-content-id="<?php echo $this->escAttr($content->id()); ?>">
+                                <div class="gmrexp-reading-room__content-entry-heading">
+                                    <div>
+                                        <h4><?php echo $this->escHtml($content->name() !== '' ? $content->name() : $content->key()); ?></h4>
+                                        <code><?php echo $this->escHtml($content->id()); ?></code>
+                                    </div>
+                                    <span class="gmrexp-reading-room__content-type"><?php echo $this->escHtml($this->contentTypeLabel($content->type())); ?></span>
+                                </div>
+                                <?php if (is_string($content->value('description')) && $content->value('description') !== ''): ?>
+                                    <p><?php echo $this->escHtml((string) $content->value('description')); ?></p>
+                                <?php endif; ?>
+                                <?php if ($content->tags() !== []): ?>
+                                    <ul class="gmrexp-reading-room__tag-list" aria-label="Tags">
+                                        <?php foreach ($content->tags() as $tag): ?><li><?php echo $this->escHtml($tag); ?></li><?php endforeach; ?>
+                                    </ul>
+                                <?php endif; ?>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+                </section>
+            <?php endforeach; ?>
+        </section>
+        <?php
+        return trim((string) ob_get_clean());
+    }
+
+    public function expansionUrl(?string $baseUrl, string $expansionKey, ?string $type = null): string
+    {
+        $url = $this->navigationUrl('browse', $baseUrl);
+        $args = [self::EXPANSION_QUERY_ARG => $this->normalizeExpansionKey($expansionKey)];
+        if ($type !== null && $type !== '') {
+            $args[self::CONTENT_TYPE_QUERY_ARG] = $this->normalizeContentType($type);
+        }
+
+        if (function_exists('add_query_arg')) {
+            return (string) add_query_arg($args, $url);
+        }
+
+        $separator = str_contains($url, '?') ? '&' : '?';
+        return $url . $separator . http_build_query($args);
+    }
+
+    private function normalizeContentType(string $type): string
+    {
+        $type = strtolower(trim($type));
+        $type = preg_replace('/[^a-z0-9_\-]+/', '-', $type) ?? '';
+        return trim(preg_replace('/-+/', '-', $type) ?? '', '-');
     }
 
     private function renderActivationForm(string $expansionKey, bool $active): string

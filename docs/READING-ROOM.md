@@ -156,3 +156,8 @@ Browse cards now provide secure Activate/Deactivate controls backed by the Livin
 ## Phase V.3A
 
 The shortcode host page is now explicitly non-cacheable because it displays mutable Living Library state. Activation changes also invalidate the remembered host page through the standard WordPress post-cache boundary. See `THE-SIGN-REFUSES-TO-CHANGE.md`.
+
+
+## Phase V.4
+
+Browse cards can now open a read-only Almanac detail surface with deterministic content-family views and canonical entry summaries. See `WHAT-EXACTLY-IS-IN-THIS-BOOK.md`.

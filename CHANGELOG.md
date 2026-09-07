@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.5.0-alpha4 — Phase V.4: What Exactly Is in This Book?
+
+- Added read-only installed-Almanac detail views to the Reading Room.
+- Added `ExpansionDetail` as a presentation read model over Catalogue and Living Library.
+- Added deterministic canonical content-family grouping and family filtering.
+- Added canonical entry summaries with IDs, names, types, descriptions and tags when present.
+- Added Open Almanac links and direct family links from Browse cards.
+- Kept all detail navigation inside the existing shortcode host page.
+- Added safe unknown-Expansion and unknown-family behavior.
+- Added no new rewrite route and kept Reading Room route contract `1.0.0`.
+- Added no frontend content persistence or mechanics interpretation.
+- Kept activation mutation, expanded compatibility diagnostics, import, review, migration and publication out of the detail view.
+- Recorded the certified Phase V.3A baseline: 509 tests / 1253 assertions.
+
 ## 0.5.0-alpha3.1 — Phase V.3A: The Keeper Turns the Key, the Sign Refuses to Change
 
 - Fixed stale activation labels on the plain Reading Room shortcode host page.

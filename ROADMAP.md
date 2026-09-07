@@ -358,7 +358,7 @@ Planned sequence:
 - **V.1 — The Reading Room Opens**: front-end shell, Keeper access, stable navigation/routes, read-only Library summary. ✅
 - **V.2 — Books Upon the Shelves**: browse installed Expansion packs. ✅
 - **V.3 — The Keeper Turns the Key**: front-end Expansion activation controls. ✅
-- **V.4 — What Exactly Is in This Book?**: Expansion detail and content-family views.
+- **V.4 — What Exactly Is in This Book?**: Expansion detail and content-family views. ✅
 - **V.5 — The Librarian Raises an Eyebrow**: human-readable compatibility/dependency diagnostics.
 - **V.6 — The Keeper's Import Desk**: structured source-material staging UI.
 - **V.7 — Pippin Finds the Google Docs**: Google Docs source adapter into neutral Import API documents.
@@ -474,5 +474,32 @@ Planned sequence:
 - [x] Preserve Living Library as the only activation state authority.
 - [x] Preserve Reading Room route contract `1.0.0`.
 - [x] Document external reverse-proxy/CDN limitation without adding vendor-specific coupling.
+- [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 509 tests / 1253 assertions.
+
+
+## Phase V.4 — What Exactly Is in This Book?
+
+- [x] Plugin version `0.5.0-alpha4`.
+- [x] Open installed Almanacs from Browse.
+- [x] Dedicated `ExpansionDetail` read model over Catalogue and Living Library.
+- [x] Canonical Expansion identity/version/description displayed.
+- [x] Current active/inactive and compatibility labels displayed read-only.
+- [x] Canonical entry total displayed.
+- [x] Entries grouped deterministically by canonical content type.
+- [x] Entries ordered deterministically by name/key within each family.
+- [x] Human-readable family labels remain presentation-only.
+- [x] All-content and single-family read-only views.
+- [x] Canonical entry ID, name, type, description and tags displayed when present.
+- [x] Safe not-found view for unknown Expansion keys.
+- [x] Unknown family filters safely fall back to all content.
+- [x] Detail navigation remains inside the shortcode host page.
+- [x] No new rewrite route; Reading Room route contract remains `1.0.0`.
+- [x] No duplicate frontend content persistence.
+- [x] No activation mutation from detail view.
+- [x] No V.5 expanded compatibility diagnostics.
+- [x] No import, review, migration or publication mutation.
+- [x] Synthetic-only regression fixtures; no invented canonical mechanics.
+- [x] Responsive detail/family/entry styling.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

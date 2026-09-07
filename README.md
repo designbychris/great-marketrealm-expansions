@@ -6,15 +6,13 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
-**Phase V.3A — The Keeper Turns the Key, the Sign Refuses to Change**
+**Phase V.4 — What Exactly Is in This Book?**
 
-Phase V.3 is certified at **503 tests / 1245 assertions**.
+Phase V.3A is certified at **509 tests / 1253 assertions**.
 
-The Reading Room host page is now explicitly dynamic so its Library overview cannot safely retain stale activation labels. GMREXP marks the shortcode host with the standard `DONOTCACHEPAGE` boundary, emits no-cache headers when possible, and invalidates the remembered WordPress host page through `clean_post_cache()` after a successful Activate/Deactivate action.
+Installed Almanacs can now be opened from Browse into a read-only detail view sourced directly from Catalogue and Living Library. Canonical entries are grouped into deterministic content families, with family filtering and entry summaries showing canonical IDs, names, descriptions and tags without introducing frontend content persistence or reinterpreting mechanics.
 
-Vendor-neutral extension hooks are also available for installations with additional caching layers.
-
-See `docs/THE-SIGN-REFUSES-TO-CHANGE.md`.
+See `docs/WHAT-EXACTLY-IS-IN-THIS-BOOK.md`.
 
 
 ## Development
