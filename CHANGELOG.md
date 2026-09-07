@@ -9,6 +9,19 @@
 
 
 
+
+## 0.3.0-alpha6 — Phase III.6: Marginalia in the Keeper's Handbook
+
+- Added dedicated canonical schemas for `rule` and `condition` content.
+- Added optional Keeper-rule scopes, activation guidance, priorities, prerequisites, conflicts, supersession, references, and notes.
+- Connected optional-rule prerequisites and generic mechanics to Rules API `1.0.0`.
+- Added condition application, duration, stacking, effects, removal methods, escalation/stages, references, and notes.
+- Connected condition effects and nested mechanics to Rules API `1.0.0`.
+- Kept rule kinds, scope values, activation modes, condition kinds, application types, timing vocabulary, stacking modes, saves, checks, and difficulties extensible.
+- Preserved the boundary between canonical definitions, campaign rule activation, and live condition state.
+- Recorded the certified Phase III.5 baseline: 266 tests / 646 assertions.
+- Kept Catalogue API, Bridge API, and Rules API at `1.0.0`.
+
 ## 0.3.0-alpha5 — Phase III.5: The Keeper's Strongbox
 
 - Added a dedicated treasure schema for reusable parcels, rewards, caches, hoards, and sourcebook treasure.

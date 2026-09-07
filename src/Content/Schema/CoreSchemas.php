@@ -27,6 +27,8 @@ final class CoreSchemas
                 'encounter' => EncounterSchemaFactory::encounter(),
                 'hazard' => HazardSchemaFactory::hazard(),
                 'treasure' => TreasureSchemaFactory::treasure(),
+                'rule' => KeepersHandbookSchemaFactory::ruleDefinition(),
+                'condition' => KeepersHandbookSchemaFactory::condition(),
                 default => CoreSchemaFactory::make($type->key()),
             };
             $schemas->add($schema);

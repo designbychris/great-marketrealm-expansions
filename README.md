@@ -82,3 +82,8 @@ Phase III.4 adds canonical hazards and traps with detection, triggers, avoidance
 ### The Keeper's Strongbox
 
 Phase III.5 adds canonical treasure parcels with currency, item references, nested treasure, random/weighted tables, selections, nominal value metadata, and Rules Engine grants. See `docs/KEEPERS-STRONGBOX.md`.
+
+
+### Marginalia in the Keeper's Handbook
+
+Phase III.6 adds canonical optional Keeper rules and conditions, including scopes, activation guidance, Rules Engine mechanics, condition application/duration/stacking, removal and escalation. See `docs/KEEPERS-HANDBOOK-MARGINALIA.md`.

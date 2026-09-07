@@ -25,7 +25,7 @@
 - **III.3 — The Encounter Ledger**: encounter compositions, participants, environments, objectives and rewards. ✅
 - **III.4 — Things That Bite Back**: hazards, traps, environmental dangers and neutral mechanical effects. ✅
 - **III.5 — The Keeper's Strongbox**: structured treasure, parcels, tables and rewards. ✅
-- **III.6 — Marginalia in the Keeper's Handbook**: optional DM rules, conditions and expansion-scoped rule modules.
+- **III.6 — Marginalia in the Keeper's Handbook**: optional DM rules, conditions and expansion-scoped rule modules. ✅
 - **III.7 — The Adventure Shelf**: adventures/source-book structures, chapters, scenes and canonical content references.
 
 ## Phase IV — The Living Library
@@ -186,5 +186,22 @@ GMREXP owns expansion content and its meaning. Companion owns character/user wor
 - [x] Optional nominal value metadata and open distribution vocabulary.
 - [x] Canonical cross-content references and Keeper notes.
 - [x] Clear boundary between reusable treasure definitions and Companion/Tabletop award state.
+- [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 266 tests / 646 assertions.
+
+
+## Phase III.6 — Marginalia in the Keeper's Handbook
+
+- [x] Dedicated schemas for canonical `rule` and `condition` content.
+- [x] Lightweight named rule/condition compatibility.
+- [x] Open rule kinds, applicability scopes and activation metadata.
+- [x] Optional rule priorities, prerequisites, conflicts and supersession references.
+- [x] Generic optional-rule mechanics validated by Rules API `1.0.0`.
+- [x] Structured condition application metadata with open saves/checks/difficulties.
+- [x] Structured condition duration and stacking semantics.
+- [x] Top-level condition effects and generic Rules Engine statements.
+- [x] Stable keyed condition removal methods and escalation/stages.
+- [x] Canonical cross-content references and Keeper notes.
+- [x] Clear separation between canonical definitions, campaign activation state and live condition state.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

@@ -95,3 +95,10 @@ Hazard definitions are reusable canonical content. They may describe trigger con
 ### Phase III.5 treasure boundary
 
 Treasure definitions are reusable canonical reward content. They may reference existing Catalogue items, compose nested treasure parcels, define currency bundles, weighted or range-based tables, selections, and neutral grants. Award ownership, current character currency, inventory mutation, Fellowship Treasury balances, claimed state, and session-specific random results remain Companion/Tabletop workflow or live state.
+
+
+### Phase III.6 rule and condition boundary
+
+Optional `rule` definitions are canonical content. They may describe scope, activation guidance, priority, prerequisites, conflicts, supersession, and neutral Rules Engine statements. Which rules are actually enabled for a campaign is consumer/campaign state.
+
+`condition` definitions describe canonical application, duration, stacking, effects, removal methods, and stages. Which live actor has a condition, current stack counts, remaining duration, and current removal state remain Companion/Tabletop concerns.
