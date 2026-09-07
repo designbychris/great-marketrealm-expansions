@@ -295,3 +295,10 @@ normal Catalogue loader
 ```
 
 Pippin has apparently interpreted “read before shelving” as permission to read the first three pages of every book and then judge it by the map quality. The Keeper may wish to retain final editorial authority.
+
+
+## Phase IV.5 version-transition hand-off
+
+Review decisions remain distinct from migrations. Review determines whether a transformed source interpretation is accepted; Migration API `1.0.0` moves already-known GMREXP content between explicit schema/content versions when registered migration steps exist.
+
+Migration does not retroactively change the Keeper's review decision and still does not publish content. See `docs/CONTENT-MIGRATIONS.md`.

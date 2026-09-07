@@ -15,6 +15,29 @@
 
 
 
+
+## 0.4.0-alpha5 — Phase IV.5: Moving Shelves Without Losing the Books
+
+- Added Migration API `1.0.0`.
+- Added trusted registered migration steps with explicit content type, source version and target version.
+- Enforced strictly forward-only migration transitions.
+- Added deterministic migration planning across chained explicit steps.
+- Refused missing and ambiguous migration routes instead of guessing.
+- Preserved canonical content type/key identity outside migration callbacks.
+- Kept source ContentDefinition objects immutable during migration.
+- Added structured route, step-output, callback and canonical-validation failures.
+- Validated final migrated definitions through the existing canonical schema pipeline.
+- Preserved source/import provenance and appended protected ordered migration history.
+- Prevented migration callbacks from spoofing protected provenance/history.
+- Added semantically equivalent same-version validation no-ops.
+- Added batch migration diagnostics with all-or-nothing migrated-definition output.
+- Added public `migrations()` access through the Kernel/service container.
+- Added Migration API and registered-step counts to Keeper diagnostics.
+- Shipped no invented production migration rules; tests use synthetic proving transforms.
+- Deliberately omitted Catalogue mutation, activation, filesystem writes and publication.
+- Recorded the certified Phase IV.4 baseline: 401 tests / 1011 assertions.
+- Kept Catalogue API, Bridge API, Rules API, Library API, Import API and Review API at `1.0.0`.
+
 ## 0.4.0-alpha4 — Phase IV.4: The Keeper Reads Before Shelving
 
 - Added Review API `1.0.0`.

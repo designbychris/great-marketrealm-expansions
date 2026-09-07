@@ -7,6 +7,7 @@ use GreatMarketrealmExpansions\Catalogue\Catalogue;
 use GreatMarketrealmExpansions\Integration\Bridge;
 use GreatMarketrealmExpansions\Rules\RuleEngine;
 use GreatMarketrealmExpansions\Library\Library;
+use GreatMarketrealmExpansions\Migration\MigrationService;
 use GreatMarketrealmExpansions\Import\ImportService;
 use GreatMarketrealmExpansions\Review\ReviewService;
 
@@ -18,6 +19,7 @@ final class CatalogueAdminPage
     private ?Library $library;
     private ?ImportService $importer;
     private ?ReviewService $reviewer;
+    private ?MigrationService $migrations;
 
     public function __construct(
         private Catalogue $catalogue,
@@ -25,12 +27,14 @@ final class CatalogueAdminPage
         ?RuleEngine $rules = null,
         ?Library $library = null,
         ?ImportService $importer = null,
-        ?ReviewService $reviewer = null
+        ?ReviewService $reviewer = null,
+        ?MigrationService $migrations = null
     ) {
         $this->rules = $rules ?? new RuleEngine();
         $this->library = $library;
         $this->importer = $importer;
         $this->reviewer = $reviewer;
+        $this->migrations = $migrations;
     }
 
     public function registerMenu(): void
@@ -74,6 +78,8 @@ final class CatalogueAdminPage
             'library_api_version' => $this->library?->apiVersion(),
             'import_api_version' => $this->importer?->apiVersion(),
             'review_api_version' => $this->reviewer?->apiVersion(),
+            'migration_api_version' => $this->migrations?->apiVersion(),
+            'migration_step_count' => $this->migrations === null ? 0 : count($this->migrations->registry()->all()),
             'expansion_count' => count($this->catalogue->expansions()),
             'active_expansion_count' => $this->library === null ? count($this->catalogue->expansions()) : count($this->library->activeExpansions()),
             'compatibility' => $compatibility,
@@ -144,6 +150,8 @@ final class CatalogueAdminPage
                     <tr><th scope="row">Library API</th><td><?php echo esc_html((string) ($summary['library_api_version'] ?? 'unavailable')); ?></td></tr>
                     <tr><th scope="row">Import API</th><td><?php echo esc_html((string) ($summary['import_api_version'] ?? 'unavailable')); ?></td></tr>
                     <tr><th scope="row">Review API</th><td><?php echo esc_html((string) ($summary['review_api_version'] ?? 'unavailable')); ?></td></tr>
+                    <tr><th scope="row">Migration API</th><td><?php echo esc_html((string) ($summary['migration_api_version'] ?? 'unavailable')); ?></td></tr>
+                    <tr><th scope="row">Registered migration steps</th><td><?php echo esc_html((string) ($summary['migration_step_count'] ?? 0)); ?></td></tr>
                     <tr><th scope="row">Installed expansion packs</th><td><?php echo esc_html((string) $summary['expansion_count']); ?></td></tr>
                     <tr><th scope="row">Active expansion packs</th><td><?php echo esc_html((string) $summary['active_expansion_count']); ?></td></tr>
                     <tr><th scope="row">Compatibility: ready</th><td><?php echo esc_html((string) ($summary['compatibility']['ready'] ?? 0)); ?></td></tr>

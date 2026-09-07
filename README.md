@@ -6,15 +6,17 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
-**Phase IV.4 — The Keeper Reads Before Shelving**
+**Phase IV.5 — Moving Shelves Without Losing the Books**
 
-Phase IV.3 is certified at **375 tests / 921 assertions**.
+Phase IV.4 is certified at **401 tests / 1011 assertions**.
 
-GMREXP now has Review API `1.0.0`: staged import records can be reviewed individually and left pending, approved, rejected, or amended. Amendments must pass the same canonical schema validation pipeline and retain protected import/source provenance.
+GMREXP now has Migration API `1.0.0`: explicit trusted forward-only migration steps can be registered, planned into unambiguous version-transition chains, applied without mutating source definitions, audited through protected migration provenance, and validated through the canonical content schemas.
 
-Review remains deliberately separate from publication. A reviewed definition is not automatically installed, written to an Almanac, activated, or added to the Catalogue.
+Batch migration exposes migrated definitions only when the entire batch succeeds. Migration remains deliberately separate from Catalogue mutation, Library activation, filesystem writes and publication.
 
-See `docs/KEEPER-REVIEW.md` and `docs/IMPORT-STAGING.md`.
+No canonical Great MarketRealm migration rules are invented by this phase; production steps should be registered only for real version transitions.
+
+See `docs/CONTENT-MIGRATIONS.md`.
 
 
 ## Development
@@ -108,3 +110,8 @@ Phase IV.3 adds the neutral sourcebook/Google-Docs staging boundary and Import A
 ### Keeper Review
 
 Phase IV.4 adds granular review and amendment of staged sourcebook imports without publishing them. See `docs/KEEPER-REVIEW.md`.
+
+
+### Content Migrations
+
+Phase IV.5 adds explicit forward-only content/schema migration planning and atomic output boundaries. See `docs/CONTENT-MIGRATIONS.md`.

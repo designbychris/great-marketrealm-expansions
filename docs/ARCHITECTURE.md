@@ -139,3 +139,10 @@ The Import API does not publish, activate, install or overwrite expansion conten
 Review API `1.0.0` sits between import staging and future Almanac publication. Each staged record receives an independent pending/approved/rejected/amended decision. Invalid staged records cannot be approved unchanged; amendments are passed through the canonical schema validator and retain protected source provenance.
 
 Review sessions are intentionally review-state objects rather than Catalogue writers. Completion means every staged record has a Keeper decision, not that content has been published or installed.
+
+
+### Phase IV.5 migration boundary
+
+Migration API `1.0.0` provides trusted, explicit, forward-only transformation chains for known GMREXP content definitions. Migration steps operate on definition data only, so canonical type/key identity remains outside transformation callbacks. Successful results preserve provenance and append protected migration history before final canonical schema validation.
+
+Migration is non-persistent in this phase. Batch migration provides an atomic output view — migrated definitions are exposed as a group only when every item succeeds — but performs no filesystem, database, Catalogue, Library activation, or publication mutation.

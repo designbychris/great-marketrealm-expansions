@@ -36,7 +36,7 @@ Expansion catalogue management, entitlement/availability rules if ever required,
 - **IV.2 — The Librarian Checks the Labels**: compatibility reporting and dependency diagnostics. ✅
 - **IV.3 — The Books Arrive by Owl, Cart, or Google Doc**: sourcebook/import staging and provenance-preserving transformations. ✅
 - **IV.4 — The Keeper Reads Before Shelving**: review/approval workflow for transformed Almanac content. ✅
-- **IV.5 — Moving Shelves Without Losing the Books**: content/schema migrations and version-transition tooling.
+- **IV.5 — Moving Shelves Without Losing the Books**: content/schema migrations and version-transition tooling. ✅
 
 ### Architectural rule
 
@@ -316,5 +316,34 @@ GMREXP owns expansion content and its meaning. Companion owns character/user wor
 - [x] Public `reviewer()` helper and Kernel service.
 - [x] Review API visibility in Keeper diagnostics.
 - [x] No Catalogue mutation, activation, Almanac writing or publication capability.
+- [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 401 tests / 1011 assertions.
+
+
+## Phase IV.5 — Moving Shelves Without Losing the Books
+
+- [x] Migration API `1.0.0`.
+- [x] Trusted registered migration-step abstraction.
+- [x] Stable content-type / from-version / to-version routes.
+- [x] Strictly forward-only migration steps.
+- [x] Semantic version comparison using explicit version endpoints.
+- [x] Deterministic migration registry ordering.
+- [x] Explicit migration planning across chained steps.
+- [x] Missing migration paths refused.
+- [x] Ambiguous migration paths refused rather than guessed.
+- [x] Canonical type/key identity preserved outside migration callbacks.
+- [x] Source `ContentDefinition` objects remain unmodified.
+- [x] Structured migration failures for route, callback, output, and validation errors.
+- [x] Final migrated definitions pass through canonical schema validation.
+- [x] Existing provenance preserved.
+- [x] Protected ordered migration history appended on success.
+- [x] Migration callbacks cannot spoof protected prior provenance/history.
+- [x] Same-version migrations are validated no-ops without synthetic history.
+- [x] Batch migration diagnostics.
+- [x] Atomic batch output: no migrated definition set exposed unless every item succeeds.
+- [x] Public `migrations()` helper and Kernel service.
+- [x] Migration API and registered-step count visible in Keeper diagnostics.
+- [x] No production/canonical migration rules invented.
+- [x] No Catalogue, Library activation, filesystem, or publication mutation.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

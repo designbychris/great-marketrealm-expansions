@@ -17,6 +17,9 @@ use GreatMarketrealmExpansions\Integration\ConsumerRegistry;
 use GreatMarketrealmExpansions\Import\ImportService;
 use GreatMarketrealmExpansions\Library\InMemoryActivationStore;
 use GreatMarketrealmExpansions\Library\Library;
+use GreatMarketrealmExpansions\Migration\MigrationRegistry;
+use GreatMarketrealmExpansions\Migration\MigrationService;
+use GreatMarketrealmExpansions\Migration\MigrationStep;
 use GreatMarketrealmExpansions\Review\ReviewService;
 use PHPUnit\Framework\TestCase;
 
@@ -120,6 +123,42 @@ final class CatalogueAdminPageTest extends TestCase
 
         self::assertSame('1.0.0', $summary['import_api_version']);
         self::assertSame('1.0.0', $summary['review_api_version']);
+    }
+
+
+    public function test_summary_reports_migration_api_and_registered_step_count(): void
+    {
+        $types = new ContentTypeCatalogue();
+        foreach (CoreContentTypes::all() as $type) {
+            $types->add($type);
+        }
+        $schemas = new SchemaRegistry();
+        CoreSchemas::register($schemas, $types);
+        $validator = new ContentValidator($schemas);
+        $migrations = new MigrationService(new MigrationRegistry(), $validator);
+        $migrations->register(new MigrationStep(
+            'fixture-migration',
+            'feat',
+            '1.0.0',
+            '2.0.0',
+            static fn (array $data): array => $data
+        ));
+
+        $catalogue = new Catalogue(new ExpansionRegistry(), new ContentRegistry());
+        $page = new CatalogueAdminPage(
+            $catalogue,
+            new Bridge($catalogue, new ConsumerRegistry()),
+            null,
+            null,
+            null,
+            null,
+            $migrations
+        );
+
+        $summary = $page->summary();
+
+        self::assertSame('1.0.0', $summary['migration_api_version']);
+        self::assertSame(1, $summary['migration_step_count']);
     }
 
     public function test_menu_slug_is_stable(): void
