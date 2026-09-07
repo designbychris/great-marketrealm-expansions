@@ -164,3 +164,12 @@ No Phase V.1 component writes Catalogue content, changes Living Library activati
 It is not a registry and does not persist anything. Rendering Browse cannot activate/deactivate packs, change compatibility state, mutate Catalogue definitions, or create detail records.
 
 The V.1 `/marketrealm-expansions/browse/` route is reused unchanged, so the Reading Room route contract remains `1.0.0`.
+
+
+### Phase V.2A shortcode-host boundary
+
+The WordPress page containing `[great_marketrealm_expansions]` is the preferred owner of the outer frontend page. GMREXP owns only the Reading Room section rendered inside that shortcode.
+
+Reading Room desk navigation therefore uses the host page permalink plus `gmrexp_section`, rather than navigating away to a second standalone page hierarchy. The host page is remembered by WordPress page ID solely so the earlier virtual routes can redirect into the canonical shortcode host once known.
+
+Legacy virtual routes remain fallback-compatible; this hotfix changes no Catalogue, Library or content ownership boundary.

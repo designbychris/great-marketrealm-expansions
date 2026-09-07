@@ -10,6 +10,8 @@ final class ReadingRoomPage
 {
     public const SHORTCODE = 'great_marketrealm_expansions';
     public const QUERY_VAR = 'gmrexp_reading_room';
+    public const SECTION_QUERY_ARG = 'gmrexp_section';
+    public const HOST_PAGE_OPTION = 'gmrexp_reading_room_host_page_id';
     public const STYLE_HANDLE = 'gmrexp-reading-room';
     public const ROUTE_VERSION = '1.0.0';
 
@@ -113,6 +115,16 @@ final class ReadingRoomPage
             return;
         }
 
+        $section = $this->navigation->normalizeSection($section);
+        $hostUrl = $this->rememberedHostUrl();
+
+        if ($hostUrl !== null && function_exists('wp_safe_redirect')) {
+            wp_safe_redirect($this->sectionUrl($hostUrl, $section), 302);
+            exit;
+        }
+
+        // Backwards-compatible fallback for installations that have not yet
+        // rendered the shortcode on a WordPress host page.
         $this->enqueueAssets();
 
         if (function_exists('status_header')) {
@@ -150,18 +162,26 @@ final class ReadingRoomPage
     /** @param array<string,mixed>|string $attributes */
     public function shortcode(array|string $attributes = []): string
     {
-        $section = 'library';
+        $section = null;
 
         if (is_array($attributes) && isset($attributes['section']) && is_string($attributes['section'])) {
-            $section = $attributes['section'];
+            $section = trim($attributes['section']);
         }
 
+        if (($section === null || $section === '') && isset($_GET[self::SECTION_QUERY_ARG]) && is_string($_GET[self::SECTION_QUERY_ARG])) {
+            $section = $this->unslash($_GET[self::SECTION_QUERY_ARG]);
+        }
+
+        $section = $this->navigation->normalizeSection($section);
+        $baseUrl = $this->currentHostUrl();
+
+        $this->rememberHostPage();
         $this->enqueueAssets();
 
-        return $this->render($section);
+        return $this->render($section, $baseUrl);
     }
 
-    public function render(string $section = 'library'): string
+    public function render(string $section = 'library', ?string $baseUrl = null): string
     {
         $section = $this->navigation->normalizeSection($section);
         $state = $this->access->state(
@@ -188,12 +208,12 @@ final class ReadingRoomPage
                 <p class="gmrexp-reading-room__lede">The Keeper's front desk for the Living Library. Installed Almanacs remain canonical; this room reads their state through the Catalogue and Library APIs.</p>
             </header>
 
-            <?php echo $this->renderNavigation($section); ?>
+            <?php echo $this->renderNavigation($section, $baseUrl); ?>
 
             <?php if ($section === 'browse'): ?>
                 <?php echo $this->renderBrowse(); ?>
             <?php elseif ($section !== 'library'): ?>
-                <?php echo $this->renderPlaceholder($section); ?>
+                <?php echo $this->renderPlaceholder($section, $baseUrl); ?>
             <?php else: ?>
                 <section class="gmrexp-reading-room__section" aria-labelledby="gmrexp-library-heading">
                     <div class="gmrexp-reading-room__section-heading">
@@ -261,7 +281,7 @@ final class ReadingRoomPage
         return trim((string) ob_get_clean());
     }
 
-    private function renderNavigation(string $current): string
+    private function renderNavigation(string $current, ?string $baseUrl = null): string
     {
         ob_start();
         ?>
@@ -270,7 +290,7 @@ final class ReadingRoomPage
                 <?php foreach ($this->navigation->items() as $section => $item): ?>
                     <li>
                         <a
-                            href="<?php echo $this->escAttr($this->urlFor($section)); ?>"
+                            href="<?php echo $this->escAttr($this->navigationUrl($section, $baseUrl)); ?>"
                             <?php echo $section === $current ? 'aria-current="page"' : ''; ?>
                             <?php echo !$item['available'] ? 'data-coming-soon="true"' : ''; ?>
                         >
@@ -377,7 +397,7 @@ final class ReadingRoomPage
         return ucwords(str_replace(['-', '_'], ' ', $type));
     }
 
-    private function renderPlaceholder(string $section): string
+    private function renderPlaceholder(string $section, ?string $baseUrl = null): string
     {
         $item = $this->navigation->items()[$section];
         ob_start();
@@ -386,7 +406,7 @@ final class ReadingRoomPage
             <p class="gmrexp-reading-room__kicker">Reserved desk</p>
             <h2 id="gmrexp-placeholder-heading"><?php echo $this->escHtml($item['label']); ?></h2>
             <p>This route is intentionally stable from V.1 onward, but its workflow has not opened yet. No placeholder action mutates Catalogue, Library, Import, Review, or Migration state.</p>
-            <a class="gmrexp-reading-room__back" href="<?php echo $this->escAttr($this->urlFor('library')); ?>">Return to Your Library</a>
+            <a class="gmrexp-reading-room__back" href="<?php echo $this->escAttr($this->navigationUrl('library', $baseUrl)); ?>">Return to Your Library</a>
         </section>
         <?php
         return trim((string) ob_get_clean());
@@ -396,7 +416,7 @@ final class ReadingRoomPage
     {
         $loginUrl = '#';
         if (function_exists('wp_login_url')) {
-            $loginUrl = wp_login_url($this->urlFor('library'));
+            $loginUrl = wp_login_url($this->currentHostUrl() ?? $this->urlFor('library'));
         }
 
         return sprintf(
@@ -417,6 +437,126 @@ final class ReadingRoomPage
             $this->escHtml((string) $value),
             $this->escHtml($label)
         );
+    }
+
+    public function sectionUrl(string $baseUrl, string $section): string
+    {
+        $section = $this->navigation->normalizeSection($section);
+        $baseUrl = $this->stripSectionQueryArg(trim($baseUrl));
+
+        if ($section === 'library') {
+            return $baseUrl;
+        }
+
+        if (function_exists('add_query_arg')) {
+            return (string) add_query_arg(self::SECTION_QUERY_ARG, $section, $baseUrl);
+        }
+
+        $separator = str_contains($baseUrl, '?') ? '&' : '?';
+        return $baseUrl . $separator . rawurlencode(self::SECTION_QUERY_ARG) . '=' . rawurlencode($section);
+    }
+
+    private function navigationUrl(string $section, ?string $baseUrl = null): string
+    {
+        if ($baseUrl !== null && trim($baseUrl) !== '') {
+            return $this->sectionUrl($baseUrl, $section);
+        }
+
+        return $this->urlFor($section);
+    }
+
+    private function currentHostUrl(): ?string
+    {
+        if (function_exists('get_queried_object_id') && function_exists('get_permalink')) {
+            $pageId = (int) get_queried_object_id();
+            if ($pageId > 0) {
+                $url = get_permalink($pageId);
+                if (is_string($url) && $url !== '') {
+                    return $this->stripSectionQueryArg($url);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private function rememberHostPage(): void
+    {
+        if (!function_exists('get_queried_object_id') || !function_exists('update_option')) {
+            return;
+        }
+
+        $pageId = (int) get_queried_object_id();
+        if ($pageId <= 0) {
+            return;
+        }
+
+        update_option(self::HOST_PAGE_OPTION, $pageId, false);
+    }
+
+    private function rememberedHostUrl(): ?string
+    {
+        if (!function_exists('get_option') || !function_exists('get_permalink')) {
+            return null;
+        }
+
+        $pageId = (int) get_option(self::HOST_PAGE_OPTION, 0);
+        if ($pageId <= 0) {
+            return null;
+        }
+
+        $url = get_permalink($pageId);
+        return is_string($url) && $url !== '' ? $this->stripSectionQueryArg($url) : null;
+    }
+
+    private function stripSectionQueryArg(string $url): string
+    {
+        if (function_exists('remove_query_arg')) {
+            return (string) remove_query_arg(self::SECTION_QUERY_ARG, $url);
+        }
+
+        $parts = parse_url($url);
+        if ($parts === false) {
+            return $url;
+        }
+
+        $query = [];
+        if (isset($parts['query'])) {
+            parse_str($parts['query'], $query);
+            unset($query[self::SECTION_QUERY_ARG]);
+        }
+
+        $rebuilt = '';
+        if (isset($parts['scheme'])) {
+            $rebuilt .= $parts['scheme'] . '://';
+        }
+        if (isset($parts['user'])) {
+            $rebuilt .= $parts['user'];
+            if (isset($parts['pass'])) {
+                $rebuilt .= ':' . $parts['pass'];
+            }
+            $rebuilt .= '@';
+        }
+        if (isset($parts['host'])) {
+            $rebuilt .= $parts['host'];
+        }
+        if (isset($parts['port'])) {
+            $rebuilt .= ':' . $parts['port'];
+        }
+        $rebuilt .= $parts['path'] ?? '';
+        if ($query !== []) {
+            $rebuilt .= '?' . http_build_query($query);
+        }
+        if (isset($parts['fragment'])) {
+            $rebuilt .= '#' . $parts['fragment'];
+        }
+
+        return $rebuilt;
+    }
+
+    private function unslash(string $value): string
+    {
+        return function_exists('wp_unslash') ? (string) wp_unslash($value) : stripslashes($value);
     }
 
     private function urlFor(string $section): string

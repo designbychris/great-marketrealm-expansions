@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.5.0-alpha2.1 — Phase V.2A: The Librarian Realises There Are Two Front Doors
+
+- Fixed Reading Room navigation leaving the WordPress page that hosts `[great_marketrealm_expansions]`.
+- Made the shortcode host page the preferred frontend Reading Room shell.
+- Added stable `gmrexp_section` desk selection within the host-page permalink.
+- Preserved explicit shortcode `section="..."` behavior with precedence over request selection.
+- Added safe unknown-section fallback to Your Library.
+- Added dynamic host-permalink discovery with no hard-coded `/expansions/` slug.
+- Remembered the shortcode host by WordPress page ID so later slug/permalink changes remain resolvable.
+- Redirected legacy `/marketrealm-expansions/...` routes to the remembered host page when available.
+- Retained the legacy standalone renderer as a backwards-compatible fallback before a host is known.
+- Preserved unrelated host-page query arguments while changing Reading Room desks.
+- Kept Reading Room route contract `1.0.0`; rewrite patterns are unchanged.
+- Changed no Catalogue, Library, compatibility, import, review, migration or publication semantics.
+- Recorded the certified Phase V.2 baseline: 479 tests / 1209 assertions.
+
 ## 0.5.0-alpha2 — Phase V.2: Books Upon the Shelves
 
 - Opened the Reading Room Browse desk at the stable route reserved in V.1.

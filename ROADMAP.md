@@ -412,4 +412,25 @@ Planned sequence:
 - [x] Responsive Browse shelf styling.
 - [x] Synthetic-only regression fixtures; no invented canonical mechanics.
 - [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 479 tests / 1209 assertions.
+
+
+## Phase V.2A — The Librarian Realises There Are Two Front Doors
+
+- [x] Plugin version `0.5.0-alpha2.1`.
+- [x] Keep the WordPress shortcode page as the primary Reading Room host.
+- [x] Add stable section request key `gmrexp_section`.
+- [x] Library desk resolves to the clean host-page permalink.
+- [x] Browse / Import / Review resolve inside the same host page via section query.
+- [x] Existing explicit shortcode `section="..."` remains supported.
+- [x] Explicit shortcode section takes precedence over request section.
+- [x] Unknown request sections normalize safely to Library.
+- [x] Host-page permalink discovered dynamically; no `/expansions/` slug hard-coded.
+- [x] Host WordPress page remembered by page ID rather than raw permalink.
+- [x] Legacy `/marketrealm-expansions/...` routes redirect to the remembered shortcode host when available.
+- [x] Legacy standalone renderer retained as fallback before a host page has been observed.
+- [x] Unrelated query arguments preserved when switching Reading Room desks.
+- [x] Reading Room route version remains `1.0.0`; rewrite patterns did not change.
+- [x] No Catalogue, Library, compatibility, import, review, migration or publication mutation.
+- [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

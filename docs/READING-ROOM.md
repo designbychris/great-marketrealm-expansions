@@ -139,3 +139,10 @@ Pippin has been informed that “front-end shell” is not permission to remove 
 ## Phase V.2
 
 The Browse desk now lists installed Almanacs, their Library/compatibility labels, and canonical content-family counts through `BrowseShelf`. See `BOOKS-UPON-THE-SHELVES.md`.
+
+
+## Phase V.2A — One front door
+
+The WordPress page containing `[great_marketrealm_expansions]` is now the primary Reading Room host. Navigation swaps desks with `?gmrexp_section=...` on that same permalink, preserving the site's normal theme/page rendering.
+
+The earlier `/marketrealm-expansions/...` routes remain backwards-compatible and redirect to the remembered shortcode host when available. See `TWO-FRONT-DOORS.md`.

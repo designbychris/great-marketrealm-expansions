@@ -135,3 +135,8 @@ Those remain later Reading Room phases.
 Pippin has discovered the shelf catalogue.
 
 This is preferable to Pippin discovering the shelf brackets.
+
+
+## V.2A routing note
+
+The Browse UI itself is unchanged by V.2A. When embedded on a WordPress page, Browse now opens inside that same shortcode host using `?gmrexp_section=browse` rather than navigating to the standalone legacy route. See `TWO-FRONT-DOORS.md`.

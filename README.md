@@ -6,17 +6,17 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
-**Phase V.2 — Books Upon the Shelves**
+**Phase V.2A — The Librarian Realises There Are Two Front Doors**
 
-Phase V.1 is certified at **464 tests / 1166 assertions**.
+Phase V.2 is certified at **479 tests / 1209 assertions**.
 
-The Reading Room's Browse desk is now open. It presents every installed Expansion pack through a deterministic read-only `BrowseShelf`, combining canonical Catalogue identity/content counts with Living Library activation and compatibility labels.
+The Reading Room now treats the WordPress page containing `[great_marketrealm_expansions]` as its primary front door. Navigation stays inside that host page using `?gmrexp_section=...`, so the site's normal theme/header/footer/page layout remains in control while GMREXP swaps the Reading Room desk rendered by the shortcode.
 
-Browse shows the contents of each Almanac by canonical content-family count without opening individual definitions yet. Activation controls remain reserved for V.3, Expansion detail pages for V.4, and full compatibility diagnostics for V.5.
+The host WordPress page is remembered by page ID for backwards-compatible redirects from the earlier `/marketrealm-expansions/...` virtual routes. Those routes remain a safe fallback if no shortcode host has yet been observed.
 
-No new canonical Great MarketRealm mechanics are introduced by this phase.
+No Expansion state or canonical content semantics change in this hotfix.
 
-See `docs/BOOKS-UPON-THE-SHELVES.md`.
+See `docs/TWO-FRONT-DOORS.md`.
 
 
 ## Development
@@ -125,3 +125,8 @@ Phase V.1 opens the Keeper-facing front-end shell and reserves stable routes for
 ### Books Upon the Shelves
 
 Phase V.2 opens the read-only Browse desk for installed Expansion packs and their canonical content-family counts. See `docs/BOOKS-UPON-THE-SHELVES.md`.
+
+
+### Two Front Doors
+
+Phase V.2A keeps Reading Room navigation inside the WordPress page hosting the shortcode and redirects legacy virtual routes once that host is known. See `docs/TWO-FRONT-DOORS.md`.
