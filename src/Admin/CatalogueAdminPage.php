@@ -52,6 +52,12 @@ final class CatalogueAdminPage
         }
         ksort($types);
 
+        $reports = $this->library?->compatibilityReports() ?? [];
+        $compatibility = ['ready' => 0, 'degraded' => 0, 'blocked' => 0];
+        foreach ($reports as $report) {
+            $compatibility[$report->status()] = ($compatibility[$report->status()] ?? 0) + 1;
+        }
+
         return [
             'plugin_version' => defined('GMREXP_VERSION') ? GMREXP_VERSION : 'unknown',
             'catalogue_api_version' => $this->catalogue->apiVersion(),
@@ -60,6 +66,7 @@ final class CatalogueAdminPage
             'library_api_version' => $this->library?->apiVersion(),
             'expansion_count' => count($this->catalogue->expansions()),
             'active_expansion_count' => $this->library === null ? count($this->catalogue->expansions()) : count($this->library->activeExpansions()),
+            'compatibility' => $compatibility,
             'content_count' => count($entries),
             'content_types' => $types,
         ];
@@ -127,24 +134,41 @@ final class CatalogueAdminPage
                     <tr><th scope="row">Library API</th><td><?php echo esc_html((string) ($summary['library_api_version'] ?? 'unavailable')); ?></td></tr>
                     <tr><th scope="row">Installed expansion packs</th><td><?php echo esc_html((string) $summary['expansion_count']); ?></td></tr>
                     <tr><th scope="row">Active expansion packs</th><td><?php echo esc_html((string) $summary['active_expansion_count']); ?></td></tr>
+                    <tr><th scope="row">Compatibility: ready</th><td><?php echo esc_html((string) ($summary['compatibility']['ready'] ?? 0)); ?></td></tr>
+                    <tr><th scope="row">Compatibility: degraded</th><td><?php echo esc_html((string) ($summary['compatibility']['degraded'] ?? 0)); ?></td></tr>
+                    <tr><th scope="row">Compatibility: blocked</th><td><?php echo esc_html((string) ($summary['compatibility']['blocked'] ?? 0)); ?></td></tr>
                     <tr><th scope="row">Catalogue entries</th><td><?php echo esc_html((string) $summary['content_count']); ?></td></tr>
                 </tbody>
             </table>
 
             <h2>Installed Almanacs</h2>
             <table class="widefat striped" style="max-width:1100px">
-                <thead><tr><th>Name</th><th>Key</th><th>Version</th><th>Status</th><th>Description</th><th>Library</th></tr></thead>
+                <thead><tr><th>Name</th><th>Key</th><th>Version</th><th>Library</th><th>Compatibility</th><th>Description</th><th>Action</th></tr></thead>
                 <tbody>
                 <?php if ($expansions === []): ?>
-                    <tr><td colspan="6">No expansion packs are currently loaded.</td></tr>
+                    <tr><td colspan="7">No expansion packs are currently loaded.</td></tr>
                 <?php else: ?>
                     <?php foreach ($expansions as $expansion): ?>
-                        <?php $is_active = $this->library === null ? true : $this->library->isActive($expansion->key()); ?>
+                        <?php
+                        $is_active = $this->library === null ? true : $this->library->isActive($expansion->key());
+                        $compatibility_report = $this->library?->compatibility($expansion->key());
+                        $compatibility_status = $compatibility_report?->status() ?? 'unavailable';
+                        ?>
                         <tr>
                             <td><strong><?php echo esc_html($expansion->name()); ?></strong></td>
                             <td><code><?php echo esc_html($expansion->key()); ?></code></td>
                             <td><?php echo esc_html($expansion->version()); ?></td>
                             <td><strong><?php echo esc_html($is_active ? 'Active' : 'Inactive'); ?></strong></td>
+                            <td>
+                                <strong><?php echo esc_html(ucfirst($compatibility_status)); ?></strong>
+                                <?php if ($compatibility_report !== null && $compatibility_report->issues() !== []): ?>
+                                    <ul style="margin:6px 0 0 18px">
+                                        <?php foreach ($compatibility_report->issues() as $issue): ?>
+                                            <li><code><?php echo esc_html($issue->code()); ?></code>: <?php echo esc_html($issue->message()); ?></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php endif; ?>
+                            </td>
                             <td><?php echo esc_html($expansion->description()); ?></td>
                             <td>
                                 <?php if ($this->library !== null): ?>

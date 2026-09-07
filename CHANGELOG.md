@@ -12,6 +12,22 @@
 
 
 
+
+## 0.4.0-alpha2 — Phase IV.2: The Librarian Checks the Labels
+
+- Added ready/degraded/blocked Living Library compatibility reports.
+- Added stable compatibility issue codes, severities, subjects, and serialisation.
+- Added required and optional expansion dependencies with active-state and version checks.
+- Added compact and structured dependency manifest forms.
+- Added expansion conflicts with active-only/install-level and optional version scoping.
+- Added optional consumer-version requirements beneath manifest compatibility metadata.
+- Added conservative version-constraint evaluation with comma-separated comparisons.
+- Added Library capabilities for compatibility reports, dependencies, and conflicts.
+- Upgraded the Keeper Catalogue with compatibility counts and per-pack diagnostic messages.
+- Kept compatibility evaluation diagnostic-only; no pack is automatically activated or deactivated.
+- Recorded the certified Phase IV.1 baseline: 328 tests / 795 assertions.
+- Kept Catalogue API, Bridge API, Rules API, and Library API at `1.0.0`.
+
 ## 0.4.0-alpha1 — Phase IV.1: The Keeper Marks the Active Shelves
 
 - Began Phase IV — The Living Library.

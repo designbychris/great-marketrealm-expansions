@@ -84,3 +84,31 @@ Content files and expansion directories are sorted before loading. This makes di
 The Phase I.3 format uses PHP arrays because bundled expansion packs are version-controlled plugin code. PHP pack files are therefore **trusted code**, not an upload/import format.
 
 A future external import system must use a non-executable data format and must never `require` arbitrary user-supplied PHP files.
+
+
+## Phase IV.2 dependency and compatibility labels
+
+Manifests may optionally declare Living Library diagnostics:
+
+```php
+'dependencies' => [
+    ['key' => 'base-pack', 'version' => '>=1.0.0,<2.0.0'],
+    ['key' => 'optional-pack', 'required' => false],
+],
+
+'conflicts' => [
+    ['key' => 'legacy-pack', 'version' => '<2.0.0'],
+],
+
+'compatibility' => [
+    'ruleset' => 'great-marketrealm',
+    'consumers' => [
+        'great-marketrealm-companion' => '>=1.0.0',
+        'great-marketrealm-tabletop' => '>=1.0.0',
+    ],
+],
+```
+
+These values are diagnostic metadata. The loader preserves them on the expansion pack; the Living Library evaluates them after installation.
+
+See `docs/LIBRARY-COMPATIBILITY.md` for supported constraint syntax, required/optional dependency behaviour, conflicts, and report states.

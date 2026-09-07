@@ -159,4 +159,27 @@ final class BridgeTest extends TestCase
         );
     }
 
+
+    public function test_bridge_advertises_living_library_compatibility_capabilities(): void
+    {
+        $catalogue = new Catalogue(new ExpansionRegistry(), new ContentRegistry());
+        $library = new Library($catalogue, new InMemoryActivationStore());
+        $bridge = new Bridge($catalogue, new ConsumerRegistry(), null, $library);
+
+        self::assertTrue($bridge->supports('library.compatibility.report'));
+
+        $connection = $bridge->connect(new Consumer(
+            'compatibility-client',
+            'Compatibility Client',
+            '1.0.0',
+            '1.0.0',
+            '1.0.0',
+            ['library.compatibility.report']
+        ));
+
+        self::assertTrue($connection->connected());
+        self::assertTrue($connection->supports('library.compatibility.report'));
+        self::assertNotNull($connection->library());
+    }
+
 }

@@ -17,6 +17,9 @@ final class Library
         'library.activation.read',
         'library.activation.write',
         'library.content.active',
+        'library.compatibility.report',
+        'library.dependencies',
+        'library.conflicts',
     ];
 
     public function __construct(private Catalogue $catalogue, private ActivationStore $activation) {}
@@ -75,6 +78,19 @@ final class Library
         }
 
         $this->activation->set($expansionKey, $active);
+    }
+
+
+    /** @param array<string,string> $environmentVersions */
+    public function compatibility(string $expansionKey, array $environmentVersions = []): CompatibilityReport
+    {
+        return (new CompatibilityInspector($this->catalogue, $this))->inspect($expansionKey, $environmentVersions);
+    }
+
+    /** @param array<string,string> $environmentVersions @return array<string,CompatibilityReport> */
+    public function compatibilityReports(array $environmentVersions = []): array
+    {
+        return (new CompatibilityInspector($this->catalogue, $this))->inspectAll($environmentVersions);
     }
 
     /** @return list<CatalogueEntry> */

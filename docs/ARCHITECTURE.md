@@ -118,3 +118,10 @@ The Catalogue answers **what is installed and canonical**. The Living Library an
 Activation never removes or rewrites Catalogue content. Packs with no explicit activation decision default to active, preserving Phase III behaviour. Production activation persistence sits behind `ActivationStore`, currently implemented with a WordPress option.
 
 Ownership, entitlement, remote marketplace availability and campaign-specific activation are intentionally outside Phase IV.1.
+
+
+### Phase IV.2 compatibility boundary
+
+Expansion dependency, conflict, and consumer-version declarations are pack metadata interpreted by the Living Library. Compatibility evaluation produces deterministic `ready`, `degraded`, or `blocked` reports with stable diagnostic codes.
+
+Compatibility is deliberately diagnostic. The inspector never mutates activation state, unloads packs, or rewrites canonical content. Consumer versions are evaluated only when explicitly supplied; the Library does not guess sibling-plugin installations or versions.

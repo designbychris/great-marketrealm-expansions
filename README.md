@@ -6,15 +6,13 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
-**Phase IV.1 — The Keeper Marks the Active Shelves**
+**Phase IV.2 — The Librarian Checks the Labels**
 
-Phase III Keeper Content is complete and certified at **313 tests / 755 assertions**.
+Phase IV.1 is certified at **328 tests / 795 assertions**.
 
-Phase IV begins the **Living Library**: GMREXP can now distinguish between expansion packs that are installed in the canonical Catalogue and packs that are currently active for consumers. Installed packs default to active for backwards compatibility, activation is persisted behind a pluggable store, and the Keeper Catalogue provides secure Activate/Deactivate controls.
+The Living Library can now evaluate expansion dependencies, optional integrations, conflicts, and declared consumer-version requirements. Every installed pack receives a diagnostic state of **ready**, **degraded**, or **blocked** without automatically changing its activation state.
 
-The canonical Catalogue remains complete and read-only regardless of activation state. Ownership, entitlement, marketplace availability, and campaign-specific activation are deliberately not invented in this phase.
-
-See `docs/LIVING-LIBRARY.md`.
+See `docs/LIBRARY-COMPATIBILITY.md` and `docs/LIVING-LIBRARY.md`.
 
 
 ## Development
@@ -93,3 +91,8 @@ Phase III.6 adds canonical optional Keeper rules and conditions, including scope
 ### The Adventure Shelf
 
 Phase III.7 adds whole-adventure/sourcebook structure with entry points, chapters, sections, scenes, appendices, progression branches, canonical content references, and Rules Engine integration. See `docs/ADVENTURE-SHELF.md`.
+
+
+### Library Compatibility
+
+Phase IV.2 adds dependency, conflict, and consumer-version diagnostics to the Living Library. See `docs/LIBRARY-COMPATIBILITY.md`.

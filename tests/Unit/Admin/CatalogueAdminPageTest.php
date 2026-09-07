@@ -57,6 +57,37 @@ final class CatalogueAdminPageTest extends TestCase
         self::assertSame(1, $summary['active_expansion_count']);
     }
 
+
+    public function test_summary_reports_ready_degraded_and_blocked_compatibility_counts(): void
+    {
+        $expansions = new ExpansionRegistry();
+        $expansions->add(new ExpansionPack('ready-pack', 'Ready Pack'));
+        $expansions->add(new ExpansionPack('degraded-pack', 'Degraded Pack', '1.0.0', '', [
+            'dependencies' => [
+                ['key' => 'optional-missing', 'required' => false],
+            ],
+        ]));
+        $expansions->add(new ExpansionPack('blocked-pack', 'Blocked Pack', '1.0.0', '', [
+            'dependencies' => [
+                ['key' => 'required-missing'],
+            ],
+        ]));
+
+        $catalogue = new Catalogue($expansions, new ContentRegistry());
+        $library = new Library($catalogue, new InMemoryActivationStore());
+        $page = new CatalogueAdminPage(
+            $catalogue,
+            new Bridge($catalogue, new ConsumerRegistry(), null, $library),
+            null,
+            $library
+        );
+
+        self::assertSame(
+            ['ready' => 1, 'degraded' => 1, 'blocked' => 1],
+            $page->summary()['compatibility']
+        );
+    }
+
     public function test_menu_slug_is_stable(): void
     {
         self::assertSame('great-marketrealm-expansions', CatalogueAdminPage::MENU_SLUG);

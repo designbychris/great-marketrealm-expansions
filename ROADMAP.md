@@ -33,7 +33,7 @@
 Expansion catalogue management, entitlement/availability rules if ever required, pack activation, compatibility reporting, Google Docs/sourcebook-to-Almanac import/export, reviewed transformations and content migrations.
 
 - **IV.1 — The Keeper Marks the Active Shelves**: site/library-level installed-vs-active pack state, Library API and Keeper activation controls. ✅
-- **IV.2 — The Librarian Checks the Labels**: compatibility reporting and dependency diagnostics.
+- **IV.2 — The Librarian Checks the Labels**: compatibility reporting and dependency diagnostics. ✅
 - **IV.3 — The Books Arrive by Owl, Cart, or Google Doc**: sourcebook/import staging and provenance-preserving transformations.
 - **IV.4 — The Keeper Reads Before Shelving**: review/approval workflow for transformed Almanac content.
 - **IV.5 — Moving Shelves Without Losing the Books**: content/schema migrations and version-transition tooling.
@@ -247,4 +247,25 @@ GMREXP owns expansion content and its meaning. Companion owns character/user wor
 - [x] Keeper Catalogue activation status, counts and secure Activate/Deactivate controls.
 - [x] No invented ownership, entitlement, marketplace or campaign-scoping model.
 - [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 328 tests / 795 assertions.
+
+
+## Phase IV.2 — The Librarian Checks the Labels
+
+- [x] Ready / degraded / blocked compatibility reports.
+- [x] Stable compatibility issue codes and severities.
+- [x] Required expansion dependencies.
+- [x] Optional expansion dependencies with graceful degradation.
+- [x] Installed-versus-active dependency checks.
+- [x] Version-constrained dependency checks.
+- [x] Expansion conflict declarations.
+- [x] Active-only and install-level conflict modes.
+- [x] Version-scoped conflicts.
+- [x] Optional Companion/Tabletop/consumer version declarations.
+- [x] Consumer environment-version verification without guessing installed versions.
+- [x] Backwards-compatible Library API capability additions.
+- [x] Compatibility reporting through the existing bridged Library service.
+- [x] Keeper Catalogue ready/degraded/blocked counts and per-pack diagnostics.
+- [x] Diagnostic-only behaviour: no automatic activation mutation.
+- [x] Almanac manifest documentation and regression coverage.
 - [ ] Server-side PHPUnit certification.
