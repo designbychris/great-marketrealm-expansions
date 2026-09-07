@@ -22,7 +22,7 @@
 
 - **III.1 — The Keeper Opens the Bestiary**: structured monster stat blocks, traits, actions, challenge metadata and Rules Engine integration. ✅
 - **III.2 — Faces Behind the Counter**: NPC identities, roles, relationships, dialogue/lore hooks and optional combat references. ✅
-- **III.3 — The Encounter Ledger**: encounter compositions, participants, environments, objectives and rewards.
+- **III.3 — The Encounter Ledger**: encounter compositions, participants, environments, objectives and rewards. ✅
 - **III.4 — Things That Bite Back**: hazards, traps, environmental dangers and neutral mechanical effects.
 - **III.5 — The Keeper's Strongbox**: structured treasure, parcels, tables and rewards.
 - **III.6 — Marginalia in the Keeper's Handbook**: optional DM rules, conditions and expansion-scoped rule modules.
@@ -134,5 +134,22 @@ GMREXP owns expansion content and its meaning. Companion owns character/user wor
 - [x] Optional canonical monster reference for combat identity.
 - [x] Nested Rules Engine validation for NPC-specific combat rules.
 - [x] Open vocabularies for future MarketRealm social oddities.
+- [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 213 tests / 520 assertions.
+
+
+## Phase III.3 — The Encounter Ledger
+
+- [x] Dedicated encounter schema.
+- [x] Lightweight named encounter compatibility.
+- [x] Canonical participant references with quantity, role, disposition, placement and variant metadata.
+- [x] Keyed reinforcement/wave groups with triggers and participant composition.
+- [x] Structured environment metadata: locations, terrain, hazards, lighting, weather and Keeper notes.
+- [x] Keyed objectives with success/failure descriptions.
+- [x] Open difficulty ratings, XP budgets and optional party guidance.
+- [x] Rewards as canonical references or lightweight structured grants.
+- [x] Stable encounter triggers and cross-content references.
+- [x] Nested Rules Engine validation throughout encounter structures.
+- [x] Clear separation between canonical encounter content and live Tabletop state.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

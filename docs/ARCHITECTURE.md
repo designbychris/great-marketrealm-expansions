@@ -80,3 +80,8 @@ Monster definitions now have a dedicated schema but remain content, not live enc
 ### Phase III.2 NPC boundary
 
 NPC definitions are canonical narrative/content records, not WordPress users, Companion characters, or live Tabletop actors. An NPC can reference a canonical monster for combat without duplicating that stat block. Relationships and lore hooks similarly reference content by stable identifiers so later campaign/adventure systems can connect records without embedding copies.
+
+
+### Phase III.3 encounter boundary
+
+Encounter definitions are reusable canonical recipes. They reference monsters, NPCs, hazards, treasure, locations, and future content rather than duplicating them. Live initiative order, token state, HP, rounds, placement coordinates, fog, and encounter progress remain Tabletop state. Encounter-specific rule statements may describe canonical variants without mutating either the source records or live state.

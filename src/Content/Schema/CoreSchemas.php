@@ -24,6 +24,7 @@ final class CoreSchemas
                 'magic-item' => AdventurersCupboardSchemaFactory::magicItem(),
                 'monster' => MonsterSchemaFactory::monster(),
                 'npc' => NpcSchemaFactory::npc(),
+                'encounter' => EncounterSchemaFactory::encounter(),
                 default => CoreSchemaFactory::make($type->key()),
             };
             $schemas->add($schema);

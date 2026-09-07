@@ -67,3 +67,8 @@ Phase III begins with **The Keeper Opens the Bestiary**, adding canonical monste
 ### Faces Behind the Counter
 
 Phase III.2 adds canonical NPC dossiers for identity, roles, relationships, dialogue, lore hooks, and optional monster-backed combat identity. See `docs/FACES-BEHIND-THE-COUNTER.md`.
+
+
+### The Encounter Ledger
+
+Phase III.3 adds canonical encounter compositions with participants, waves, environments, objectives, difficulty guidance, rewards, triggers, and Rules Engine mechanics. See `docs/ENCOUNTER-LEDGER.md`.

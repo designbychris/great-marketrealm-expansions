@@ -6,6 +6,20 @@
 
 
 
+
+## 0.3.0-alpha3 — Phase III.3: The Encounter Ledger
+
+- Added a dedicated encounter schema for Keeper-facing expansion content.
+- Added canonical participant references with quantities, roles, dispositions, placement metadata, variants, and encounter-specific rules.
+- Added keyed encounter waves/reinforcements.
+- Added structured environment metadata for locations, terrain, hazards, lighting, weather, and neutral mechanics.
+- Added keyed objectives, encounter triggers, difficulty metadata, rewards, references, and Keeper notes.
+- Added optional XP budgets and suggested party size/level without hard-coding a difficulty vocabulary.
+- Connected nested encounter mechanics to Rules API `1.0.0`.
+- Preserved the boundary between canonical encounter content and live Tabletop state.
+- Recorded the certified Phase III.2 baseline: 213 tests / 520 assertions.
+- Kept Catalogue API, Bridge API, and Rules API at `1.0.0`.
+
 ## 0.3.0-alpha2 — Phase III.2: Faces Behind the Counter
 
 - Added a dedicated NPC schema for Keeper-facing expansion content.
