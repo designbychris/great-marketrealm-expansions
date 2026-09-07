@@ -26,7 +26,7 @@
 - **III.4 — Things That Bite Back**: hazards, traps, environmental dangers and neutral mechanical effects. ✅
 - **III.5 — The Keeper's Strongbox**: structured treasure, parcels, tables and rewards. ✅
 - **III.6 — Marginalia in the Keeper's Handbook**: optional DM rules, conditions and expansion-scoped rule modules. ✅
-- **III.7 — The Adventure Shelf**: adventures/source-book structures, chapters, scenes and canonical content references.
+- **III.7 — The Adventure Shelf**: adventures/source-book structures, chapters, scenes and canonical content references. ✅
 
 ## Phase IV — The Living Library
 
@@ -203,5 +203,23 @@ GMREXP owns expansion content and its meaning. Companion owns character/user wor
 - [x] Stable keyed condition removal methods and escalation/stages.
 - [x] Canonical cross-content references and Keeper notes.
 - [x] Clear separation between canonical definitions, campaign activation state and live condition state.
+- [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 290 tests / 705 assertions.
+
+
+## Phase III.7 — The Adventure Shelf
+
+- [x] Dedicated adventure/sourcebook schema.
+- [x] Lightweight named adventure compatibility.
+- [x] Open adventure kind and optional level guidance.
+- [x] Stable keyed adventure entry points.
+- [x] Rules Engine-backed adventure prerequisites.
+- [x] Stable keyed chapters with optional explicit ordering.
+- [x] Nested keyed sections and scenes.
+- [x] Scene-level canonical references to encounters, NPCs, monsters, hazards, treasure, conditions and rule definitions.
+- [x] Nested Rules Engine validation throughout chapter/section/scene structures.
+- [x] Stable keyed appendices and canonical reference containers.
+- [x] Open progression modes with keyed branching paths and nested rules.
+- [x] Clear separation between canonical adventure structure and live campaign/session progress.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

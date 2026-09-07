@@ -10,6 +10,19 @@
 
 
 
+
+## 0.3.0-alpha7 — Phase III.7: The Adventure Shelf
+
+- Added a dedicated adventure/sourcebook schema.
+- Added stable keyed entry points, chapters, nested sections, scenes, and appendices.
+- Added optional level guidance and open adventure/scene/progression vocabularies.
+- Added scene-level canonical references to encounters, NPCs, monsters, hazards, treasure, conditions, rules, and general content.
+- Added open progression modes with keyed branches and Rules Engine-backed branch conditions/mechanics.
+- Connected adventure prerequisites and nested chapter/section/scene mechanics to Rules API `1.0.0`.
+- Preserved the boundary between canonical book/adventure structure and live campaign/session progress.
+- Recorded the certified Phase III.6 baseline: 290 tests / 705 assertions.
+- Kept Catalogue API, Bridge API, and Rules API at `1.0.0`.
+
 ## 0.3.0-alpha6 — Phase III.6: Marginalia in the Keeper's Handbook
 
 - Added dedicated canonical schemas for `rule` and `condition` content.

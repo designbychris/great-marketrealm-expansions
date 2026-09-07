@@ -29,6 +29,7 @@ final class CoreSchemas
                 'treasure' => TreasureSchemaFactory::treasure(),
                 'rule' => KeepersHandbookSchemaFactory::ruleDefinition(),
                 'condition' => KeepersHandbookSchemaFactory::condition(),
+                'adventure' => AdventureSchemaFactory::adventure(),
                 default => CoreSchemaFactory::make($type->key()),
             };
             $schemas->add($schema);

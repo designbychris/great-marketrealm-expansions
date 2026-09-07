@@ -87,3 +87,8 @@ Phase III.5 adds canonical treasure parcels with currency, item references, nest
 ### Marginalia in the Keeper's Handbook
 
 Phase III.6 adds canonical optional Keeper rules and conditions, including scopes, activation guidance, Rules Engine mechanics, condition application/duration/stacking, removal and escalation. See `docs/KEEPERS-HANDBOOK-MARGINALIA.md`.
+
+
+### The Adventure Shelf
+
+Phase III.7 adds whole-adventure/sourcebook structure with entry points, chapters, sections, scenes, appendices, progression branches, canonical content references, and Rules Engine integration. See `docs/ADVENTURE-SHELF.md`.

@@ -102,3 +102,10 @@ Treasure definitions are reusable canonical reward content. They may reference e
 Optional `rule` definitions are canonical content. They may describe scope, activation guidance, priority, prerequisites, conflicts, supersession, and neutral Rules Engine statements. Which rules are actually enabled for a campaign is consumer/campaign state.
 
 `condition` definitions describe canonical application, duration, stacking, effects, removal methods, and stages. Which live actor has a condition, current stack counts, remaining duration, and current removal state remain Companion/Tabletop concerns.
+
+
+### Phase III.7 adventure boundary
+
+Adventure records are canonical book/adventure structure. They arrange chapters, sections, scenes, appendices, entry points, progression branches, and references to existing canonical content. They do not duplicate monster, NPC, hazard, treasure, rule, condition, or encounter mechanics.
+
+The party's current chapter/scene, chosen branch, completed objectives, claimed rewards, and all live session state remain consumer concerns.
