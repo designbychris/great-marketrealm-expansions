@@ -28,9 +28,9 @@ Phase V.1 reserves these routes:
 /marketrealm-expansions/review/
 ```
 
-`Your Library` is open in V.1.
+`Your Library` opened in V.1. **Browse** opens in V.2.
 
-Browse, Import Desk and Review Desk deliberately render non-mutating placeholders until their respective phases. Reserving the routes now means later phases can replace those placeholders without breaking links or navigation contracts.
+Import Desk and Review Desk deliberately remain non-mutating placeholders until their respective phases. Reserving the routes now means later phases can replace those placeholders without breaking links or navigation contracts.
 
 The rewrite rules are registered through WordPress and flushed once when the dedicated Reading Room route version changes. That route version is independent from the plugin release version, so ordinary releases do not cause unnecessary permalink flushes.
 
@@ -119,7 +119,7 @@ Later Phase V work can extend the same class namespace rather than restyling the
 V.1 deliberately does **not**:
 
 - activate or deactivate expansions from the front end;
-- browse individual catalogue definitions;
+- open individual catalogue definition/detail pages;
 - import files or Google Docs;
 - create review sessions;
 - amend or approve staged content;
@@ -134,3 +134,8 @@ The Reading Room rule is:
 > The interface displays state; the underlying APIs continue to own its meaning.
 
 Pippin has been informed that “front-end shell” is not permission to remove the front wall.
+
+
+## Phase V.2
+
+The Browse desk now lists installed Almanacs, their Library/compatibility labels, and canonical content-family counts through `BrowseShelf`. See `BOOKS-UPON-THE-SHELVES.md`.

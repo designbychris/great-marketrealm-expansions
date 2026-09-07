@@ -155,3 +155,12 @@ The Reading Room is a front-end adapter, not another domain store. `ReadingRoomS
 Stable Library/Browse/Import/Review routes are reserved in V.1. Only the Library route is functionally open; future routes are deliberately non-mutating placeholders. The same renderer is available through `[great_marketrealm_expansions]`.
 
 No Phase V.1 component writes Catalogue content, changes Living Library activation, stages imports, records review decisions, runs migrations, or publishes Almanac files.
+
+
+### Phase V.2 Browse shelf boundary
+
+`BrowseShelf` is a deterministic read model over the existing `Catalogue` and `Library` services. It creates immutable `BrowseShelfEntry` presentation values containing canonical pack identity, version/description, content-family counts, activation state and compatibility status.
+
+It is not a registry and does not persist anything. Rendering Browse cannot activate/deactivate packs, change compatibility state, mutate Catalogue definitions, or create detail records.
+
+The V.1 `/marketrealm-expansions/browse/` route is reused unchanged, so the Reading Room route contract remains `1.0.0`.

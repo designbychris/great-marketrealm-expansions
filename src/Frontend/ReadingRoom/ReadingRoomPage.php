@@ -190,7 +190,9 @@ final class ReadingRoomPage
 
             <?php echo $this->renderNavigation($section); ?>
 
-            <?php if ($section !== 'library'): ?>
+            <?php if ($section === 'browse'): ?>
+                <?php echo $this->renderBrowse(); ?>
+            <?php elseif ($section !== 'library'): ?>
                 <?php echo $this->renderPlaceholder($section); ?>
             <?php else: ?>
                 <section class="gmrexp-reading-room__section" aria-labelledby="gmrexp-library-heading">
@@ -199,7 +201,7 @@ final class ReadingRoomPage
                             <p class="gmrexp-reading-room__kicker">Current shelf</p>
                             <h2 id="gmrexp-library-heading">Your Library</h2>
                         </div>
-                        <span class="gmrexp-reading-room__status">Reading only in V.1</span>
+                        <span class="gmrexp-reading-room__status">Library overview</span>
                     </div>
 
                     <div class="gmrexp-reading-room__summary-grid" aria-label="Living Library summary">
@@ -247,7 +249,7 @@ final class ReadingRoomPage
                 <section class="gmrexp-reading-room__section gmrexp-reading-room__section--quiet" aria-labelledby="gmrexp-next-desks-heading">
                     <p class="gmrexp-reading-room__kicker">Doors prepared for later phases</p>
                     <h2 id="gmrexp-next-desks-heading">The rest of the Reading Room</h2>
-                    <p>Browse, Import Desk, and Review Desk now have stable routes and navigation positions. Their workflows remain deliberately closed until their own phases.</p>
+                    <p>Browse is now open. Import Desk and Review Desk retain their stable routes but remain deliberately closed until their own phases.</p>
                 </section>
             <?php endif; ?>
 
@@ -281,6 +283,98 @@ final class ReadingRoomPage
         </nav>
         <?php
         return trim((string) ob_get_clean());
+    }
+
+    private function renderBrowse(): string
+    {
+        $shelf = new BrowseShelf($this->catalogue, $this->library);
+        $entries = $shelf->entries();
+
+        ob_start();
+        ?>
+        <section class="gmrexp-reading-room__section" aria-labelledby="gmrexp-browse-heading">
+            <div class="gmrexp-reading-room__section-heading">
+                <div>
+                    <p class="gmrexp-reading-room__kicker">Books upon the shelves</p>
+                    <h2 id="gmrexp-browse-heading">Browse Installed Expansions</h2>
+                    <p class="gmrexp-reading-room__section-intro">A read-only view of every Almanac currently installed in the canonical Catalogue. Activation and compatibility are shown here as labels; their controls and full diagnostics belong to later Reading Room desks.</p>
+                </div>
+                <span class="gmrexp-reading-room__status"><?php echo $this->escHtml((string) count($entries)); ?> installed</span>
+            </div>
+
+            <?php if ($entries === []): ?>
+                <div class="gmrexp-reading-room__empty">
+                    <h3>Not a book in sight.</h3>
+                    <p>No expansion packs are currently installed, so the Browse shelf has nothing to display yet.</p>
+                </div>
+            <?php else: ?>
+                <div class="gmrexp-reading-room__browse-summary" aria-label="Browse shelf summary">
+                    <?php echo $this->summaryCard('Installed Almanacs', $shelf->count()); ?>
+                    <?php echo $this->summaryCard('Active Almanacs', $shelf->activeCount()); ?>
+                    <?php echo $this->summaryCard('Catalogue Entries', $shelf->contentCount()); ?>
+                </div>
+
+                <div class="gmrexp-reading-room__browse-shelf">
+                    <?php foreach ($entries as $entry): ?>
+                        <article class="gmrexp-reading-room__browse-book" data-expansion="<?php echo $this->escAttr($entry->key()); ?>">
+                            <div class="gmrexp-reading-room__book-topline">
+                                <span class="gmrexp-reading-room__pill"><?php echo $this->escHtml($entry->active() ? 'Active' : 'Inactive'); ?></span>
+                                <span class="gmrexp-reading-room__compatibility" data-status="<?php echo $this->escAttr($entry->compatibilityStatus()); ?>">
+                                    <?php echo $this->escHtml(ucfirst($entry->compatibilityStatus())); ?>
+                                </span>
+                            </div>
+
+                            <div class="gmrexp-reading-room__browse-book-heading">
+                                <div>
+                                    <p class="gmrexp-reading-room__book-label">Installed Almanac</p>
+                                    <h3><?php echo $this->escHtml($entry->name()); ?></h3>
+                                    <p class="gmrexp-reading-room__version">Version <?php echo $this->escHtml($entry->version()); ?></p>
+                                </div>
+                                <strong class="gmrexp-reading-room__entry-total">
+                                    <span><?php echo $this->escHtml((string) $entry->entryCount()); ?></span>
+                                    <?php echo $this->escHtml($entry->entryCount() === 1 ? 'entry' : 'entries'); ?>
+                                </strong>
+                            </div>
+
+                            <?php if ($entry->description() !== ''): ?>
+                                <p class="gmrexp-reading-room__browse-description"><?php echo $this->escHtml($entry->description()); ?></p>
+                            <?php endif; ?>
+
+                            <dl class="gmrexp-reading-room__book-facts">
+                                <div><dt>Canonical key</dt><dd><code><?php echo $this->escHtml($entry->key()); ?></code></dd></div>
+                                <div><dt>Library state</dt><dd><?php echo $this->escHtml($entry->active() ? 'Active' : 'Inactive'); ?></dd></div>
+                                <div><dt>Compatibility</dt><dd><?php echo $this->escHtml(ucfirst($entry->compatibilityStatus())); ?></dd></div>
+                            </dl>
+
+                            <div class="gmrexp-reading-room__contents" aria-label="<?php echo $this->escAttr($entry->name() . ' content types'); ?>">
+                                <p class="gmrexp-reading-room__book-label">Contents</p>
+                                <?php if ($entry->contentTypes() === []): ?>
+                                    <p class="gmrexp-reading-room__contents-empty">No canonical content entries are currently loaded for this Almanac.</p>
+                                <?php else: ?>
+                                    <ul class="gmrexp-reading-room__type-list">
+                                        <?php foreach ($entry->contentTypes() as $type => $count): ?>
+                                            <li>
+                                                <span><?php echo $this->escHtml($this->contentTypeLabel($type)); ?></span>
+                                                <strong><?php echo $this->escHtml((string) $count); ?></strong>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php endif; ?>
+                            </div>
+
+                            <p class="gmrexp-reading-room__future-note">Expansion detail pages open in V.4.</p>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </section>
+        <?php
+        return trim((string) ob_get_clean());
+    }
+
+    private function contentTypeLabel(string $type): string
+    {
+        return ucwords(str_replace(['-', '_'], ' ', $type));
     }
 
     private function renderPlaceholder(string $section): string

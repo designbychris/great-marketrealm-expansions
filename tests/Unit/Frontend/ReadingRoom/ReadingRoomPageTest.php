@@ -101,6 +101,53 @@ final class ReadingRoomPageTest extends TestCase
         self::assertStringContainsString('/marketrealm-expansions/import/', $html);
         self::assertStringContainsString('/marketrealm-expansions/review/', $html);
         self::assertStringContainsString('Coming later', $html);
+        self::assertStringNotContainsString('Browse</span><small>Coming later', $html);
+    }
+
+
+    public function test_browse_route_renders_installed_expansion_shelf(): void
+    {
+        $html = $this->page()->render('browse');
+
+        self::assertStringContainsString('data-section="browse"', $html);
+        self::assertStringContainsString('Browse Installed Expansions', $html);
+        self::assertStringContainsString('Fixture Book', $html);
+        self::assertStringContainsString('fixture-book', $html);
+    }
+
+    public function test_browse_route_shows_content_family_counts_without_detail_page(): void
+    {
+        $html = $this->page()->render('browse');
+
+        self::assertStringContainsString('Contents', $html);
+        self::assertStringContainsString('Feat', $html);
+        self::assertStringContainsString('Expansion detail pages open in V.4.', $html);
+    }
+
+    public function test_browse_route_exposes_read_only_state_labels(): void
+    {
+        $html = $this->page()->render('browse');
+
+        self::assertStringContainsString('Library state', $html);
+        self::assertStringContainsString('Compatibility', $html);
+        self::assertStringContainsString('Active', $html);
+        self::assertStringContainsString('Ready', $html);
+    }
+
+    public function test_browse_route_has_graceful_empty_state(): void
+    {
+        $html = $this->page(false)->render('browse');
+
+        self::assertStringContainsString('Not a book in sight.', $html);
+        self::assertStringContainsString('Browse shelf has nothing to display yet', $html);
+    }
+
+    public function test_browse_is_no_longer_a_reserved_placeholder(): void
+    {
+        $html = $this->page()->render('browse');
+
+        self::assertStringNotContainsString('Reserved desk', $html);
+        self::assertStringNotContainsString('No placeholder action mutates', $html);
     }
 
     public function test_future_route_renders_non_mutating_placeholder(): void

@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.5.0-alpha2 — Phase V.2: Books Upon the Shelves
+
+- Opened the Reading Room Browse desk at the stable route reserved in V.1.
+- Added `BrowseShelf` as a deterministic read model over Catalogue and Living Library.
+- Added immutable `BrowseShelfEntry` presentation values.
+- Added canonical Expansion key, name, version and description browsing.
+- Added read-only active/inactive and ready/degraded/blocked labels.
+- Added per-Expansion canonical entry totals and deterministic content-family counts.
+- Added human-readable display labels without changing canonical content type keys.
+- Added graceful empty-Browse rendering.
+- Added responsive Browse shelf/card styling.
+- Kept the Reading Room route contract at `1.0.0`; no rewrite contract changed.
+- Deliberately omitted V.3 activation controls, V.4 detail pages and V.5 expanded compatibility diagnostics.
+- Added no import, review, migration, publication or Catalogue mutation capability.
+- Shipped no invented canonical mechanics; PHPUnit uses synthetic proving Almanacs.
+- Recorded the certified Phase V.1 baseline: 464 tests / 1166 assertions.
+- Kept Catalogue API, Bridge API, Rules API, Library API, Import API, Review API and Migration API at `1.0.0`.
+
 ## 0.5.0-alpha1 — Phase V.1: The Reading Room Opens
 
 - Began Phase V — The Keeper Opens the Reading Room.

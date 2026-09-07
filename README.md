@@ -6,15 +6,17 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
-**Phase V.1 — The Reading Room Opens**
+**Phase V.2 — Books Upon the Shelves**
 
-Phase IV.5 is certified at **434 tests / 1099 assertions**, completing the Living Library foundation.
+Phase V.1 is certified at **464 tests / 1166 assertions**.
 
-Phase V now begins the Keeper-facing front-end experience. V.1 adds the Reading Room shell, Keeper access boundary, stable Library/Browse/Import/Review routes, the `[great_marketrealm_expansions]` shortcode, responsive/accessibility-aware styling, and a read-only Library summary backed directly by Catalogue and Living Library APIs.
+The Reading Room's Browse desk is now open. It presents every installed Expansion pack through a deterministic read-only `BrowseShelf`, combining canonical Catalogue identity/content counts with Living Library activation and compatibility labels.
 
-Browse, Import Desk and Review Desk are intentionally reserved placeholders until their own phases; the Reading Room does not create a second state store or mutate canonical content.
+Browse shows the contents of each Almanac by canonical content-family count without opening individual definitions yet. Activation controls remain reserved for V.3, Expansion detail pages for V.4, and full compatibility diagnostics for V.5.
 
-See `docs/READING-ROOM.md`.
+No new canonical Great MarketRealm mechanics are introduced by this phase.
+
+See `docs/BOOKS-UPON-THE-SHELVES.md`.
 
 
 ## Development
@@ -118,3 +120,8 @@ Phase IV.5 adds explicit forward-only content/schema migration planning and atom
 ### The Reading Room
 
 Phase V.1 opens the Keeper-facing front-end shell and reserves stable routes for the later Browse, Import, and Review desks. See `docs/READING-ROOM.md`.
+
+
+### Books Upon the Shelves
+
+Phase V.2 opens the read-only Browse desk for installed Expansion packs and their canonical content-family counts. See `docs/BOOKS-UPON-THE-SHELVES.md`.

@@ -356,7 +356,7 @@ Phase V turns the Living Library infrastructure into a Keeper-facing front-end w
 Planned sequence:
 
 - **V.1 — The Reading Room Opens**: front-end shell, Keeper access, stable navigation/routes, read-only Library summary. ✅
-- **V.2 — Books Upon the Shelves**: browse installed Expansion packs.
+- **V.2 — Books Upon the Shelves**: browse installed Expansion packs. ✅
 - **V.3 — The Keeper Turns the Key**: front-end Expansion activation controls.
 - **V.4 — What Exactly Is in This Book?**: Expansion detail and content-family views.
 - **V.5 — The Librarian Raises an Eyebrow**: human-readable compatibility/dependency diagnostics.
@@ -386,5 +386,30 @@ Planned sequence:
 - [x] Semantic landmarks, active-navigation state, focus visibility and reduced-motion support.
 - [x] Public `reading_room()` helper and Kernel service.
 - [x] No front-end activation, import, review, publication or migration mutation.
+- [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 464 tests / 1166 assertions.
+
+
+## Phase V.2 — Books Upon the Shelves
+
+- [x] Plugin version `0.5.0-alpha2`.
+- [x] Open the stable `/marketrealm-expansions/browse/` route reserved in V.1.
+- [x] Browse navigation marked available without changing route contracts.
+- [x] Dedicated `BrowseShelf` read model over Catalogue and Living Library.
+- [x] Immutable `BrowseShelfEntry` presentation values.
+- [x] Deterministic Expansion ordering by name/key.
+- [x] Canonical key, name, version and description displayed.
+- [x] Active/inactive Library state displayed read-only.
+- [x] Ready/degraded/blocked compatibility state displayed read-only.
+- [x] Total canonical entry counts per Expansion.
+- [x] Deterministic canonical content-family counts per Expansion.
+- [x] Human-readable content-type labels without changing canonical type keys.
+- [x] Graceful empty Browse shelf.
+- [x] Explicit V.4 boundary for individual Expansion/content details.
+- [x] No activation controls before V.3.
+- [x] No expanded compatibility diagnostics before V.5.
+- [x] No import, review, migration, publication or Catalogue mutation.
+- [x] Responsive Browse shelf styling.
+- [x] Synthetic-only regression fixtures; no invented canonical mechanics.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.
