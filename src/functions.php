@@ -15,6 +15,7 @@ use GreatMarketrealmExpansions\Library\Library;
 use GreatMarketrealmExpansions\Migration\MigrationService;
 use GreatMarketrealmExpansions\Review\ReviewService;
 use GreatMarketrealmExpansions\Rules\RuleEngine;
+use GreatMarketrealmExpansions\Frontend\ReadingRoom\ReadingRoomPage;
 
 function expansions(): ExpansionRegistry
 {
@@ -98,4 +99,11 @@ function migrations(): MigrationService
     $kernel = Kernel::instance();
     $kernel->boot();
     return $kernel->migrations();
+}
+
+function reading_room(): ReadingRoomPage
+{
+    $kernel = Kernel::instance();
+    $kernel->boot();
+    return $kernel->readingRoom();
 }

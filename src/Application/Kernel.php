@@ -17,6 +17,7 @@ use GreatMarketrealmExpansions\Library\Library;
 use GreatMarketrealmExpansions\Migration\MigrationService;
 use GreatMarketrealmExpansions\Review\ReviewService;
 use GreatMarketrealmExpansions\Rules\RuleEngine;
+use GreatMarketrealmExpansions\Frontend\ReadingRoom\ReadingRoomPage;
 use GreatMarketrealmExpansions\Providers\ExpansionServiceProvider;
 use GreatMarketrealmExpansions\Providers\ServiceProvider;
 
@@ -69,6 +70,7 @@ final class Kernel
     public function importer(): ImportService { return $this->container->get(ImportService::class); }
     public function reviewer(): ReviewService { return $this->container->get(ReviewService::class); }
     public function migrations(): MigrationService { return $this->container->get(MigrationService::class); }
+    public function readingRoom(): ReadingRoomPage { return $this->container->get(ReadingRoomPage::class); }
     public function adminPage(): CatalogueAdminPage { return $this->container->get(CatalogueAdminPage::class); }
     public function isBooted(): bool { return $this->booted; }
 }

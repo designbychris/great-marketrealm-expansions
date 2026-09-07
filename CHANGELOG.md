@@ -1,20 +1,22 @@
 # Changelog
 
+## 0.5.0-alpha1 — Phase V.1: The Reading Room Opens
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- Began Phase V — The Keeper Opens the Reading Room.
+- Added the Keeper-facing front-end Reading Room shell.
+- Added stable `/marketrealm-expansions/`, Browse, Import Desk and Review Desk routes.
+- Added a dedicated Reading Room route version and one-time WordPress rewrite refresh only when route contracts change.
+- Added `[great_marketrealm_expansions]` using the same renderer as the virtual routes.
+- Reused the established `manage_options` Keeper capability with explicit guest and forbidden gates.
+- Added read-only installed, active, catalogue-entry and compatibility summaries backed by Catalogue and Library APIs.
+- Added installed Expansion cards without introducing a second content or activation store.
+- Added graceful empty-Library rendering.
+- Added deliberate non-mutating placeholders for future Browse, Import and Review workflows.
+- Added responsive/accessibility-aware Reading Room styling.
+- Added public `reading_room()` access through the Kernel/service container.
+- Deliberately omitted front-end activation, import, review, migration and publication mutation.
+- Recorded the certified Phase IV.5 baseline: 434 tests / 1099 assertions.
+- Kept Catalogue API, Bridge API, Rules API, Library API, Import API, Review API and Migration API at `1.0.0`.
 
 ## 0.4.0-alpha5 — Phase IV.5: Moving Shelves Without Losing the Books
 

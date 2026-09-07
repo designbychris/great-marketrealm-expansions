@@ -146,3 +146,12 @@ Review sessions are intentionally review-state objects rather than Catalogue wri
 Migration API `1.0.0` provides trusted, explicit, forward-only transformation chains for known GMREXP content definitions. Migration steps operate on definition data only, so canonical type/key identity remains outside transformation callbacks. Successful results preserve provenance and append protected migration history before final canonical schema validation.
 
 Migration is non-persistent in this phase. Batch migration provides an atomic output view — migrated definitions are exposed as a group only when every item succeeds — but performs no filesystem, database, Catalogue, Library activation, or publication mutation.
+
+
+### Phase V.1 Reading Room boundary
+
+The Reading Room is a front-end adapter, not another domain store. `ReadingRoomSummary` reads installed/canonical data from `Catalogue` and active/compatibility state from `Library`. `ReadingRoomPage` presents that information behind the established Keeper capability boundary.
+
+Stable Library/Browse/Import/Review routes are reserved in V.1. Only the Library route is functionally open; future routes are deliberately non-mutating placeholders. The same renderer is available through `[great_marketrealm_expansions]`.
+
+No Phase V.1 component writes Catalogue content, changes Living Library activation, stages imports, records review decisions, runs migrations, or publishes Almanac files.

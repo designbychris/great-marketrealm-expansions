@@ -6,17 +6,15 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
-**Phase IV.5 — Moving Shelves Without Losing the Books**
+**Phase V.1 — The Reading Room Opens**
 
-Phase IV.4 is certified at **401 tests / 1011 assertions**.
+Phase IV.5 is certified at **434 tests / 1099 assertions**, completing the Living Library foundation.
 
-GMREXP now has Migration API `1.0.0`: explicit trusted forward-only migration steps can be registered, planned into unambiguous version-transition chains, applied without mutating source definitions, audited through protected migration provenance, and validated through the canonical content schemas.
+Phase V now begins the Keeper-facing front-end experience. V.1 adds the Reading Room shell, Keeper access boundary, stable Library/Browse/Import/Review routes, the `[great_marketrealm_expansions]` shortcode, responsive/accessibility-aware styling, and a read-only Library summary backed directly by Catalogue and Living Library APIs.
 
-Batch migration exposes migrated definitions only when the entire batch succeeds. Migration remains deliberately separate from Catalogue mutation, Library activation, filesystem writes and publication.
+Browse, Import Desk and Review Desk are intentionally reserved placeholders until their own phases; the Reading Room does not create a second state store or mutate canonical content.
 
-No canonical Great MarketRealm migration rules are invented by this phase; production steps should be registered only for real version transitions.
-
-See `docs/CONTENT-MIGRATIONS.md`.
+See `docs/READING-ROOM.md`.
 
 
 ## Development
@@ -115,3 +113,8 @@ Phase IV.4 adds granular review and amendment of staged sourcebook imports witho
 ### Content Migrations
 
 Phase IV.5 adds explicit forward-only content/schema migration planning and atomic output boundaries. See `docs/CONTENT-MIGRATIONS.md`.
+
+
+### The Reading Room
+
+Phase V.1 opens the Keeper-facing front-end shell and reserves stable routes for the later Browse, Import, and Review desks. See `docs/READING-ROOM.md`.

@@ -346,4 +346,45 @@ GMREXP owns expansion content and its meaning. Companion owns character/user wor
 - [x] No production/canonical migration rules invented.
 - [x] No Catalogue, Library activation, filesystem, or publication mutation.
 - [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 434 tests / 1099 assertions.
+
+
+# Phase V — The Keeper Opens the Reading Room
+
+Phase V turns the Living Library infrastructure into a Keeper-facing front-end workflow while preserving the ownership boundaries established in Phases I–IV.
+
+Planned sequence:
+
+- **V.1 — The Reading Room Opens**: front-end shell, Keeper access, stable navigation/routes, read-only Library summary. ✅
+- **V.2 — Books Upon the Shelves**: browse installed Expansion packs.
+- **V.3 — The Keeper Turns the Key**: front-end Expansion activation controls.
+- **V.4 — What Exactly Is in This Book?**: Expansion detail and content-family views.
+- **V.5 — The Librarian Raises an Eyebrow**: human-readable compatibility/dependency diagnostics.
+- **V.6 — The Keeper's Import Desk**: structured source-material staging UI.
+- **V.7 — Pippin Finds the Google Docs**: Google Docs source adapter into neutral Import API documents.
+- **V.8 — Red Ink and Questionable Margins**: Keeper review UI.
+- **V.9 — The Shelving Trolley**: reviewed-definition to proposed-Almanac workflow.
+- **V.10 — The Keeper Rings the Bell**: atomic publication/install workflow.
+
+
+## Phase V.1 — The Reading Room Opens
+
+- [x] Plugin version `0.5.0-alpha1`.
+- [x] Keeper-facing front-end Reading Room shell.
+- [x] Stable `/marketrealm-expansions/` Library route.
+- [x] Stable reserved Browse, Import Desk and Review Desk routes.
+- [x] Dedicated Reading Room route version with one-time rewrite refresh only when route contracts change.
+- [x] `[great_marketrealm_expansions]` shortcode using the same renderer.
+- [x] Explicit guest / signed-in non-Keeper / Keeper access states.
+- [x] Existing `manage_options` Keeper capability reused; no new entitlement model invented.
+- [x] Read-only summary sourced from Catalogue and Living Library APIs.
+- [x] Installed / active / catalogue-entry / compatibility counts.
+- [x] Installed expansion cards sourced from canonical Catalogue/Library views.
+- [x] Graceful empty-Library state.
+- [x] Non-mutating placeholders for future Phase V desks.
+- [x] Responsive Reading Room stylesheet.
+- [x] Semantic landmarks, active-navigation state, focus visibility and reduced-motion support.
+- [x] Public `reading_room()` helper and Kernel service.
+- [x] No front-end activation, import, review, publication or migration mutation.
+- [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

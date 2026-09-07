@@ -24,6 +24,9 @@ use GreatMarketrealmExpansions\Library\WordPressOptionActivationStore;
 use GreatMarketrealmExpansions\Migration\MigrationRegistry;
 use GreatMarketrealmExpansions\Migration\MigrationService;
 use GreatMarketrealmExpansions\Review\ReviewService;
+use GreatMarketrealmExpansions\Frontend\ReadingRoom\ReadingRoomAccess;
+use GreatMarketrealmExpansions\Frontend\ReadingRoom\ReadingRoomNavigation;
+use GreatMarketrealmExpansions\Frontend\ReadingRoom\ReadingRoomPage;
 use GreatMarketrealmExpansions\Rules\RuleEngine;
 
 final class ExpansionServiceProvider extends ServiceProvider
@@ -82,6 +85,14 @@ final class ExpansionServiceProvider extends ServiceProvider
             $container->get(ContentRegistry::class),
             $container->get(ContentValidator::class)
         ));
+        $this->container->singleton(ReadingRoomAccess::class, static fn (Container $container): ReadingRoomAccess => new ReadingRoomAccess());
+        $this->container->singleton(ReadingRoomNavigation::class, static fn (Container $container): ReadingRoomNavigation => new ReadingRoomNavigation());
+        $this->container->singleton(ReadingRoomPage::class, static fn (Container $container): ReadingRoomPage => new ReadingRoomPage(
+            $container->get(Catalogue::class),
+            $container->get(Library::class),
+            $container->get(ReadingRoomAccess::class),
+            $container->get(ReadingRoomNavigation::class)
+        ));
         $this->container->singleton(CatalogueAdminPage::class, static fn (Container $container): CatalogueAdminPage => new CatalogueAdminPage(
             $container->get(Catalogue::class),
             $container->get(Bridge::class),
@@ -98,6 +109,9 @@ final class ExpansionServiceProvider extends ServiceProvider
         if (function_exists('add_action')) {
             $api = $this->container->get(CatalogueRestApi::class);
             add_action('rest_api_init', static function () use ($api): void { $api->registerRoutes(); });
+
+            $readingRoom = $this->container->get(ReadingRoomPage::class);
+            $readingRoom->register();
 
             $admin = $this->container->get(CatalogueAdminPage::class);
             add_action('admin_menu', static function () use ($admin): void { $admin->registerMenu(); });
