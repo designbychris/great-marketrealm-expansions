@@ -8,6 +8,7 @@ use GreatMarketrealmExpansions\Integration\Bridge;
 use GreatMarketrealmExpansions\Rules\RuleEngine;
 use GreatMarketrealmExpansions\Library\Library;
 use GreatMarketrealmExpansions\Import\ImportService;
+use GreatMarketrealmExpansions\Review\ReviewService;
 
 final class CatalogueAdminPage
 {
@@ -16,17 +17,20 @@ final class CatalogueAdminPage
     private RuleEngine $rules;
     private ?Library $library;
     private ?ImportService $importer;
+    private ?ReviewService $reviewer;
 
     public function __construct(
         private Catalogue $catalogue,
         private Bridge $bridge,
         ?RuleEngine $rules = null,
         ?Library $library = null,
-        ?ImportService $importer = null
+        ?ImportService $importer = null,
+        ?ReviewService $reviewer = null
     ) {
         $this->rules = $rules ?? new RuleEngine();
         $this->library = $library;
         $this->importer = $importer;
+        $this->reviewer = $reviewer;
     }
 
     public function registerMenu(): void
@@ -69,6 +73,7 @@ final class CatalogueAdminPage
             'rules_api_version' => $this->rules->apiVersion(),
             'library_api_version' => $this->library?->apiVersion(),
             'import_api_version' => $this->importer?->apiVersion(),
+            'review_api_version' => $this->reviewer?->apiVersion(),
             'expansion_count' => count($this->catalogue->expansions()),
             'active_expansion_count' => $this->library === null ? count($this->catalogue->expansions()) : count($this->library->activeExpansions()),
             'compatibility' => $compatibility,
@@ -138,6 +143,7 @@ final class CatalogueAdminPage
                     <tr><th scope="row">Rules API</th><td><?php echo esc_html((string) $summary['rules_api_version']); ?></td></tr>
                     <tr><th scope="row">Library API</th><td><?php echo esc_html((string) ($summary['library_api_version'] ?? 'unavailable')); ?></td></tr>
                     <tr><th scope="row">Import API</th><td><?php echo esc_html((string) ($summary['import_api_version'] ?? 'unavailable')); ?></td></tr>
+                    <tr><th scope="row">Review API</th><td><?php echo esc_html((string) ($summary['review_api_version'] ?? 'unavailable')); ?></td></tr>
                     <tr><th scope="row">Installed expansion packs</th><td><?php echo esc_html((string) $summary['expansion_count']); ?></td></tr>
                     <tr><th scope="row">Active expansion packs</th><td><?php echo esc_html((string) $summary['active_expansion_count']); ?></td></tr>
                     <tr><th scope="row">Compatibility: ready</th><td><?php echo esc_html((string) ($summary['compatibility']['ready'] ?? 0)); ?></td></tr>

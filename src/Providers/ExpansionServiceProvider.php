@@ -21,6 +21,7 @@ use GreatMarketrealmExpansions\Import\ImportService;
 use GreatMarketrealmExpansions\Library\ActivationStore;
 use GreatMarketrealmExpansions\Library\Library;
 use GreatMarketrealmExpansions\Library\WordPressOptionActivationStore;
+use GreatMarketrealmExpansions\Review\ReviewService;
 use GreatMarketrealmExpansions\Rules\RuleEngine;
 
 final class ExpansionServiceProvider extends ServiceProvider
@@ -44,6 +45,9 @@ final class ExpansionServiceProvider extends ServiceProvider
         $this->container->singleton(RuleEngine::class, static fn (Container $container): RuleEngine => new RuleEngine());
         $this->container->singleton(ContentValidator::class, static fn (Container $container): ContentValidator => new ContentValidator($container->get(SchemaRegistry::class)));
         $this->container->singleton(ImportService::class, static fn (Container $container): ImportService => new ImportService(
+            $container->get(ContentValidator::class)
+        ));
+        $this->container->singleton(ReviewService::class, static fn (Container $container): ReviewService => new ReviewService(
             $container->get(ContentValidator::class)
         ));
         $this->container->singleton(ContentRegistry::class, static fn (Container $container): ContentRegistry => new ContentRegistry($container->get(ContentValidator::class)));
@@ -76,7 +80,8 @@ final class ExpansionServiceProvider extends ServiceProvider
             $container->get(Bridge::class),
             $container->get(RuleEngine::class),
             $container->get(Library::class),
-            $container->get(ImportService::class)
+            $container->get(ImportService::class),
+            $container->get(ReviewService::class)
         ));
     }
 

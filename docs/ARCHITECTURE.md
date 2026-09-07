@@ -132,3 +132,10 @@ Compatibility is deliberately diagnostic. The inspector never mutates activation
 External documents do not become Catalogue content directly. Source-specific adapters produce a non-executable structured import document; Import API `1.0.0` stamps protected provenance, validates each staged definition through the canonical schema pipeline, surfaces ambiguity and returns a reviewable result.
 
 The Import API does not publish, activate, install or overwrite expansion content. Google Docs is therefore an upstream source adapter concern rather than a gameplay/runtime dependency.
+
+
+### Phase IV.4 review boundary
+
+Review API `1.0.0` sits between import staging and future Almanac publication. Each staged record receives an independent pending/approved/rejected/amended decision. Invalid staged records cannot be approved unchanged; amendments are passed through the canonical schema validator and retain protected source provenance.
+
+Review sessions are intentionally review-state objects rather than Catalogue writers. Completion means every staged record has a Keeper decision, not that content has been published or installed.

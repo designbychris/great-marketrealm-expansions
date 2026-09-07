@@ -5,12 +5,19 @@ use GreatMarketrealmExpansions\Admin\CatalogueAdminPage;
 use GreatMarketrealmExpansions\Catalogue\Catalogue;
 use GreatMarketrealmExpansions\Content\ContentDefinition;
 use GreatMarketrealmExpansions\Content\ContentRegistry;
+use GreatMarketrealmExpansions\Content\Schema\ContentValidator;
+use GreatMarketrealmExpansions\Content\Schema\CoreSchemas;
+use GreatMarketrealmExpansions\Content\Schema\SchemaRegistry;
+use GreatMarketrealmExpansions\Content\Types\ContentTypeCatalogue;
+use GreatMarketrealmExpansions\Content\Types\CoreContentTypes;
 use GreatMarketrealmExpansions\Expansions\ExpansionPack;
 use GreatMarketrealmExpansions\Expansions\ExpansionRegistry;
 use GreatMarketrealmExpansions\Integration\Bridge;
 use GreatMarketrealmExpansions\Integration\ConsumerRegistry;
+use GreatMarketrealmExpansions\Import\ImportService;
 use GreatMarketrealmExpansions\Library\InMemoryActivationStore;
 use GreatMarketrealmExpansions\Library\Library;
+use GreatMarketrealmExpansions\Review\ReviewService;
 use PHPUnit\Framework\TestCase;
 
 final class CatalogueAdminPageTest extends TestCase
@@ -86,6 +93,33 @@ final class CatalogueAdminPageTest extends TestCase
             ['ready' => 1, 'degraded' => 1, 'blocked' => 1],
             $page->summary()['compatibility']
         );
+    }
+
+
+    public function test_summary_reports_import_and_review_api_versions_when_services_are_available(): void
+    {
+        $types = new ContentTypeCatalogue();
+        foreach (CoreContentTypes::all() as $type) {
+            $types->add($type);
+        }
+        $schemas = new SchemaRegistry();
+        CoreSchemas::register($schemas, $types);
+        $validator = new ContentValidator($schemas);
+
+        $catalogue = new Catalogue(new ExpansionRegistry(), new ContentRegistry());
+        $page = new CatalogueAdminPage(
+            $catalogue,
+            new Bridge($catalogue, new ConsumerRegistry()),
+            null,
+            null,
+            new ImportService($validator),
+            new ReviewService($validator)
+        );
+
+        $summary = $page->summary();
+
+        self::assertSame('1.0.0', $summary['import_api_version']);
+        self::assertSame('1.0.0', $summary['review_api_version']);
     }
 
     public function test_menu_slug_is_stable(): void

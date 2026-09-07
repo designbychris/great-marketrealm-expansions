@@ -14,6 +14,7 @@ use GreatMarketrealmExpansions\Expansions\Loading\ExpansionFileLoader;
 use GreatMarketrealmExpansions\Integration\Bridge;
 use GreatMarketrealmExpansions\Import\ImportService;
 use GreatMarketrealmExpansions\Library\Library;
+use GreatMarketrealmExpansions\Review\ReviewService;
 use GreatMarketrealmExpansions\Rules\RuleEngine;
 use GreatMarketrealmExpansions\Providers\ExpansionServiceProvider;
 use GreatMarketrealmExpansions\Providers\ServiceProvider;
@@ -65,6 +66,7 @@ final class Kernel
     public function rules(): RuleEngine { return $this->container->get(RuleEngine::class); }
     public function library(): Library { return $this->container->get(Library::class); }
     public function importer(): ImportService { return $this->container->get(ImportService::class); }
+    public function reviewer(): ReviewService { return $this->container->get(ReviewService::class); }
     public function adminPage(): CatalogueAdminPage { return $this->container->get(CatalogueAdminPage::class); }
     public function isBooted(): bool { return $this->booted; }
 }

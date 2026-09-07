@@ -6,15 +6,15 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
-**Phase IV.3 — The Books Arrive by Owl, Cart, or Google Doc**
+**Phase IV.4 — The Keeper Reads Before Shelving**
 
-Phase IV.2 is certified at **351 tests / 843 assertions**.
+Phase IV.3 is certified at **375 tests / 921 assertions**.
 
-GMREXP now has Import API `1.0.0`: a safe staging layer for external sourcebooks, reviewed exports and future Google Docs transformations. External source material is transformed into a non-executable structured representation, stamped with protected provenance, validated through the canonical schemas, and returned as a reviewable staging result.
+GMREXP now has Review API `1.0.0`: staged import records can be reviewed individually and left pending, approved, rejected, or amended. Amendments must pass the same canonical schema validation pipeline and retain protected import/source provenance.
 
-Nothing is published directly to the Catalogue in this phase. Ambiguity is surfaced rather than guessed.
+Review remains deliberately separate from publication. A reviewed definition is not automatically installed, written to an Almanac, activated, or added to the Catalogue.
 
-See `docs/IMPORT-STAGING.md`.
+See `docs/KEEPER-REVIEW.md` and `docs/IMPORT-STAGING.md`.
 
 
 ## Development
@@ -103,3 +103,8 @@ Phase IV.2 adds dependency, conflict, and consumer-version diagnostics to the Li
 ### Import Staging
 
 Phase IV.3 adds the neutral sourcebook/Google-Docs staging boundary and Import API `1.0.0`. See `docs/IMPORT-STAGING.md`.
+
+
+### Keeper Review
+
+Phase IV.4 adds granular review and amendment of staged sourcebook imports without publishing them. See `docs/KEEPER-REVIEW.md`.

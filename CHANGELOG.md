@@ -14,6 +14,26 @@
 
 
 
+
+## 0.4.0-alpha4 — Phase IV.4: The Keeper Reads Before Shelving
+
+- Added Review API `1.0.0`.
+- Added deterministic review sessions over staged Import API results.
+- Added granular pending, approved, rejected and amended review states.
+- Allowed structurally valid staged definitions to be explicitly approved.
+- Prevented invalid/unresolved staged definitions from being approved unchanged.
+- Added explicit rejection for any staged record.
+- Added Keeper amendments validated through the canonical schema pipeline.
+- Preserved protected import provenance and source context through amendments.
+- Added protected review provenance for amended definitions.
+- Added reversible reset-to-pending decisions and optional review notes.
+- Added review progress/completion counts and approved-definition extraction.
+- Added public `reviewer()` access through the Kernel/service container.
+- Added Review API visibility to Keeper diagnostics.
+- Deliberately omitted publication, Catalogue mutation, activation and Almanac-writing capabilities.
+- Recorded the certified Phase IV.3 baseline: 375 tests / 921 assertions.
+- Kept Catalogue API, Bridge API, Rules API, Library API and Import API at `1.0.0`.
+
 ## 0.4.0-alpha3 — Phase IV.3: The Books Arrive by Owl, Cart, or Google Doc
 
 - Added Import API `1.0.0`.

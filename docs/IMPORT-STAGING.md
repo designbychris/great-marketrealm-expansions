@@ -309,3 +309,12 @@ normal Catalogue loading
 This keeps runtime play independent of Google Docs and ensures canonical content remains reviewable and version-controlled.
 
 Pippin has requested that owl-delivered books be checked for both provenance and owl droppings. Only the former is currently in scope.
+
+
+## Phase IV.4 review hand-off
+
+A staged `ImportResult` can now be opened by Review API `1.0.0`.
+
+Review remains granular: each staged record may be approved, rejected, amended, or left pending. Amendments pass through canonical schema validation and retain protected source provenance.
+
+Review does not publish to the Catalogue. See `docs/KEEPER-REVIEW.md`.

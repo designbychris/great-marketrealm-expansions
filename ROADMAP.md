@@ -35,7 +35,7 @@ Expansion catalogue management, entitlement/availability rules if ever required,
 - **IV.1 — The Keeper Marks the Active Shelves**: site/library-level installed-vs-active pack state, Library API and Keeper activation controls. ✅
 - **IV.2 — The Librarian Checks the Labels**: compatibility reporting and dependency diagnostics. ✅
 - **IV.3 — The Books Arrive by Owl, Cart, or Google Doc**: sourcebook/import staging and provenance-preserving transformations. ✅
-- **IV.4 — The Keeper Reads Before Shelving**: review/approval workflow for transformed Almanac content.
+- **IV.4 — The Keeper Reads Before Shelving**: review/approval workflow for transformed Almanac content. ✅
 - **IV.5 — Moving Shelves Without Losing the Books**: content/schema migrations and version-transition tooling.
 
 ### Architectural rule
@@ -291,5 +291,30 @@ GMREXP owns expansion content and its meaning. Companion owns character/user wor
 - [x] Import API visibility in Keeper diagnostics.
 - [x] No Catalogue mutation, activation mutation or runtime Google Docs dependency.
 - [x] Google Docs remains a future source adapter into the same neutral staging format.
+- [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 375 tests / 921 assertions.
+
+
+## Phase IV.4 — The Keeper Reads Before Shelving
+
+- [x] Review API `1.0.0`.
+- [x] Deterministic review sessions opened from staged `ImportResult` objects.
+- [x] Stable per-session review IDs with preserved source record IDs.
+- [x] Granular pending / approved / rejected / amended states.
+- [x] Explicit approval of valid staged definitions.
+- [x] Invalid staged definitions cannot be approved unchanged.
+- [x] Rejection of valid, invalid or ambiguous staged records.
+- [x] Keeper amendments for unresolved or incorrect staged records.
+- [x] Canonical schema validation for every amendment.
+- [x] Protected import provenance retained through amendment.
+- [x] Review provenance added to amended definitions.
+- [x] Source/review provenance spoofing prevented.
+- [x] Reversible decisions through reset-to-pending.
+- [x] Optional trimmed review notes.
+- [x] Review progress and completion counts.
+- [x] Approved-definition extraction excludes rejected and pending records.
+- [x] Public `reviewer()` helper and Kernel service.
+- [x] Review API visibility in Keeper diagnostics.
+- [x] No Catalogue mutation, activation, Almanac writing or publication capability.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

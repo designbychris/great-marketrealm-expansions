@@ -12,6 +12,7 @@ use GreatMarketrealmExpansions\Expansions\Loading\ExpansionFileLoader;
 use GreatMarketrealmExpansions\Integration\Bridge;
 use GreatMarketrealmExpansions\Import\ImportService;
 use GreatMarketrealmExpansions\Library\Library;
+use GreatMarketrealmExpansions\Review\ReviewService;
 use GreatMarketrealmExpansions\Rules\RuleEngine;
 
 function expansions(): ExpansionRegistry
@@ -82,4 +83,11 @@ function importer(): ImportService
     $kernel = Kernel::instance();
     $kernel->boot();
     return $kernel->importer();
+}
+
+function reviewer(): ReviewService
+{
+    $kernel = Kernel::instance();
+    $kernel->boot();
+    return $kernel->reviewer();
 }
