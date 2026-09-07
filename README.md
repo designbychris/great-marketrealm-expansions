@@ -77,3 +77,8 @@ Phase III.3 adds canonical encounter compositions with participants, waves, envi
 ### Things That Bite Back
 
 Phase III.4 adds canonical hazards and traps with detection, triggers, avoidance, disarming, effects, escalation, reset behaviour, and Rules Engine mechanics. See `docs/THINGS-THAT-BITE-BACK.md`.
+
+
+### The Keeper's Strongbox
+
+Phase III.5 adds canonical treasure parcels with currency, item references, nested treasure, random/weighted tables, selections, nominal value metadata, and Rules Engine grants. See `docs/KEEPERS-STRONGBOX.md`.

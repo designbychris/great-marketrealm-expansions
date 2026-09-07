@@ -90,3 +90,8 @@ Encounter definitions are reusable canonical recipes. They reference monsters, N
 ### Phase III.4 hazard boundary
 
 Hazard definitions are reusable canonical content. They may describe trigger conditions, detection, avoidance, disarming, area, duration, neutral effects, escalation, reset behaviour, and references to encounters or adventures. Whether a particular hazard instance has triggered, been discovered, been disabled, reset, or affected a live actor remains Tabletop/session state.
+
+
+### Phase III.5 treasure boundary
+
+Treasure definitions are reusable canonical reward content. They may reference existing Catalogue items, compose nested treasure parcels, define currency bundles, weighted or range-based tables, selections, and neutral grants. Award ownership, current character currency, inventory mutation, Fellowship Treasury balances, claimed state, and session-specific random results remain Companion/Tabletop workflow or live state.

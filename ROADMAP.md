@@ -24,7 +24,7 @@
 - **III.2 — Faces Behind the Counter**: NPC identities, roles, relationships, dialogue/lore hooks and optional combat references. ✅
 - **III.3 — The Encounter Ledger**: encounter compositions, participants, environments, objectives and rewards. ✅
 - **III.4 — Things That Bite Back**: hazards, traps, environmental dangers and neutral mechanical effects. ✅
-- **III.5 — The Keeper's Strongbox**: structured treasure, parcels, tables and rewards.
+- **III.5 — The Keeper's Strongbox**: structured treasure, parcels, tables and rewards. ✅
 - **III.6 — Marginalia in the Keeper's Handbook**: optional DM rules, conditions and expansion-scoped rule modules.
 - **III.7 — The Adventure Shelf**: adventures/source-book structures, chapters, scenes and canonical content references.
 
@@ -169,5 +169,22 @@ GMREXP owns expansion content and its meaning. Companion owns character/user wor
 - [x] Reset/repeat behaviour without leaking live-state concerns into canonical content.
 - [x] Canonical cross-content references and Keeper notes.
 - [x] Clear boundary between reusable hazard definitions and live Tabletop hazard state.
+- [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 248 tests / 603 assertions.
+
+
+## Phase III.5 — The Keeper's Strongbox
+
+- [x] Dedicated treasure schema.
+- [x] Lightweight named treasure compatibility.
+- [x] Open canonical currency map with non-negative amounts.
+- [x] Canonical item references with quantity, chance, weighting and optional variant metadata.
+- [x] Nested treasure references for reusable parcel composition.
+- [x] Keyed random/weighted treasure tables with roll ranges or relative weights.
+- [x] Keyed treasure selections with canonical references or structured reward options.
+- [x] Top-level Rules Engine grants and nested rule validation.
+- [x] Optional nominal value metadata and open distribution vocabulary.
+- [x] Canonical cross-content references and Keeper notes.
+- [x] Clear boundary between reusable treasure definitions and Companion/Tabletop award state.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

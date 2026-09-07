@@ -8,6 +8,20 @@
 
 
 
+
+## 0.3.0-alpha5 — Phase III.5: The Keeper's Strongbox
+
+- Added a dedicated treasure schema for reusable parcels, rewards, caches, hoards, and sourcebook treasure.
+- Added open canonical currency maps and optional nominal value metadata.
+- Added canonical item references with quantity, chance, weighting, variants, notes, and nested rules.
+- Added nested treasure composition.
+- Added keyed random/weighted treasure tables with range-based or relative-weight entries.
+- Added keyed treasure selections containing canonical references or structured reward maps.
+- Connected top-level treasure grants and nested mechanics to Rules API `1.0.0`.
+- Preserved the boundary between canonical reward definitions and Companion/Tabletop ownership, inventory, currency, and claimed-state workflows.
+- Recorded the certified Phase III.4 baseline: 248 tests / 603 assertions.
+- Kept Catalogue API, Bridge API, and Rules API at `1.0.0`.
+
 ## 0.3.0-alpha4 — Phase III.4: Things That Bite Back
 
 - Added a dedicated hazard schema for traps, environmental dangers, and other Keeper-facing hazards.
