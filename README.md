@@ -6,14 +6,13 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
-**Phase V.4 — What Exactly Is in This Book?**
+**Phase V.5 — The Librarian Raises an Eyebrow**
 
-Phase V.3A is certified at **509 tests / 1253 assertions**.
+Phase V.4 is certified at **529 tests / 1284 assertions**.
 
-Installed Almanacs can now be opened from Browse into a read-only detail view sourced directly from Catalogue and Living Library. Canonical entries are grouped into deterministic content families, with family filtering and entry summaries showing canonical IDs, names, descriptions and tags without introducing frontend content persistence or reinterpreting mechanics.
+The Ready / Degraded / Blocked badge now opens a read-only explanation backed directly by the Living Library compatibility report. The Reading Room exposes existing issue severity, stable code, message and subject without introducing frontend compatibility rules or changing activation state.
 
-See `docs/WHAT-EXACTLY-IS-IN-THIS-BOOK.md`.
-
+See `docs/LIBRARIAN-RAISES-AN-EYEBROW.md`.
 
 ## Development
 

@@ -161,3 +161,8 @@ The shortcode host page is now explicitly non-cacheable because it displays muta
 ## Phase V.4
 
 Browse cards can now open a read-only Almanac detail surface with deterministic content-family views and canonical entry summaries. See `WHAT-EXACTLY-IS-IN-THIS-BOOK.md`.
+
+
+## Phase V.5
+
+Ready / Degraded / Blocked badges now link to a human-readable compatibility section inside the open Almanac. The section is backed by the existing Living Library report and remains diagnostic-only. See `LIBRARIAN-RAISES-AN-EYEBROW.md`.

@@ -192,3 +192,8 @@ Successful activation changes invalidate the remembered WordPress host page thro
 ### Phase V.4 detail boundary
 
 `ExpansionDetail` is a read model only. It groups `CatalogueEntry` objects returned by the canonical Catalogue and decorates Expansion identity with current Living Library labels. No content is copied into frontend persistence, and no mechanics are interpreted by the Reading Room.
+
+
+### Phase V.5 compatibility diagnostics boundary
+
+`CompatibilityInspector` and `CompatibilityReport` remain the sole compatibility semantics. `Frontend\ReadingRoom\CompatibilityDiagnostics` is a presentation adapter only: it derives labels/counts and exposes the existing issues without mutation. Ready, degraded, and blocked never implicitly change Living Library activation.

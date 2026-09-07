@@ -595,3 +595,113 @@
     .gmrexp-reading-room__family-heading,
     .gmrexp-reading-room__content-entry-heading { flex-direction: column; }
 }
+
+/* Phase V.5 — The Librarian Raises an Eyebrow */
+.gmrexp-reading-room__compatibility {
+    color: inherit;
+    text-decoration: none;
+}
+
+a.gmrexp-reading-room__compatibility:hover {
+    text-decoration: underline;
+    text-underline-offset: .18em;
+}
+
+.gmrexp-reading-room__compatibility[data-status="ready"] { background: #edf1df; }
+.gmrexp-reading-room__compatibility[data-status="degraded"] { background: #f5e7c9; }
+.gmrexp-reading-room__compatibility[data-status="blocked"] { background: #f1d8d1; }
+
+.gmrexp-reading-room__compatibility-panel {
+    margin-top: 1.4rem;
+    padding: 1rem;
+    border: 1px solid var(--gmrexp-line);
+    border-radius: 12px;
+    background: rgba(255,250,240,.72);
+    scroll-margin-top: 1.5rem;
+}
+
+.gmrexp-reading-room__compatibility-heading,
+.gmrexp-reading-room__compatibility-issue-topline {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.gmrexp-reading-room__compatibility-heading h3 {
+    margin: .15rem 0 0;
+    font-size: 1.35rem;
+}
+
+.gmrexp-reading-room__compatibility-summary {
+    max-width: 850px;
+    line-height: 1.6;
+}
+
+.gmrexp-reading-room__compatibility-counts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .6rem;
+    margin: 1rem 0;
+    font-family: system-ui, sans-serif;
+}
+
+.gmrexp-reading-room__compatibility-counts div {
+    padding: .7rem;
+    text-align: center;
+    background: rgba(232,220,196,.35);
+    border: 1px solid var(--gmrexp-line);
+    border-radius: 10px;
+}
+
+.gmrexp-reading-room__compatibility-counts dt {
+    color: var(--gmrexp-muted);
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+.gmrexp-reading-room__compatibility-counts dd {
+    margin: .15rem 0 0;
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+.gmrexp-reading-room__compatibility-clear {
+    padding: .85rem 1rem;
+    border-left: 4px solid var(--gmrexp-line);
+    background: rgba(237,241,223,.55);
+}
+
+.gmrexp-reading-room__compatibility-clear p { margin-bottom: 0; }
+
+.gmrexp-reading-room__compatibility-issues {
+    display: grid;
+    gap: .7rem;
+    padding: 0;
+    margin: 1rem 0;
+    list-style: none;
+}
+
+.gmrexp-reading-room__compatibility-issues li {
+    padding: .9rem 1rem;
+    border: 1px solid var(--gmrexp-line);
+    border-radius: 10px;
+    background: #fffaf0;
+}
+
+.gmrexp-reading-room__compatibility-issues li[data-severity="blocking"] { border-left-width: 5px; }
+.gmrexp-reading-room__compatibility-issues li[data-severity="warning"] { border-left-width: 3px; }
+.gmrexp-reading-room__compatibility-issues h4 { margin: .4rem 0 .2rem; }
+.gmrexp-reading-room__compatibility-issues p { margin: .35rem 0 0; line-height: 1.5; }
+.gmrexp-reading-room__compatibility-issue-topline { font-family: system-ui, sans-serif; font-size: .72rem; }
+.gmrexp-reading-room__compatibility-subject { color: var(--gmrexp-muted); font-family: system-ui, sans-serif; font-size: .75rem; }
+.gmrexp-reading-room__compatibility-subject span { font-weight: 700; }
+.gmrexp-reading-room__compatibility-boundary { margin: 1rem 0 0; color: var(--gmrexp-muted); font-size: .86rem; line-height: 1.5; }
+
+@media (max-width: 620px) {
+    .gmrexp-reading-room__compatibility-heading,
+    .gmrexp-reading-room__compatibility-issue-topline { flex-direction: column; }
+    .gmrexp-reading-room__compatibility-counts { grid-template-columns: 1fr; }
+}

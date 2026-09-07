@@ -297,9 +297,9 @@ final class ReadingRoomPage
                                 <article class="gmrexp-reading-room__book">
                                     <div class="gmrexp-reading-room__book-topline">
                                         <span class="gmrexp-reading-room__pill"><?php echo $this->escHtml($expansion->active() ? 'Active' : 'Inactive'); ?></span>
-                                        <span class="gmrexp-reading-room__compatibility" data-status="<?php echo $this->escAttr($report->status()); ?>">
+                                        <a class="gmrexp-reading-room__compatibility" data-status="<?php echo $this->escAttr($report->status()); ?>" href="<?php echo $this->escAttr($this->compatibilityUrl($baseUrl, $catalogueExpansion->key())); ?>" aria-label="<?php echo $this->escAttr('Explain ' . ucfirst($report->status()) . ' compatibility for ' . $catalogueExpansion->name()); ?>">
                                             <?php echo $this->escHtml(ucfirst($report->status())); ?>
-                                        </span>
+                                        </a>
                                     </div>
                                     <h3><?php echo $this->escHtml($catalogueExpansion->name()); ?></h3>
                                     <p class="gmrexp-reading-room__version">Version <?php echo $this->escHtml($catalogueExpansion->version()); ?></p>
@@ -380,7 +380,7 @@ final class ReadingRoomPage
                 <div>
                     <p class="gmrexp-reading-room__kicker">Books upon the shelves</p>
                     <h2 id="gmrexp-browse-heading">Browse Installed Expansions</h2>
-                    <p class="gmrexp-reading-room__section-intro">A read-only view of every Almanac currently installed in the canonical Catalogue. Activation and compatibility are shown here as labels; their controls and full diagnostics belong to later Reading Room desks.</p>
+                    <p class="gmrexp-reading-room__section-intro">A read-only view of every Almanac currently installed in the canonical Catalogue. Activation controls live here, and each compatibility badge now opens the Librarian's read-only explanation inside the Almanac.</p>
                 </div>
                 <span class="gmrexp-reading-room__status"><?php echo $this->escHtml((string) count($entries)); ?> installed</span>
             </div>
@@ -402,9 +402,9 @@ final class ReadingRoomPage
                         <article class="gmrexp-reading-room__browse-book" data-expansion="<?php echo $this->escAttr($entry->key()); ?>">
                             <div class="gmrexp-reading-room__book-topline">
                                 <span class="gmrexp-reading-room__pill"><?php echo $this->escHtml($entry->active() ? 'Active' : 'Inactive'); ?></span>
-                                <span class="gmrexp-reading-room__compatibility" data-status="<?php echo $this->escAttr($entry->compatibilityStatus()); ?>">
+                                <a class="gmrexp-reading-room__compatibility" data-status="<?php echo $this->escAttr($entry->compatibilityStatus()); ?>" href="<?php echo $this->escAttr($this->compatibilityUrl($baseUrl, $entry->key())); ?>" aria-label="<?php echo $this->escAttr('Explain ' . ucfirst($entry->compatibilityStatus()) . ' compatibility for ' . $entry->name()); ?>">
                                     <?php echo $this->escHtml(ucfirst($entry->compatibilityStatus())); ?>
-                                </span>
+                                </a>
                             </div>
 
                             <div class="gmrexp-reading-room__browse-book-heading">
@@ -504,7 +504,7 @@ final class ReadingRoomPage
                 </div>
                 <div class="gmrexp-reading-room__detail-statuses">
                     <span class="gmrexp-reading-room__pill"><?php echo $this->escHtml($expansion['active'] ? 'Active' : 'Inactive'); ?></span>
-                    <span class="gmrexp-reading-room__compatibility" data-status="<?php echo $this->escAttr((string) $expansion['compatibility_status']); ?>"><?php echo $this->escHtml(ucfirst((string) $expansion['compatibility_status'])); ?></span>
+                    <a class="gmrexp-reading-room__compatibility" data-status="<?php echo $this->escAttr((string) $expansion['compatibility_status']); ?>" href="#gmrexp-compatibility-heading" aria-label="<?php echo $this->escAttr('Explain ' . ucfirst((string) $expansion['compatibility_status']) . ' compatibility'); ?>"><?php echo $this->escHtml(ucfirst((string) $expansion['compatibility_status'])); ?></a>
                 </div>
             </div>
 
@@ -531,6 +531,8 @@ final class ReadingRoomPage
                     </ul>
                 <?php endif; ?>
             </div>
+
+            <?php echo $this->renderCompatibilityDiagnostics($expansionKey); ?>
 
             <?php foreach ($visibleFamilies as $type => $entries): ?>
                 <section class="gmrexp-reading-room__family" aria-labelledby="gmrexp-family-<?php echo $this->escAttr($type); ?>">
@@ -567,6 +569,63 @@ final class ReadingRoomPage
         </section>
         <?php
         return trim((string) ob_get_clean());
+    }
+
+    private function renderCompatibilityDiagnostics(string $expansionKey): string
+    {
+        $diagnostics = new CompatibilityDiagnostics($this->library->compatibility($expansionKey));
+
+        ob_start();
+        ?>
+        <section class="gmrexp-reading-room__compatibility-panel" data-status="<?php echo $this->escAttr($diagnostics->status()); ?>" aria-labelledby="gmrexp-compatibility-heading">
+            <div class="gmrexp-reading-room__compatibility-heading">
+                <div>
+                    <p class="gmrexp-reading-room__book-label">Compatibility</p>
+                    <h3 id="gmrexp-compatibility-heading"><?php echo $this->escHtml($diagnostics->title()); ?></h3>
+                </div>
+                <span class="gmrexp-reading-room__compatibility" data-status="<?php echo $this->escAttr($diagnostics->status()); ?>"><?php echo $this->escHtml(ucfirst($diagnostics->status())); ?></span>
+            </div>
+
+            <p class="gmrexp-reading-room__compatibility-summary"><?php echo $this->escHtml($diagnostics->summary()); ?></p>
+
+            <dl class="gmrexp-reading-room__compatibility-counts">
+                <div><dt>Issues</dt><dd><?php echo $this->escHtml((string) $diagnostics->issueCount()); ?></dd></div>
+                <div><dt>Warnings</dt><dd><?php echo $this->escHtml((string) $diagnostics->warningCount()); ?></dd></div>
+                <div><dt>Blocking</dt><dd><?php echo $this->escHtml((string) $diagnostics->blockingCount()); ?></dd></div>
+            </dl>
+
+            <?php if ($diagnostics->issues() === []): ?>
+                <div class="gmrexp-reading-room__compatibility-clear">
+                    <strong>Nothing further to report.</strong>
+                    <p>The compatibility engine returned no warnings or blocking issues for this installed Almanac.</p>
+                </div>
+            <?php else: ?>
+                <ol class="gmrexp-reading-room__compatibility-issues">
+                    <?php foreach ($diagnostics->issues() as $issue): ?>
+                        <li data-severity="<?php echo $this->escAttr($issue->severity()); ?>">
+                            <div class="gmrexp-reading-room__compatibility-issue-topline">
+                                <strong><?php echo $this->escHtml($diagnostics->severityLabel($issue)); ?></strong>
+                                <code><?php echo $this->escHtml($issue->code()); ?></code>
+                            </div>
+                            <h4><?php echo $this->escHtml($diagnostics->codeLabel($issue)); ?></h4>
+                            <p><?php echo $this->escHtml($issue->message()); ?></p>
+                            <?php if ($issue->subject() !== null && $issue->subject() !== ''): ?>
+                                <p class="gmrexp-reading-room__compatibility-subject"><span>Subject</span> <code><?php echo $this->escHtml($issue->subject()); ?></code></p>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ol>
+            <?php endif; ?>
+
+            <p class="gmrexp-reading-room__compatibility-boundary"><strong>Reading Room rule:</strong> diagnostics explain compatibility; they do not automatically activate, deactivate, install, remove, or rewrite an Almanac.</p>
+        </section>
+        <?php
+        return trim((string) ob_get_clean());
+    }
+
+    public function compatibilityUrl(?string $baseUrl, string $expansionKey): string
+    {
+        return $this->expansionUrl($baseUrl, $expansionKey) . '#gmrexp-compatibility-heading';
     }
 
     public function expansionUrl(?string $baseUrl, string $expansionKey, ?string $type = null): string

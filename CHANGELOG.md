@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.5.0-alpha5 — Phase V.5: The Librarian Raises an Eyebrow
+
+- Turned Ready / Degraded / Blocked Reading Room badges into links to human-readable compatibility diagnostics.
+- Added `CompatibilityDiagnostics` as a presentation adapter over the existing `CompatibilityReport`.
+- Added Ready explanations with explicit zero-issue state.
+- Added Degraded warning presentation using existing compatibility-engine issue codes/messages/subjects.
+- Added Blocked issue presentation without automatically changing activation state.
+- Added issue, warning, and blocking counts.
+- Preserved compatibility issue ordering and canonical issue codes from the Living Library.
+- Added compatibility diagnostic links from Your Library, Browse, and open Almanac views.
+- Kept diagnostics inside the existing open-Almanac view with no new rewrite route.
+- Kept Reading Room route contract `1.0.0` and Library API `1.0.0` unchanged.
+- Added no new compatibility semantics and no content/activation/import/review/migration/publication mutation.
+- Recorded the certified Phase V.4 baseline: 529 tests / 1284 assertions.
+
 ## 0.5.0-alpha4 — Phase V.4: What Exactly Is in This Book?
 
 - Added read-only installed-Almanac detail views to the Reading Room.

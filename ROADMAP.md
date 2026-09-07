@@ -502,4 +502,26 @@ Planned sequence:
 - [x] Synthetic-only regression fixtures; no invented canonical mechanics.
 - [x] Responsive detail/family/entry styling.
 - [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 529 tests / 1284 assertions.
+
+
+## Phase V.5 — The Librarian Raises an Eyebrow
+
+- [x] Plugin version `0.5.0-alpha5`.
+- [x] Compatibility badge opens the Almanac compatibility explanation.
+- [x] Badge links available from Your Library, Browse, and open Almanac views.
+- [x] `CompatibilityDiagnostics` presentation adapter over existing `CompatibilityReport`.
+- [x] Ready explanation for reports with no compatibility issues.
+- [x] Degraded explanation for compatibility warnings.
+- [x] Blocked explanation for compatibility blocking issues.
+- [x] Issue, warning, and blocking counts.
+- [x] Existing issue severity, code, message, and subject exposed read-only.
+- [x] Canonical issue codes preserved exactly.
+- [x] Compatibility-engine issue ordering preserved.
+- [x] No automatic activation/deactivation from compatibility status.
+- [x] No installation, removal, migration, publication, or content mutation.
+- [x] No new rewrite route; Reading Room route contract remains `1.0.0`.
+- [x] Existing Library compatibility semantics remain authoritative.
+- [x] Responsive and accessible diagnostic presentation.
+- [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.
