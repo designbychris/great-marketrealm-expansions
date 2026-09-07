@@ -5,6 +5,7 @@ defined('ABSPATH') || exit;
 
 use GreatMarketrealmExpansions\Catalogue\Catalogue;
 use GreatMarketrealmExpansions\Rules\RuleEngine;
+use GreatMarketrealmExpansions\Library\Library;
 
 final class BridgeConnection
 {
@@ -24,7 +25,8 @@ final class BridgeConnection
         private array $missingOptionalCapabilities,
         private array $issues,
         private ?Catalogue $catalogue,
-        private ?RuleEngine $rules = null
+        private ?RuleEngine $rules = null,
+        private ?Library $library = null
     ) {}
 
     public function connected(): bool { return $this->catalogue !== null && $this->issues === []; }
@@ -43,6 +45,7 @@ final class BridgeConnection
     public function issues(): array { return $this->issues; }
     public function catalogue(): ?Catalogue { return $this->catalogue; }
     public function rules(): ?RuleEngine { return $this->rules; }
+    public function library(): ?Library { return $this->library; }
 
     public function supports(string $capability): bool
     {
@@ -58,6 +61,7 @@ final class BridgeConnection
             'bridge_api_version' => $this->bridgeApiVersion,
             'catalogue_api_version' => $this->catalogueApiVersion,
             'rules_api_version' => $this->rules?->apiVersion(),
+            'library_api_version' => $this->library?->apiVersion(),
             'available_capabilities' => $this->availableCapabilities,
             'negotiated_capabilities' => $this->negotiatedCapabilities,
             'missing_required_capabilities' => $this->missingRequiredCapabilities,

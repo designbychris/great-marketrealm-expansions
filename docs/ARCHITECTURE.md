@@ -109,3 +109,12 @@ Optional `rule` definitions are canonical content. They may describe scope, acti
 Adventure records are canonical book/adventure structure. They arrange chapters, sections, scenes, appendices, entry points, progression branches, and references to existing canonical content. They do not duplicate monster, NPC, hazard, treasure, rule, condition, or encounter mechanics.
 
 The party's current chapter/scene, chosen branch, completed objectives, claimed rewards, and all live session state remain consumer concerns.
+
+
+### Phase IV.1 Living Library boundary
+
+The Catalogue answers **what is installed and canonical**. The Living Library answers **which installed packs are currently active at the site/library level**.
+
+Activation never removes or rewrites Catalogue content. Packs with no explicit activation decision default to active, preserving Phase III behaviour. Production activation persistence sits behind `ActivationStore`, currently implemented with a WordPress option.
+
+Ownership, entitlement, remote marketplace availability and campaign-specific activation are intentionally outside Phase IV.1.

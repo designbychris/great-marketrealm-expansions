@@ -9,6 +9,8 @@ use GreatMarketrealmExpansions\Expansions\ExpansionPack;
 use GreatMarketrealmExpansions\Expansions\ExpansionRegistry;
 use GreatMarketrealmExpansions\Integration\Bridge;
 use GreatMarketrealmExpansions\Integration\ConsumerRegistry;
+use GreatMarketrealmExpansions\Library\InMemoryActivationStore;
+use GreatMarketrealmExpansions\Library\Library;
 use PHPUnit\Framework\TestCase;
 
 final class CatalogueAdminPageTest extends TestCase
@@ -31,6 +33,28 @@ final class CatalogueAdminPageTest extends TestCase
         self::assertSame(2, $summary['content_count']);
         self::assertSame(['feat' => 1, 'monster' => 1], $summary['content_types']);
         self::assertCount(2, $catalogue->allContent());
+    }
+
+
+    public function test_summary_reports_library_api_and_active_pack_count(): void
+    {
+        $expansions = new ExpansionRegistry();
+        $expansions->add(new ExpansionPack('alpha-pack', 'Alpha Pack'));
+        $expansions->add(new ExpansionPack('beta-pack', 'Beta Pack'));
+        $catalogue = new Catalogue($expansions, new ContentRegistry());
+        $library = new Library($catalogue, new InMemoryActivationStore(['beta-pack' => false]));
+        $page = new CatalogueAdminPage(
+            $catalogue,
+            new Bridge($catalogue, new ConsumerRegistry(), null, $library),
+            null,
+            $library
+        );
+
+        $summary = $page->summary();
+
+        self::assertSame('1.0.0', $summary['library_api_version']);
+        self::assertSame(2, $summary['expansion_count']);
+        self::assertSame(1, $summary['active_expansion_count']);
     }
 
     public function test_menu_slug_is_stable(): void

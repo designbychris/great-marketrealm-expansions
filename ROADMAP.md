@@ -32,6 +32,12 @@
 
 Expansion catalogue management, entitlement/availability rules if ever required, pack activation, compatibility reporting, Google Docs/sourcebook-to-Almanac import/export, reviewed transformations and content migrations.
 
+- **IV.1 — The Keeper Marks the Active Shelves**: site/library-level installed-vs-active pack state, Library API and Keeper activation controls. ✅
+- **IV.2 — The Librarian Checks the Labels**: compatibility reporting and dependency diagnostics.
+- **IV.3 — The Books Arrive by Owl, Cart, or Google Doc**: sourcebook/import staging and provenance-preserving transformations.
+- **IV.4 — The Keeper Reads Before Shelving**: review/approval workflow for transformed Almanac content.
+- **IV.5 — Moving Shelves Without Losing the Books**: content/schema migrations and version-transition tooling.
+
 ### Architectural rule
 
 GMREXP owns expansion content and its meaning. Companion owns character/user workflows. Tabletop owns live play/VTT state. Consumers should reference canonical expansion IDs rather than duplicate expansion mechanics.
@@ -221,5 +227,24 @@ GMREXP owns expansion content and its meaning. Companion owns character/user wor
 - [x] Stable keyed appendices and canonical reference containers.
 - [x] Open progression modes with keyed branching paths and nested rules.
 - [x] Clear separation between canonical adventure structure and live campaign/session progress.
+- [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 313 tests / 755 assertions.
+
+
+## Phase IV.1 — The Keeper Marks the Active Shelves
+
+- [x] Library API `1.0.0`.
+- [x] Stable installed-versus-active expansion distinction.
+- [x] Backwards-compatible default: newly observed installed packs are active until explicitly disabled.
+- [x] Pluggable `ActivationStore` boundary.
+- [x] WordPress-option production activation persistence.
+- [x] In-memory activation store for isolated tests and future alternate scopes.
+- [x] Active and inactive expansion views.
+- [x] Active-content view without mutating the canonical Catalogue.
+- [x] Public `library()` helper and Kernel service.
+- [x] Additive Library capability negotiation through Bridge API `1.0.0`.
+- [x] Backwards-compatible Bridge construction when no Library is supplied.
+- [x] Keeper Catalogue activation status, counts and secure Activate/Deactivate controls.
+- [x] No invented ownership, entitlement, marketplace or campaign-scoping model.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

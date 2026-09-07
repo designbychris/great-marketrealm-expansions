@@ -6,16 +6,23 @@ defined('ABSPATH') || exit;
 use GreatMarketrealmExpansions\Catalogue\Catalogue;
 use GreatMarketrealmExpansions\Integration\Bridge;
 use GreatMarketrealmExpansions\Rules\RuleEngine;
+use GreatMarketrealmExpansions\Library\Library;
 
 final class CatalogueAdminPage
 {
     public const MENU_SLUG = 'great-marketrealm-expansions';
 
     private RuleEngine $rules;
+    private ?Library $library;
 
-    public function __construct(private Catalogue $catalogue, private Bridge $bridge, ?RuleEngine $rules = null)
-    {
+    public function __construct(
+        private Catalogue $catalogue,
+        private Bridge $bridge,
+        ?RuleEngine $rules = null,
+        ?Library $library = null
+    ) {
         $this->rules = $rules ?? new RuleEngine();
+        $this->library = $library;
     }
 
     public function registerMenu(): void
@@ -50,10 +57,45 @@ final class CatalogueAdminPage
             'catalogue_api_version' => $this->catalogue->apiVersion(),
             'bridge_api_version' => $this->bridge->apiVersion(),
             'rules_api_version' => $this->rules->apiVersion(),
+            'library_api_version' => $this->library?->apiVersion(),
             'expansion_count' => count($this->catalogue->expansions()),
+            'active_expansion_count' => $this->library === null ? count($this->catalogue->expansions()) : count($this->library->activeExpansions()),
             'content_count' => count($entries),
             'content_types' => $types,
         ];
+    }
+
+
+    public function handleActivation(): void
+    {
+        if ($this->library === null) {
+            return;
+        }
+
+        if (function_exists('current_user_can') && !current_user_can('manage_options')) {
+            if (function_exists('wp_die')) {
+                wp_die('You do not have permission to manage Great MarketRealm expansion activation.');
+            }
+            return;
+        }
+
+        if (function_exists('check_admin_referer')) {
+            check_admin_referer('gmrexp_set_expansion_activation');
+        }
+
+        $key = isset($_POST['expansion']) && is_string($_POST['expansion'])
+            ? sanitize_key(wp_unslash($_POST['expansion']))
+            : '';
+        $active = isset($_POST['active']) && (string) $_POST['active'] === '1';
+
+        if ($key !== '' && $this->library->isInstalled($key)) {
+            $this->library->setActive($key, $active);
+        }
+
+        if (function_exists('wp_safe_redirect') && function_exists('admin_url')) {
+            wp_safe_redirect(admin_url('admin.php?page=' . self::MENU_SLUG . '&gmrexp_activation_updated=1'));
+            exit;
+        }
     }
 
     public function render(): void
@@ -71,9 +113,9 @@ final class CatalogueAdminPage
         ?>
         <div class="wrap gmrexp-admin">
             <h1>Great MarketRealm Expansions</h1>
-            <p class="description">The Keeper's read-only view of installed expansion packs and their canonical catalogue content.</p>
+            <p class="description">The Keeper's Living Library of installed expansion packs, activation state, and canonical catalogue content.</p>
 
-            <div class="notice notice-info inline"><p><strong>Read-only catalogue:</strong> expansion content is loaded from trusted Almanac files. There are no editable settings on this screen.</p></div>
+            <div class="notice notice-info inline"><p><strong>Canonical catalogue:</strong> expansion content remains read-only and is loaded from trusted Almanac files. Library activation only controls whether consumers should treat a loaded pack as active.</p></div>
 
             <h2>Library Status</h2>
             <table class="widefat striped" style="max-width:900px">
@@ -82,24 +124,41 @@ final class CatalogueAdminPage
                     <tr><th scope="row">Catalogue API</th><td><?php echo esc_html((string) $summary['catalogue_api_version']); ?></td></tr>
                     <tr><th scope="row">Bridge API</th><td><?php echo esc_html((string) $summary['bridge_api_version']); ?></td></tr>
                     <tr><th scope="row">Rules API</th><td><?php echo esc_html((string) $summary['rules_api_version']); ?></td></tr>
+                    <tr><th scope="row">Library API</th><td><?php echo esc_html((string) ($summary['library_api_version'] ?? 'unavailable')); ?></td></tr>
                     <tr><th scope="row">Installed expansion packs</th><td><?php echo esc_html((string) $summary['expansion_count']); ?></td></tr>
+                    <tr><th scope="row">Active expansion packs</th><td><?php echo esc_html((string) $summary['active_expansion_count']); ?></td></tr>
                     <tr><th scope="row">Catalogue entries</th><td><?php echo esc_html((string) $summary['content_count']); ?></td></tr>
                 </tbody>
             </table>
 
             <h2>Installed Almanacs</h2>
             <table class="widefat striped" style="max-width:1100px">
-                <thead><tr><th>Name</th><th>Key</th><th>Version</th><th>Description</th></tr></thead>
+                <thead><tr><th>Name</th><th>Key</th><th>Version</th><th>Status</th><th>Description</th><th>Library</th></tr></thead>
                 <tbody>
                 <?php if ($expansions === []): ?>
-                    <tr><td colspan="4">No expansion packs are currently loaded.</td></tr>
+                    <tr><td colspan="6">No expansion packs are currently loaded.</td></tr>
                 <?php else: ?>
                     <?php foreach ($expansions as $expansion): ?>
+                        <?php $is_active = $this->library === null ? true : $this->library->isActive($expansion->key()); ?>
                         <tr>
                             <td><strong><?php echo esc_html($expansion->name()); ?></strong></td>
                             <td><code><?php echo esc_html($expansion->key()); ?></code></td>
                             <td><?php echo esc_html($expansion->version()); ?></td>
+                            <td><strong><?php echo esc_html($is_active ? 'Active' : 'Inactive'); ?></strong></td>
                             <td><?php echo esc_html($expansion->description()); ?></td>
+                            <td>
+                                <?php if ($this->library !== null): ?>
+                                    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+                                        <input type="hidden" name="action" value="gmrexp_set_expansion_activation">
+                                        <input type="hidden" name="expansion" value="<?php echo esc_attr($expansion->key()); ?>">
+                                        <input type="hidden" name="active" value="<?php echo $is_active ? '0' : '1'; ?>">
+                                        <?php if (function_exists('wp_nonce_field')) { wp_nonce_field('gmrexp_set_expansion_activation'); } ?>
+                                        <button type="submit" class="button"><?php echo esc_html($is_active ? 'Deactivate' : 'Activate'); ?></button>
+                                    </form>
+                                <?php else: ?>
+                                    <span aria-label="Activation unavailable">&mdash;</span>
+                                <?php endif; ?>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>

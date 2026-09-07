@@ -10,6 +10,7 @@ use GreatMarketrealmExpansions\Content\Types\ContentTypeCatalogue;
 use GreatMarketrealmExpansions\Expansions\ExpansionRegistry;
 use GreatMarketrealmExpansions\Expansions\Loading\ExpansionFileLoader;
 use GreatMarketrealmExpansions\Integration\Bridge;
+use GreatMarketrealmExpansions\Library\Library;
 use GreatMarketrealmExpansions\Rules\RuleEngine;
 
 function expansions(): ExpansionRegistry
@@ -66,4 +67,11 @@ function rules(): RuleEngine
     $kernel = Kernel::instance();
     $kernel->boot();
     return $kernel->rules();
+}
+
+function library(): Library
+{
+    $kernel = Kernel::instance();
+    $kernel->boot();
+    return $kernel->library();
 }

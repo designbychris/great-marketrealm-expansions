@@ -7,6 +7,8 @@ use GreatMarketrealmExpansions\Expansions\ExpansionRegistry;
 use GreatMarketrealmExpansions\Integration\Bridge;
 use GreatMarketrealmExpansions\Integration\Consumer;
 use GreatMarketrealmExpansions\Integration\ConsumerRegistry;
+use GreatMarketrealmExpansions\Library\InMemoryActivationStore;
+use GreatMarketrealmExpansions\Library\Library;
 use PHPUnit\Framework\TestCase;
 
 final class BridgeTest extends TestCase
@@ -122,6 +124,39 @@ final class BridgeTest extends TestCase
         self::assertNotNull($connection->rules());
         self::assertSame('1.0.0', $connection->rules()?->apiVersion());
         self::assertSame('1.0.0', $connection->toArray()['rules_api_version']);
+    }
+
+
+    public function test_bridge_can_expose_living_library_capabilities_and_service(): void
+    {
+        $catalogue = new Catalogue(new ExpansionRegistry(), new ContentRegistry());
+        $library = new Library($catalogue, new InMemoryActivationStore());
+        $bridge = new Bridge($catalogue, new ConsumerRegistry(), null, $library);
+
+        self::assertTrue($bridge->supports('library.activation.read'));
+
+        $connection = $bridge->connect(new Consumer(
+            'library-client',
+            'Library Client',
+            '1.0.0',
+            '1.0.0',
+            '1.0.0',
+            ['library.activation.read']
+        ));
+
+        self::assertTrue($connection->connected());
+        self::assertSame('1.0.0', $connection->library()?->apiVersion());
+        self::assertSame('1.0.0', $connection->toArray()['library_api_version']);
+    }
+
+    public function test_bridge_without_library_keeps_legacy_constructor_compatible(): void
+    {
+        $bridge = $this->bridge();
+
+        self::assertFalse($bridge->supports('library.activation.read'));
+        self::assertNull(
+            $bridge->connect(new Consumer('legacy-client', 'Legacy Client', '1.0.0'))->library()
+        );
     }
 
 }

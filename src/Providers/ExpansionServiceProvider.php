@@ -17,6 +17,9 @@ use GreatMarketrealmExpansions\Expansions\ExpansionRegistry;
 use GreatMarketrealmExpansions\Expansions\Loading\ExpansionFileLoader;
 use GreatMarketrealmExpansions\Integration\Bridge;
 use GreatMarketrealmExpansions\Integration\ConsumerRegistry;
+use GreatMarketrealmExpansions\Library\ActivationStore;
+use GreatMarketrealmExpansions\Library\Library;
+use GreatMarketrealmExpansions\Library\WordPressOptionActivationStore;
 use GreatMarketrealmExpansions\Rules\RuleEngine;
 
 final class ExpansionServiceProvider extends ServiceProvider
@@ -48,10 +51,16 @@ final class ExpansionServiceProvider extends ServiceProvider
             $container->get(Catalogue::class)
         ));
         $this->container->singleton(ConsumerRegistry::class, static fn (Container $container): ConsumerRegistry => new ConsumerRegistry());
+        $this->container->singleton(ActivationStore::class, static fn (Container $container): ActivationStore => new WordPressOptionActivationStore());
+        $this->container->singleton(Library::class, static fn (Container $container): Library => new Library(
+            $container->get(Catalogue::class),
+            $container->get(ActivationStore::class)
+        ));
         $this->container->singleton(Bridge::class, static fn (Container $container): Bridge => new Bridge(
             $container->get(Catalogue::class),
             $container->get(ConsumerRegistry::class),
-            $container->get(RuleEngine::class)
+            $container->get(RuleEngine::class),
+            $container->get(Library::class)
         ));
         $this->container->singleton(ExpansionFileLoader::class, static fn (Container $container): ExpansionFileLoader => new ExpansionFileLoader(
             $container->get(ExpansionRegistry::class),
@@ -61,7 +70,8 @@ final class ExpansionServiceProvider extends ServiceProvider
         $this->container->singleton(CatalogueAdminPage::class, static fn (Container $container): CatalogueAdminPage => new CatalogueAdminPage(
             $container->get(Catalogue::class),
             $container->get(Bridge::class),
-            $container->get(RuleEngine::class)
+            $container->get(RuleEngine::class),
+            $container->get(Library::class)
         ));
     }
 
@@ -73,6 +83,7 @@ final class ExpansionServiceProvider extends ServiceProvider
 
             $admin = $this->container->get(CatalogueAdminPage::class);
             add_action('admin_menu', static function () use ($admin): void { $admin->registerMenu(); });
+            add_action('admin_post_gmrexp_set_expansion_activation', static function () use ($admin): void { $admin->handleActivation(); });
         }
     }
 }

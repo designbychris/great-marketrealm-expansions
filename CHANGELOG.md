@@ -11,6 +11,22 @@
 
 
 
+
+## 0.4.0-alpha1 — Phase IV.1: The Keeper Marks the Active Shelves
+
+- Began Phase IV — The Living Library.
+- Added Library API `1.0.0` and public `library()` access.
+- Added installed-versus-active expansion state without mutating the canonical Catalogue.
+- Added backwards-compatible default activation for installed packs with no saved decision.
+- Added pluggable activation storage with WordPress-option persistence and an in-memory test implementation.
+- Added active/inactive expansion views and active-content filtering.
+- Added Library capability negotiation and connected Library access through Bridge API `1.0.0`.
+- Preserved backwards compatibility for Bridge consumers that do not use the Living Library.
+- Upgraded the Keeper Catalogue with Library status, active-pack counts, and secure Activate/Deactivate controls.
+- Deliberately deferred ownership, entitlement, marketplace and campaign-specific activation semantics.
+- Recorded the certified Phase III.7 baseline: 313 tests / 755 assertions.
+- Kept Catalogue API, Bridge API, and Rules API at `1.0.0`.
+
 ## 0.3.0-alpha7 — Phase III.7: The Adventure Shelf
 
 - Added a dedicated adventure/sourcebook schema.

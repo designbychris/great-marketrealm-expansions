@@ -5,6 +5,7 @@ defined('ABSPATH') || exit;
 
 use GreatMarketrealmExpansions\Catalogue\Catalogue;
 use GreatMarketrealmExpansions\Rules\RuleEngine;
+use GreatMarketrealmExpansions\Library\Library;
 use InvalidArgumentException;
 
 final class Bridge
@@ -21,10 +22,16 @@ final class Bridge
     ];
 
     private RuleEngine $rules;
+    private ?Library $library;
 
-    public function __construct(private Catalogue $catalogue, private ConsumerRegistry $consumers, ?RuleEngine $rules = null)
-    {
+    public function __construct(
+        private Catalogue $catalogue,
+        private ConsumerRegistry $consumers,
+        ?RuleEngine $rules = null,
+        ?Library $library = null
+    ) {
         $this->rules = $rules ?? new RuleEngine();
+        $this->library = $library;
     }
 
     public function apiVersion(): string { return self::API_VERSION; }
@@ -35,7 +42,8 @@ final class Bridge
         $capabilities = array_values(array_unique(array_merge(
             self::CAPABILITIES,
             $this->catalogue->capabilities(),
-            $this->rules->capabilities()
+            $this->rules->capabilities(),
+            $this->library?->capabilities() ?? []
         )));
         sort($capabilities);
         return $capabilities;
@@ -94,7 +102,8 @@ final class Bridge
             $missingOptional,
             $issues,
             $issues === [] ? $this->catalogue : null,
-            $issues === [] ? $this->rules : null
+            $issues === [] ? $this->rules : null,
+            $issues === [] ? $this->library : null
         );
     }
 

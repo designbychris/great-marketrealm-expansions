@@ -6,15 +6,16 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
-**Phase II.1 — Peoples Beyond the Pantry**
+**Phase IV.1 — The Keeper Marks the Active Shelves**
 
-Phase I is complete. Phase II begins by teaching GMREXP how to describe a complete playable race or subrace as structured expansion data without race-specific PHP. The race schema now understands creature type, fixed-or-choice size, movement speeds, languages, traits, ability-score rules, language choices, proficiencies, resistances, senses and character-generation choices. Subraces identify a canonical parent race and supply their own traits plus optional overrides.
+Phase III Keeper Content is complete and certified at **313 tests / 755 assertions**.
 
-The first Phase II push remains canon-neutral: production code defines the format, while PHPUnit fixtures prove it. Real Great MarketRealm race mechanics should be entered only from an approved canonical source.
+Phase IV begins the **Living Library**: GMREXP can now distinguish between expansion packs that are installed in the canonical Catalogue and packs that are currently active for consumers. Installed packs default to active for backwards compatibility, activation is persisted behind a pluggable store, and the Keeper Catalogue provides secure Activate/Deactivate controls.
 
-A new read-only **MarketRealm Expansions** wp-admin page also provides a visible Keeper's Catalogue showing loaded Almanacs, API versions, content counts and canonical IDs. It is diagnostic/catalogue UI, not an editor.
+The canonical Catalogue remains complete and read-only regardless of activation state. Ownership, entitlement, marketplace availability, and campaign-specific activation are deliberately not invented in this phase.
 
-See `docs/PLAYABLE-RACES.md`, `docs/ADMIN-CATALOGUE.md`, `docs/INTEGRATION-BRIDGE.md`, `docs/CATALOGUE-API.md` and `docs/ALMANAC-FORMAT.md`.
+See `docs/LIVING-LIBRARY.md`.
+
 
 ## Development
 
