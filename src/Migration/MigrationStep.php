@@ -29,7 +29,7 @@ final class MigrationStep
             throw new InvalidArgumentException('Migration steps require id, content type, from version, and to version.');
         }
 
-        if (version_compare($this->toVersion, $this->fromVersion, '<=')) {
+        if (MigrationVersion::compare($this->toVersion, $this->fromVersion) <= 0) {
             throw new InvalidArgumentException('Migration steps must move strictly forward in version order.');
         }
 

@@ -55,11 +55,11 @@ final class MigrationService
             throw new MigrationException('Migration planning requires content type, from version, and to version.');
         }
 
-        if (version_compare($toVersion, $fromVersion, '<')) {
+        if (MigrationVersion::compare($toVersion, $fromVersion) < 0) {
             throw new MigrationException('Migration planning is forward-only; downgrade paths are not supported.');
         }
 
-        if (version_compare($fromVersion, $toVersion, '==')) {
+        if (MigrationVersion::equal($fromVersion, $toVersion)) {
             return new MigrationPlan($contentType, $fromVersion, $toVersion, []);
         }
 
@@ -236,16 +236,16 @@ final class MigrationService
         $visited[$visitKey] = true;
 
         foreach ($this->registry->forType($contentType) as $step) {
-            if (!version_compare($step->fromVersion(), $currentVersion, '==')) {
+            if (!MigrationVersion::equal($step->fromVersion(), $currentVersion)) {
                 continue;
             }
 
-            if (version_compare($step->toVersion(), $targetVersion, '>')) {
+            if (MigrationVersion::compare($step->toVersion(), $targetVersion) > 0) {
                 continue;
             }
 
             $nextPath = [...$path, $step];
-            if (version_compare($step->toVersion(), $targetVersion, '==')) {
+            if (MigrationVersion::equal($step->toVersion(), $targetVersion)) {
                 $paths[] = $nextPath;
                 continue;
             }

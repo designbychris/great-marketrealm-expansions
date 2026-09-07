@@ -19,8 +19,8 @@ final class MigrationRegistry
         foreach ($this->steps as $existing) {
             if (
                 $existing->contentType() === $step->contentType()
-                && version_compare($existing->fromVersion(), $step->fromVersion(), '==')
-                && version_compare($existing->toVersion(), $step->toVersion(), '==')
+                && MigrationVersion::equal($existing->fromVersion(), $step->fromVersion())
+                && MigrationVersion::equal($existing->toVersion(), $step->toVersion())
             ) {
                 throw new InvalidArgumentException(sprintf(
                     'Migration route "%s" %s -> %s is already registered.',
