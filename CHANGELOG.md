@@ -13,6 +13,24 @@
 
 
 
+
+## 0.4.0-alpha3 — Phase IV.3: The Books Arrive by Owl, Cart, or Google Doc
+
+- Added Import API `1.0.0`.
+- Added non-executable structured-document and JSON staging.
+- Added source identity, source context and protected provenance stamping.
+- Added canonical schema validation for staged external definitions.
+- Added stable import issue codes, warning/error severity, review flags and serialisation.
+- Added explicit ambiguity reporting without guessing missing content types.
+- Refused to generate missing canonical keys from source titles.
+- Added duplicate staged-identity detection and deterministic staging.
+- Added public `importer()` access through the Kernel/service container.
+- Added Import API visibility to Keeper diagnostics.
+- Kept staging separate from publication: no Catalogue, activation or Almanac mutation occurs.
+- Preserved the future Google Docs integration as a source-specific adapter rather than a runtime dependency.
+- Recorded the certified Phase IV.2 baseline: 351 tests / 843 assertions.
+- Kept Catalogue API, Bridge API, Rules API and Library API at `1.0.0`.
+
 ## 0.4.0-alpha2 — Phase IV.2: The Librarian Checks the Labels
 
 - Added ready/degraded/blocked Living Library compatibility reports.

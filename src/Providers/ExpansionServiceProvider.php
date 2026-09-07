@@ -17,6 +17,7 @@ use GreatMarketrealmExpansions\Expansions\ExpansionRegistry;
 use GreatMarketrealmExpansions\Expansions\Loading\ExpansionFileLoader;
 use GreatMarketrealmExpansions\Integration\Bridge;
 use GreatMarketrealmExpansions\Integration\ConsumerRegistry;
+use GreatMarketrealmExpansions\Import\ImportService;
 use GreatMarketrealmExpansions\Library\ActivationStore;
 use GreatMarketrealmExpansions\Library\Library;
 use GreatMarketrealmExpansions\Library\WordPressOptionActivationStore;
@@ -42,6 +43,9 @@ final class ExpansionServiceProvider extends ServiceProvider
 
         $this->container->singleton(RuleEngine::class, static fn (Container $container): RuleEngine => new RuleEngine());
         $this->container->singleton(ContentValidator::class, static fn (Container $container): ContentValidator => new ContentValidator($container->get(SchemaRegistry::class)));
+        $this->container->singleton(ImportService::class, static fn (Container $container): ImportService => new ImportService(
+            $container->get(ContentValidator::class)
+        ));
         $this->container->singleton(ContentRegistry::class, static fn (Container $container): ContentRegistry => new ContentRegistry($container->get(ContentValidator::class)));
         $this->container->singleton(Catalogue::class, static fn (Container $container): Catalogue => new Catalogue(
             $container->get(ExpansionRegistry::class),
@@ -71,7 +75,8 @@ final class ExpansionServiceProvider extends ServiceProvider
             $container->get(Catalogue::class),
             $container->get(Bridge::class),
             $container->get(RuleEngine::class),
-            $container->get(Library::class)
+            $container->get(Library::class),
+            $container->get(ImportService::class)
         ));
     }
 

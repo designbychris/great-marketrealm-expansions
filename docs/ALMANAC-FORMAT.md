@@ -112,3 +112,12 @@ Manifests may optionally declare Living Library diagnostics:
 These values are diagnostic metadata. The loader preserves them on the expansion pack; the Living Library evaluates them after installation.
 
 See `docs/LIBRARY-COMPATIBILITY.md` for supported constraint syntax, required/optional dependency behaviour, conflicts, and report states.
+
+
+## Phase IV.3 external import boundary
+
+External source material does not use the trusted PHP Almanac format directly.
+
+Phase IV.3 introduces a non-executable structured staging format and JSON entry point. Source-specific adapters — including a future Google Docs adapter — transform source material into that intermediate representation. The Import API then stamps protected provenance and validates staged records through the canonical schema system.
+
+Staging does not publish to the Catalogue. See `docs/IMPORT-STAGING.md`.

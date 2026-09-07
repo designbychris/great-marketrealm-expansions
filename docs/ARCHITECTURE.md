@@ -125,3 +125,10 @@ Ownership, entitlement, remote marketplace availability and campaign-specific ac
 Expansion dependency, conflict, and consumer-version declarations are pack metadata interpreted by the Living Library. Compatibility evaluation produces deterministic `ready`, `degraded`, or `blocked` reports with stable diagnostic codes.
 
 Compatibility is deliberately diagnostic. The inspector never mutates activation state, unloads packs, or rewrites canonical content. Consumer versions are evaluated only when explicitly supplied; the Library does not guess sibling-plugin installations or versions.
+
+
+### Phase IV.3 import staging boundary
+
+External documents do not become Catalogue content directly. Source-specific adapters produce a non-executable structured import document; Import API `1.0.0` stamps protected provenance, validates each staged definition through the canonical schema pipeline, surfaces ambiguity and returns a reviewable result.
+
+The Import API does not publish, activate, install or overwrite expansion content. Google Docs is therefore an upstream source adapter concern rather than a gameplay/runtime dependency.

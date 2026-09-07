@@ -34,7 +34,7 @@ Expansion catalogue management, entitlement/availability rules if ever required,
 
 - **IV.1 — The Keeper Marks the Active Shelves**: site/library-level installed-vs-active pack state, Library API and Keeper activation controls. ✅
 - **IV.2 — The Librarian Checks the Labels**: compatibility reporting and dependency diagnostics. ✅
-- **IV.3 — The Books Arrive by Owl, Cart, or Google Doc**: sourcebook/import staging and provenance-preserving transformations.
+- **IV.3 — The Books Arrive by Owl, Cart, or Google Doc**: sourcebook/import staging and provenance-preserving transformations. ✅
 - **IV.4 — The Keeper Reads Before Shelving**: review/approval workflow for transformed Almanac content.
 - **IV.5 — Moving Shelves Without Losing the Books**: content/schema migrations and version-transition tooling.
 
@@ -268,4 +268,28 @@ GMREXP owns expansion content and its meaning. Companion owns character/user wor
 - [x] Keeper Catalogue ready/degraded/blocked counts and per-pack diagnostics.
 - [x] Diagnostic-only behaviour: no automatic activation mutation.
 - [x] Almanac manifest documentation and regression coverage.
+- [x] Server-side PHPUnit certification — 351 tests / 843 assertions.
+
+
+## Phase IV.3 — The Books Arrive by Owl, Cart, or Google Doc
+
+- [x] Import API `1.0.0`.
+- [x] Non-executable structured source-document staging.
+- [x] Non-executable JSON staging entry point.
+- [x] Stable source identity: type, ID, title, version and metadata.
+- [x] Protected import provenance stamping.
+- [x] Preservation of source-provided provenance and review context.
+- [x] Canonical schema validation for staged definitions.
+- [x] Stable import warning/error codes.
+- [x] Explicit Keeper-review flags.
+- [x] Ambiguous candidate-type reporting without guessing.
+- [x] Missing content types remain unresolved instead of inferred.
+- [x] Missing canonical keys remain unresolved instead of generated from titles.
+- [x] Duplicate staged-identity detection.
+- [x] Deterministic staging for identical source documents.
+- [x] Public `importer()` helper and Kernel service.
+- [x] Import API visibility in Keeper diagnostics.
+- [x] No Catalogue mutation, activation mutation or runtime Google Docs dependency.
+- [x] Google Docs remains a future source adapter into the same neutral staging format.
+- [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

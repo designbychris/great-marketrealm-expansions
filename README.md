@@ -6,13 +6,15 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
-**Phase IV.2 — The Librarian Checks the Labels**
+**Phase IV.3 — The Books Arrive by Owl, Cart, or Google Doc**
 
-Phase IV.1 is certified at **328 tests / 795 assertions**.
+Phase IV.2 is certified at **351 tests / 843 assertions**.
 
-The Living Library can now evaluate expansion dependencies, optional integrations, conflicts, and declared consumer-version requirements. Every installed pack receives a diagnostic state of **ready**, **degraded**, or **blocked** without automatically changing its activation state.
+GMREXP now has Import API `1.0.0`: a safe staging layer for external sourcebooks, reviewed exports and future Google Docs transformations. External source material is transformed into a non-executable structured representation, stamped with protected provenance, validated through the canonical schemas, and returned as a reviewable staging result.
 
-See `docs/LIBRARY-COMPATIBILITY.md` and `docs/LIVING-LIBRARY.md`.
+Nothing is published directly to the Catalogue in this phase. Ambiguity is surfaced rather than guessed.
+
+See `docs/IMPORT-STAGING.md`.
 
 
 ## Development
@@ -96,3 +98,8 @@ Phase III.7 adds whole-adventure/sourcebook structure with entry points, chapter
 ### Library Compatibility
 
 Phase IV.2 adds dependency, conflict, and consumer-version diagnostics to the Living Library. See `docs/LIBRARY-COMPATIBILITY.md`.
+
+
+### Import Staging
+
+Phase IV.3 adds the neutral sourcebook/Google-Docs staging boundary and Import API `1.0.0`. See `docs/IMPORT-STAGING.md`.
