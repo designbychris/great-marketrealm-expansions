@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.0-alpha3.1 — Phase V.3A: The Keeper Turns the Key, the Sign Refuses to Change
+
+- Fixed stale activation labels on the plain Reading Room shortcode host page.
+- Marked the remembered Reading Room host dynamic during early `template_redirect`.
+- Marked shortcode responses with the standard `DONOTCACHEPAGE` boundary.
+- Added no-cache headers when response headers remain available.
+- Invalidated the remembered WordPress host page after successful activation mutations.
+- Used `clean_post_cache()` with a WordPress object-cache fallback.
+- Added vendor-neutral Reading Room dynamic/activation-changed hooks for additional cache integrations.
+- Kept Living Library/ActivationStore as the single activation-state authority.
+- Changed no route, Catalogue, compatibility, import, review, migration or publication semantics.
+- Recorded the certified Phase V.3 baseline: 503 tests / 1245 assertions.
+
 ## 0.5.0-alpha3 — Phase V.3: The Keeper Turns the Key
 
 - Added front-end Activate/Deactivate controls to Reading Room Browse cards.

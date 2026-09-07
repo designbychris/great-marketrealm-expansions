@@ -6,15 +6,15 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
-**Phase V.3 — The Keeper Turns the Key**
+**Phase V.3A — The Keeper Turns the Key, the Sign Refuses to Change**
 
-Phase V.2A is certified at **491 tests / 1226 assertions**.
+Phase V.3 is certified at **503 tests / 1245 assertions**.
 
-The Reading Room Browse desk now has secure front-end Activate/Deactivate controls backed directly by the existing Living Library `setActive()` contract. Deactivation keeps the Expansion installed and canonical; it only changes whether consumers should currently treat it as active.
+The Reading Room host page is now explicitly dynamic so its Library overview cannot safely retain stale activation labels. GMREXP marks the shortcode host with the standard `DONOTCACHEPAGE` boundary, emits no-cache headers when possible, and invalidates the remembered WordPress host page through `clean_post_cache()` after a successful Activate/Deactivate action.
 
-The control uses the existing Keeper capability and WordPress nonce protection and returns the Keeper to the Browse desk after the change.
+Vendor-neutral extension hooks are also available for installations with additional caching layers.
 
-See `docs/KEEPER-TURNS-THE-KEY.md`.
+See `docs/THE-SIGN-REFUSES-TO-CHANGE.md`.
 
 
 ## Development

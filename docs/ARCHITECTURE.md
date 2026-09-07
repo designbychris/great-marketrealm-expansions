@@ -180,3 +180,10 @@ Legacy virtual routes remain fallback-compatible; this hotfix changes no Catalog
 The Reading Room now exposes a secure WordPress POST adapter over `Library::setActive()`. The frontend does not own activation state; `ActivationStore` remains the persistence boundary and Catalogue remains complete regardless of active/inactive status.
 
 Deactivating a pack changes consumer availability only. Canonical content identity and installed records are untouched.
+
+
+### Phase V.3A cache-coherency boundary
+
+The Reading Room host page contains dynamic Living Library state and must not be treated as immutable page HTML. Once the shortcode host is known, GMREXP marks that page `DONOTCACHEPAGE` during early `template_redirect`; shortcode rendering applies the same boundary for the first request.
+
+Successful activation changes invalidate the remembered WordPress host page through `clean_post_cache()` (or the object-cache fallback) while leaving `ActivationStore` as the sole state authority. Optional hooks allow installation-specific cache layers to participate without introducing a core dependency on any cache vendor.

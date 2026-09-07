@@ -455,4 +455,24 @@ Planned sequence:
 - [x] No V.5 expanded compatibility diagnostics.
 - [x] No import, review, migration or publication mutation.
 - [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 503 tests / 1245 assertions.
+
+
+## Phase V.3A — The Keeper Turns the Key, the Sign Refuses to Change
+
+- [x] Plugin version `0.5.0-alpha3.1`.
+- [x] Mark remembered Reading Room host page dynamic during early `template_redirect`.
+- [x] Mark shortcode response dynamic on first host-page render.
+- [x] Define standard `DONOTCACHEPAGE` cache-prevention boundary.
+- [x] Emit `nocache_headers()` while headers remain available.
+- [x] Invalidate remembered host page after successful activation changes.
+- [x] Use `clean_post_cache()` as the primary WordPress cache invalidation boundary.
+- [x] Fall back to `wp_cache_delete(..., 'posts')` when required.
+- [x] Emit `gmrexp/reading_room_dynamic` extension hook.
+- [x] Emit `gmrexp/reading_room_activation_changed` extension hook with Expansion/state/page ID.
+- [x] Do not invalidate host page for ignored/unknown Expansion submissions.
+- [x] Preserve Living Library as the only activation state authority.
+- [x] Preserve Reading Room route contract `1.0.0`.
+- [x] Document external reverse-proxy/CDN limitation without adding vendor-specific coupling.
+- [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

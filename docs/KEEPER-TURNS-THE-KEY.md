@@ -54,3 +54,8 @@ V.3 changes activation only.
 It does not open Expansion detail pages, explain compatibility diagnostics in depth, stage imports, review content, migrate content, publish Almanacs, or alter canonical definitions.
 
 Pippin has been informed that “Turn the Key” is not permission to copy the key.
+
+
+## V.3A cache coherency
+
+The Reading Room host page is dynamic because it displays activation state. V.3A prevents ordinary WordPress-aware page caching of that host and invalidates its post cache after successful activation changes. See `THE-SIGN-REFUSES-TO-CHANGE.md`.

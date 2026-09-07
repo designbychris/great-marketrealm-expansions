@@ -37,6 +37,7 @@ final class ReadingRoomPage
         if (function_exists('add_action')) {
             add_action('init', [$this, 'registerRewriteRules']);
             add_action('init', [$this, 'maybeFlushRewriteRules'], 99);
+            add_action('template_redirect', [$this, 'markRememberedHostPageDynamic'], 1);
             add_action('template_redirect', [$this, 'maybeRenderRoute']);
             add_action('wp_enqueue_scripts', [$this, 'registerAssets']);
             add_action('admin_post_' . self::ACTIVATION_ACTION, [$this, 'handleActivation']);
@@ -180,9 +181,12 @@ final class ReadingRoomPage
             : '';
 
         $active = isset($_POST['active']) && (string) $_POST['active'] === '1';
+        $updated = false;
 
         if ($expansion !== '' && $this->library->isInstalled($expansion)) {
             $this->library->setActive($expansion, $active);
+            $updated = true;
+            $this->invalidateRememberedHostPageCache($expansion, $active);
         }
 
         $hostUrl = $this->rememberedHostUrl() ?? $this->currentHostUrl() ?? $this->urlFor('browse');
@@ -191,7 +195,7 @@ final class ReadingRoomPage
         if (function_exists('add_query_arg')) {
             $target = (string) add_query_arg(
                 'gmrexp_activation_updated',
-                $expansion !== '' ? $expansion : '1',
+                $updated ? $expansion : '0',
                 $target
             );
         }
@@ -218,6 +222,7 @@ final class ReadingRoomPage
         $section = $this->navigation->normalizeSection($section);
         $baseUrl = $this->currentHostUrl();
 
+        $this->markResponseDynamic();
         $this->rememberHostPage();
         $this->enqueueAssets();
 
@@ -562,6 +567,67 @@ final class ReadingRoomPage
         return $this->urlFor($section);
     }
 
+    public function markRememberedHostPageDynamic(): void
+    {
+        if (!function_exists('get_queried_object_id')) {
+            return;
+        }
+
+        $currentPageId = (int) get_queried_object_id();
+        $rememberedPageId = $this->rememberedHostPageId();
+
+        if ($currentPageId > 0 && $rememberedPageId > 0 && $currentPageId === $rememberedPageId) {
+            $this->markResponseDynamic();
+        }
+    }
+
+    public function markResponseDynamic(): void
+    {
+        if (!defined('DONOTCACHEPAGE')) {
+            define('DONOTCACHEPAGE', true);
+        }
+
+        if (function_exists('nocache_headers') && !headers_sent()) {
+            nocache_headers();
+        }
+
+        if (function_exists('do_action')) {
+            do_action('gmrexp/reading_room_dynamic');
+        }
+    }
+
+    private function invalidateRememberedHostPageCache(string $expansionKey, bool $active): void
+    {
+        $pageId = $this->rememberedHostPageId();
+        if ($pageId <= 0) {
+            return;
+        }
+
+        if (function_exists('clean_post_cache')) {
+            clean_post_cache($pageId);
+        } elseif (function_exists('wp_cache_delete')) {
+            wp_cache_delete($pageId, 'posts');
+        }
+
+        if (function_exists('do_action')) {
+            do_action(
+                'gmrexp/reading_room_activation_changed',
+                $expansionKey,
+                $active,
+                $pageId
+            );
+        }
+    }
+
+    private function rememberedHostPageId(): int
+    {
+        if (!function_exists('get_option')) {
+            return 0;
+        }
+
+        return max(0, (int) get_option(self::HOST_PAGE_OPTION, 0));
+    }
+
     private function currentHostUrl(): ?string
     {
         if (function_exists('get_queried_object_id') && function_exists('get_permalink')) {
@@ -597,7 +663,7 @@ final class ReadingRoomPage
             return null;
         }
 
-        $pageId = (int) get_option(self::HOST_PAGE_OPTION, 0);
+        $pageId = $this->rememberedHostPageId();
         if ($pageId <= 0) {
             return null;
         }
