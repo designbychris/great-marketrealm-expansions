@@ -25,6 +25,7 @@ final class CoreSchemas
                 'monster' => MonsterSchemaFactory::monster(),
                 'npc' => NpcSchemaFactory::npc(),
                 'encounter' => EncounterSchemaFactory::encounter(),
+                'hazard' => HazardSchemaFactory::hazard(),
                 default => CoreSchemaFactory::make($type->key()),
             };
             $schemas->add($schema);

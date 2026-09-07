@@ -85,3 +85,8 @@ NPC definitions are canonical narrative/content records, not WordPress users, Co
 ### Phase III.3 encounter boundary
 
 Encounter definitions are reusable canonical recipes. They reference monsters, NPCs, hazards, treasure, locations, and future content rather than duplicating them. Live initiative order, token state, HP, rounds, placement coordinates, fog, and encounter progress remain Tabletop state. Encounter-specific rule statements may describe canonical variants without mutating either the source records or live state.
+
+
+### Phase III.4 hazard boundary
+
+Hazard definitions are reusable canonical content. They may describe trigger conditions, detection, avoidance, disarming, area, duration, neutral effects, escalation, reset behaviour, and references to encounters or adventures. Whether a particular hazard instance has triggered, been discovered, been disabled, reset, or affected a live actor remains Tabletop/session state.

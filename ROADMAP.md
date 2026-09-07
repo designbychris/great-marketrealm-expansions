@@ -23,7 +23,7 @@
 - **III.1 — The Keeper Opens the Bestiary**: structured monster stat blocks, traits, actions, challenge metadata and Rules Engine integration. ✅
 - **III.2 — Faces Behind the Counter**: NPC identities, roles, relationships, dialogue/lore hooks and optional combat references. ✅
 - **III.3 — The Encounter Ledger**: encounter compositions, participants, environments, objectives and rewards. ✅
-- **III.4 — Things That Bite Back**: hazards, traps, environmental dangers and neutral mechanical effects.
+- **III.4 — Things That Bite Back**: hazards, traps, environmental dangers and neutral mechanical effects. ✅
 - **III.5 — The Keeper's Strongbox**: structured treasure, parcels, tables and rewards.
 - **III.6 — Marginalia in the Keeper's Handbook**: optional DM rules, conditions and expansion-scoped rule modules.
 - **III.7 — The Adventure Shelf**: adventures/source-book structures, chapters, scenes and canonical content references.
@@ -151,5 +151,23 @@ GMREXP owns expansion content and its meaning. Companion owns character/user wor
 - [x] Stable encounter triggers and cross-content references.
 - [x] Nested Rules Engine validation throughout encounter structures.
 - [x] Clear separation between canonical encounter content and live Tabletop state.
+- [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 230 tests / 559 assertions.
+
+
+## Phase III.4 — Things That Bite Back
+
+- [x] Dedicated hazard schema.
+- [x] Lightweight named hazard compatibility.
+- [x] Open hazard kind and severity vocabulary with optional level guidance.
+- [x] Structured trigger definitions with nested Rules Engine support.
+- [x] Detection and disarming checks with numeric or open difficulty vocabulary.
+- [x] Stable keyed avoidance methods.
+- [x] Structured area and duration metadata.
+- [x] Top-level effects validated by Rules API `1.0.0`.
+- [x] Stable keyed consequences and escalation stages.
+- [x] Reset/repeat behaviour without leaking live-state concerns into canonical content.
+- [x] Canonical cross-content references and Keeper notes.
+- [x] Clear boundary between reusable hazard definitions and live Tabletop hazard state.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

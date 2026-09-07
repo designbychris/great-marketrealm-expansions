@@ -72,3 +72,8 @@ Phase III.2 adds canonical NPC dossiers for identity, roles, relationships, dial
 ### The Encounter Ledger
 
 Phase III.3 adds canonical encounter compositions with participants, waves, environments, objectives, difficulty guidance, rewards, triggers, and Rules Engine mechanics. See `docs/ENCOUNTER-LEDGER.md`.
+
+
+### Things That Bite Back
+
+Phase III.4 adds canonical hazards and traps with detection, triggers, avoidance, disarming, effects, escalation, reset behaviour, and Rules Engine mechanics. See `docs/THINGS-THAT-BITE-BACK.md`.

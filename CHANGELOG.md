@@ -7,6 +7,19 @@
 
 
 
+
+## 0.3.0-alpha4 — Phase III.4: Things That Bite Back
+
+- Added a dedicated hazard schema for traps, environmental dangers, and other Keeper-facing hazards.
+- Added open severity metadata with optional level guidance.
+- Added structured trigger, detection, avoidance, disarming, area, duration, reset, consequence, and escalation data.
+- Connected top-level hazard effects and nested hazard mechanics to Rules API `1.0.0`.
+- Added canonical cross-content references for encounter/adventure/location integration.
+- Preserved a clean boundary between reusable hazard definitions and live Tabletop trigger/disabled/reset state.
+- Kept hazard kinds, trigger types, severity ratings, area shapes, checks, and reset types extensible.
+- Recorded the certified Phase III.3 baseline: 230 tests / 559 assertions.
+- Kept Catalogue API, Bridge API, and Rules API at `1.0.0`.
+
 ## 0.3.0-alpha3 — Phase III.3: The Encounter Ledger
 
 - Added a dedicated encounter schema for Keeper-facing expansion content.
