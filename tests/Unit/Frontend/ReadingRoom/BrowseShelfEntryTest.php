@@ -51,6 +51,7 @@ final class BrowseShelfEntryTest extends TestCase
             'compatibility_status' => 'degraded',
             'entry_count' => 0,
             'content_types' => [],
+            'metadata' => [],
         ], $entry->toArray());
     }
 
