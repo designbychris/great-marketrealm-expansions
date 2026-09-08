@@ -31,6 +31,7 @@ final class ExpansionFileLoader
         }
 
         $manifest = $this->readArrayFile($manifestPath, 'Expansion manifest must return an array.');
+        $this->validateArtwork($manifest, $directory, $manifestPath);
         $pack = $this->packFromManifest($manifest, $manifestPath);
 
         if ($this->expansions->has($pack->key())) {
@@ -56,6 +57,40 @@ final class ExpansionFileLoader
         ksort($counts);
 
         return new ExpansionLoadResult($pack, $counts, $files);
+    }
+
+
+    /** @param array<string,mixed> $manifest */
+    private function validateArtwork(array $manifest, string $directory, string $source): void
+    {
+        if (!array_key_exists('artwork', $manifest)) {
+            return;
+        }
+
+        $artwork = $manifest['artwork'];
+        if (!is_string($artwork)) {
+            throw new ExpansionLoadException('Manifest field "artwork" must be a safe relative image path string.', $source);
+        }
+
+        $artwork = trim(str_replace('\\', '/', $artwork));
+        if (
+            $artwork === ''
+            || str_starts_with($artwork, '/')
+            || str_contains($artwork, '..')
+            || preg_match('#^[a-z][a-z0-9+.-]*:#i', $artwork)
+        ) {
+            throw new ExpansionLoadException('Manifest field "artwork" must be a safe relative image path inside the expansion pack.', $source);
+        }
+
+        $extension = strtolower((string) pathinfo($artwork, PATHINFO_EXTENSION));
+        if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp', 'gif'], true)) {
+            throw new ExpansionLoadException('Manifest field "artwork" must reference a JPG, PNG, WEBP, or GIF image.', $source);
+        }
+
+        $path = $directory . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $artwork);
+        if (!is_file($path) || !is_readable($path)) {
+            throw new ExpansionLoadException(sprintf('Manifest artwork file "%s" is missing or unreadable.', $artwork), $source);
+        }
     }
 
     /** @return list<ExpansionLoadResult> */

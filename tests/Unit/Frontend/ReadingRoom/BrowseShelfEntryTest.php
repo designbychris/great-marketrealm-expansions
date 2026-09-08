@@ -53,4 +53,22 @@ final class BrowseShelfEntryTest extends TestCase
             'content_types' => [],
         ], $entry->toArray());
     }
+
+    public function test_metadata_defaults_empty_for_backwards_compatible_construction(): void
+    {
+        $entry = new BrowseShelfEntry(
+            'fixture-book',
+            'Fixture Book',
+            '1.0.0',
+            'Fixture.',
+            true,
+            'ready',
+            0,
+            []
+        );
+
+        self::assertSame([], $entry->metadata());
+        self::assertNull($entry->meta('artwork'));
+    }
+
 }

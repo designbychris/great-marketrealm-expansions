@@ -6,13 +6,15 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
-**Phase V.8 — Red Ink and Questionable Margins**
+**Phase V.9 — The Shelving Trolley**
 
-The Administrator-only Review Desk is open. Staged source can be handed from Import to a private Keeper queue, then approved, explicitly classified/amended through the existing Review API, ignored/rejected, or reconsidered. **Reviewed ≠ Published.**
+The Administrator-only Review Desk now feeds **The Shelving Trolley**, which assembles Keeper-approved definitions into a persistent proposed Almanac without publishing it. Proposed manifests can also declare optional pack-local Library artwork, reused consistently on both **Your Library** and **Browse** with graceful parchment fallback and reduced-motion-safe hover/focus treatment.
 
-Certified starting baseline: **590 tests / 1,419 assertions** (Phase V.7).
+**Proposed ≠ Published.** V.9 does not write Almanac files, install or activate an expansion, or mutate the canonical Catalogue.
 
-See `docs/RED-INK-AND-QUESTIONABLE-MARGINS.md`.
+Certified starting baseline: **609 tests / 1,463 assertions** (Phase V.8 live-review hotfix baseline).
+
+See `docs/THE-SHELVING-TROLLEY.md`.
 
 
 **Phase V.7 — Pippin Finds the Google Docs**

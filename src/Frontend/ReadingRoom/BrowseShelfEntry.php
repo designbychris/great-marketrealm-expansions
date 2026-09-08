@@ -16,7 +16,8 @@ final class BrowseShelfEntry
         private bool $active,
         private string $compatibilityStatus,
         private int $entryCount,
-        private array $contentTypes
+        private array $contentTypes,
+        private array $metadata = []
     ) {}
 
     public function key(): string { return $this->key; }
@@ -29,6 +30,9 @@ final class BrowseShelfEntry
 
     /** @return array<string,int> */
     public function contentTypes(): array { return $this->contentTypes; }
+    /** @return array<string,mixed> */
+    public function metadata(): array { return $this->metadata; }
+    public function meta(string $key, mixed $default = null): mixed { return $this->metadata[$key] ?? $default; }
 
     /** @return array<string,mixed> */
     public function toArray(): array
@@ -42,6 +46,7 @@ final class BrowseShelfEntry
             'compatibility_status' => $this->compatibilityStatus,
             'entry_count' => $this->entryCount,
             'content_types' => $this->contentTypes,
+            'metadata' => $this->metadata,
         ];
     }
 }

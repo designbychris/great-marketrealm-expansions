@@ -19,7 +19,7 @@ final class BrowseShelfTest extends TestCase
         $content = new ContentRegistry();
 
         $expansions->add(new ExpansionPack('zeta-book', 'Zeta Book', '1.0.0', 'Last alphabetically.'));
-        $expansions->add(new ExpansionPack('alpha-book', 'Alpha Book', '2.0.0', 'First alphabetically.'));
+        $expansions->add(new ExpansionPack('alpha-book', 'Alpha Book', '2.0.0', 'First alphabetically.', ['artwork' => 'assets/alpha-cover.jpg']));
 
         $content->add('alpha-book', new ContentDefinition('monster', 'm-1', ['name' => 'Monster One']));
         $content->add('alpha-book', new ContentDefinition('feat', 'f-1', ['name' => 'Feat One']));
@@ -111,4 +111,14 @@ final class BrowseShelfTest extends TestCase
 
         self::assertFalse($library->isActive('quiet-book'));
     }
+
+    public function test_pack_metadata_is_preserved_for_browse_presentation(): void
+    {
+        $entry = $this->shelf()->entries()[0];
+
+        self::assertSame('assets/alpha-cover.jpg', $entry->meta('artwork'));
+        self::assertSame(['artwork' => 'assets/alpha-cover.jpg'], $entry->metadata());
+        self::assertSame('assets/alpha-cover.jpg', $entry->toArray()['metadata']['artwork']);
+    }
+
 }

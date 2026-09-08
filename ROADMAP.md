@@ -607,3 +607,22 @@ Planned sequence:
 - [x] Keep Catalogue, Almanac filesystem, installation and activation untouched.
 - [x] Add regression coverage and frontend styling.
 - [ ] Server-side PHPUnit certification.
+
+
+## Phase V.9 — The Shelving Trolley
+
+- [x] Plugin version `0.5.0-alpha9`.
+- [x] Record certified V.8 baseline: 609 tests / 1463 assertions.
+- [x] Add Proposal API `1.0.0`.
+- [x] Assemble Keeper-approved definitions only.
+- [x] Exclude pending and rejected records from the proposed Almanac.
+- [x] Refuse empty proposals and duplicate canonical identities.
+- [x] Persist proposal state beside the Administrator-private Review queue.
+- [x] Invalidate stale proposals whenever a Keeper review decision changes.
+- [x] Add proposed manifest identity fields.
+- [x] Add optional safe relative Library artwork metadata.
+- [x] Add matching artwork hero treatment to Your Library and Browse with hover/focus zoom, graceful fallback, and reduced-motion support.
+- [x] Tidy long Review Desk source identifiers.
+- [x] Preserve `Proposed ≠ Published`.
+- [x] Keep Catalogue, installation and activation untouched.
+- [ ] Server-side PHPUnit certification.

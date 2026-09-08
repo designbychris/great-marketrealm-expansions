@@ -219,4 +219,65 @@ final class ExpansionFileLoaderTest extends TestCase
         }
         rmdir($directory);
     }
+
+    public function test_manifest_artwork_is_preserved_when_pack_contains_image_asset(): void
+    {
+        [$loader] = $this->loader();
+        $directory = $this->pack(
+            'artwork-pack',
+            ['assets/library-cover.jpg' => 'synthetic image bytes'],
+            ['artwork' => 'assets/library-cover.jpg']
+        );
+
+        $pack = $loader->load($directory)->pack();
+
+        self::assertSame('assets/library-cover.jpg', $pack->meta('artwork'));
+    }
+
+    /**
+     * @dataProvider invalidArtworkPathProvider
+     */
+    public function test_manifest_artwork_refuses_unsafe_or_remote_paths(string $artwork): void
+    {
+        [$loader] = $this->loader();
+        $directory = $this->pack('bad-artwork-pack', [], ['artwork' => $artwork]);
+
+        $this->expectException(ExpansionLoadException::class);
+        $this->expectExceptionMessage('artwork');
+        $loader->load($directory);
+    }
+
+    public static function invalidArtworkPathProvider(): array
+    {
+        return [
+            'absolute' => ['/tmp/cover.jpg'],
+            'traversal' => ['../cover.jpg'],
+            'remote' => ['https://example.test/cover.jpg'],
+        ];
+    }
+
+    public function test_manifest_artwork_must_exist_inside_pack(): void
+    {
+        [$loader] = $this->loader();
+        $directory = $this->pack('missing-artwork-pack', [], ['artwork' => 'assets/missing.png']);
+
+        $this->expectException(ExpansionLoadException::class);
+        $this->expectExceptionMessage('missing or unreadable');
+        $loader->load($directory);
+    }
+
+    public function test_manifest_artwork_rejects_non_image_extension(): void
+    {
+        [$loader] = $this->loader();
+        $directory = $this->pack(
+            'script-artwork-pack',
+            ['assets/library-cover.php' => '<?php echo "no";'],
+            ['artwork' => 'assets/library-cover.php']
+        );
+
+        $this->expectException(ExpansionLoadException::class);
+        $this->expectExceptionMessage('JPG, PNG, WEBP, or GIF');
+        $loader->load($directory);
+    }
+
 }

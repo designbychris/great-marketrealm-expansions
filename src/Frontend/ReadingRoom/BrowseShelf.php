@@ -35,7 +35,8 @@ final class BrowseShelf
                 $this->library->isActive($expansion->key()),
                 $this->library->compatibility($expansion->key())->status(),
                 array_sum($contentTypes),
-                $contentTypes
+                $contentTypes,
+                $expansion->metadata()
             );
         }
 

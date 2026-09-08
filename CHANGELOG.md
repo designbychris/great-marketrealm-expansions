@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.5.0-alpha9 — Phase V.9: The Shelving Trolley
+
+- Added Proposal API `1.0.0` and proposed-Almanac assembly.
+- Added Review Desk Shelving Trolley UI.
+- Proposed Almanacs contain only Keeper-approved definitions.
+- Pending and rejected source records remain excluded.
+- Empty proposals and duplicate canonical identities are refused.
+- Proposal state persists privately with the Administrator review queue and is invalidated after later review decisions.
+- Added proposed manifest key/name/version/description and optional safe relative `artwork` metadata.
+- Added optional expansion-pack artwork treatment to both Your Library and Browse cards with consistent imagery, gentle hover/focus zoom, graceful fallback, and reduced-motion support.
+- Tidied long Google Doc source identifiers in the Review Desk.
+- Preserved `Proposed ≠ Published`: no Almanac files, Catalogue mutation, installation or activation.
+- Recorded certified V.8 baseline: 609 tests / 1463 assertions.
+
 ## 0.5.0-alpha8 — Phase V.8: Red Ink and Questionable Margins
 
 - Opened the Administrator-only Review Desk.

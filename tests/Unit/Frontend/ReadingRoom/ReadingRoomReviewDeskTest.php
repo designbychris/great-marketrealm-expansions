@@ -1,6 +1,8 @@
 <?php
 namespace GreatMarketrealmExpansions\Tests\Unit\Frontend\ReadingRoom;
 
+use GreatMarketrealmExpansions\Almanac\AlmanacProposalService;
+
 use GreatMarketrealmExpansions\Catalogue\Catalogue;
 use GreatMarketrealmExpansions\Content\ContentRegistry;
 use GreatMarketrealmExpansions\Content\Schema\ContentValidator;
@@ -43,7 +45,8 @@ final class ReadingRoomReviewDeskTest extends TestCase
             new ImportService($validator),
             null,
             new ReviewService($validator),
-            $this->queue
+            $this->queue,
+            new AlmanacProposalService()
         );
         $_POST = [];
     }
@@ -210,6 +213,67 @@ final class ReadingRoomReviewDeskTest extends TestCase
         self::assertStringContainsString('Send to Review Desk', $html);
         self::assertStringContainsString('gmrexp_review_queue_submit', $html);
         self::assertStringContainsString('gmrexp_section=review', $html);
+    }
+
+
+    public function test_shelving_trolley_waits_for_an_approved_definition(): void
+    {
+        $html = $this->queueSource();
+        self::assertStringContainsString('Prepare a proposed Almanac', $html);
+        self::assertStringContainsString('Accept at least one canonical definition', $html);
+        self::assertStringContainsString('disabled', $html);
+    }
+
+    public function test_shelving_trolley_builds_persistent_proposal_from_accepted_definition(): void
+    {
+        $this->queueSource();
+        $state = $this->queue->load();
+        $state['decisions']['google-heading-1'] = [
+            'action' => 'amend',
+            'type' => 'monster',
+            'key' => 'pizza-mimic',
+            'data' => ['name' => 'Pizza Mimic'],
+            'note' => '',
+        ];
+        $this->queue->save($state);
+
+        $_POST = [
+            ReadingRoomPage::ALMANAC_PROPOSAL_SUBMIT_FIELD => '1',
+            'gmrexp_almanac_key' => 'midnight-menu',
+            'gmrexp_almanac_name' => 'The Midnight Menu',
+            'gmrexp_almanac_version' => '0.1.0',
+            'gmrexp_almanac_description' => 'A proposed expansion.',
+            'gmrexp_almanac_artwork' => 'assets/library-cover.jpg',
+        ];
+        $html = $this->page->render('review');
+
+        self::assertStringContainsString('The Shelving Trolley has assembled a proposed Almanac.', $html);
+        self::assertStringContainsString('midnight-menu', $html);
+        self::assertStringContainsString('assets/library-cover.jpg', $html);
+        self::assertSame(1, $this->queue->load()['proposal']['definition_count']);
+    }
+
+    public function test_proposal_explicitly_states_proposed_is_not_published(): void
+    {
+        $html = $this->queueSource();
+        self::assertStringContainsString('Proposed ≠ Published', $html);
+    }
+
+    public function test_new_review_decision_invalidates_stale_proposal(): void
+    {
+        $this->queueSource();
+        $state = $this->queue->load();
+        $state['proposal'] = ['manifest' => ['key' => 'stale']];
+        $this->queue->save($state);
+
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'reject',
+        ];
+        $this->page->render('review');
+
+        self::assertArrayNotHasKey('proposal', $this->queue->load());
     }
 
 }

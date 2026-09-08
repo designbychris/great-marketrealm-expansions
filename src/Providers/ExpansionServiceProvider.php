@@ -1,6 +1,8 @@
 <?php
 namespace GreatMarketrealmExpansions\Providers;
 
+use GreatMarketrealmExpansions\Almanac\AlmanacProposalService;
+
 defined('ABSPATH') || exit;
 
 use GreatMarketrealmExpansions\Admin\CatalogueAdminPage;
@@ -60,6 +62,7 @@ final class ExpansionServiceProvider extends ServiceProvider
             $container->get(ContentValidator::class)
         ));
         $this->container->singleton(ReviewQueueStore::class, static fn (Container $container): ReviewQueueStore => new WordPressUserReviewQueueStore());
+        $this->container->singleton(AlmanacProposalService::class, static fn (Container $container): AlmanacProposalService => new AlmanacProposalService());
         $this->container->singleton(MigrationRegistry::class, static fn (Container $container): MigrationRegistry => new MigrationRegistry());
         $this->container->singleton(MigrationService::class, static fn (Container $container): MigrationService => new MigrationService(
             $container->get(MigrationRegistry::class),
@@ -100,7 +103,8 @@ final class ExpansionServiceProvider extends ServiceProvider
             $container->get(ImportService::class),
             $container->get(GoogleDocsSourceAdapter::class),
             $container->get(ReviewService::class),
-            $container->get(ReviewQueueStore::class)
+            $container->get(ReviewQueueStore::class),
+            $container->get(AlmanacProposalService::class)
         ));
         $this->container->singleton(CatalogueAdminPage::class, static fn (Container $container): CatalogueAdminPage => new CatalogueAdminPage(
             $container->get(Catalogue::class),
