@@ -20,13 +20,13 @@ final class ReadingRoomNavigationTest extends TestCase
         );
     }
 
-    public function test_library_and_browse_are_open_while_later_desks_are_reserved(): void
+    public function test_library_browse_and_import_are_open_while_review_remains_reserved(): void
     {
         $items = (new ReadingRoomNavigation())->items();
 
         self::assertTrue($items['library']['available']);
         self::assertTrue($items['browse']['available']);
-        self::assertFalse($items['import']['available']);
+        self::assertTrue($items['import']['available']);
         self::assertFalse($items['review']['available']);
     }
 
