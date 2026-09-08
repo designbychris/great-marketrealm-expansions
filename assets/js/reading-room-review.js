@@ -45,10 +45,35 @@
         return help;
     };
 
+    const friendlyValue = (control, value) => {
+        if (control === 'size') return typeof value === 'string' ? value : (value && typeof value === 'object' && typeof value.value === 'string' ? value.value : '');
+        if (control === 'walking-speed') return typeof value === 'string' ? value : (value && typeof value === 'object' && Number.isInteger(value.walk) ? String(value.walk) : '');
+        if (control === 'string-list') return typeof value === 'string' ? value : (Array.isArray(value) ? value.filter((item) => typeof item === 'string').join(', ') : '');
+        if (control === 'trait-lines' && typeof value === 'string') return value;
+        if (control === 'trait-lines' && Array.isArray(value)) {
+            return value.filter((trait) => trait && typeof trait === 'object' && !Array.isArray(trait)).map((trait) => {
+                const key = typeof trait.key === 'string' ? trait.key : '';
+                const name = typeof trait.name === 'string' ? trait.name : '';
+                const description = typeof trait.description === 'string' ? trait.description : '';
+                return `${key} | ${name}${description ? ` | ${description}` : ''}`;
+            }).join('\n');
+        }
+        return value === undefined || value === null ? '' : String(value);
+    };
+
+    const makeDatalist = (id, values) => {
+        if (document.getElementById(id)) return;
+        const list = document.createElement('datalist');
+        list.id = id;
+        values.forEach((value) => list.append(new Option('', value)));
+        document.body.append(list);
+    };
+
     const makeField = (field, value) => {
         const label = document.createElement('label');
         label.className = 'gmrexp-reading-room__schema-field';
         label.setAttribute('data-schema-field', field.name);
+        label.setAttribute('data-schema-control', field.control || 'schema');
 
         const heading = document.createElement('span');
         heading.append(document.createTextNode(`${field.label} `));
@@ -62,9 +87,40 @@
         label.append(heading);
 
         const name = `gmrexp_review_schema[${field.name}]`;
+        const controlKind = field.control || 'schema';
         let control;
 
-        if (field.type === 'map' || field.type === 'array') {
+        if (controlKind === 'creature-type') {
+            control = document.createElement('input');
+            control.type = 'text';
+            control.setAttribute('list', 'gmrexp-creature-types');
+            control.placeholder = 'e.g. Humanoid';
+            control.value = friendlyValue(controlKind, value);
+            makeDatalist('gmrexp-creature-types', ['Humanoid','Fey','Construct','Undead','Monstrosity','Elemental','Plant','Ooze','Aberration','Beast','Celestial','Dragon','Fiend','Giant']);
+            label.append(control, makeHelp('Choose the creature classification intended by the source. The Review Desk does not choose one for you.'));
+        } else if (controlKind === 'size') {
+            control = document.createElement('input');
+            control.type = 'text';
+            control.setAttribute('list', 'gmrexp-creature-sizes');
+            control.placeholder = 'e.g. Medium';
+            control.value = friendlyValue(controlKind, value);
+            makeDatalist('gmrexp-creature-sizes', ['Tiny','Small','Medium','Large','Huge','Gargantuan']);
+            label.append(control, makeHelp('Enter the fixed size. More complex size choices remain available in Advanced content data.'));
+        } else if (controlKind === 'walking-speed') {
+            control = document.createElement('input');
+            control.type = 'number'; control.min = '1'; control.step = '1'; control.placeholder = '30';
+            control.value = friendlyValue(controlKind, value);
+            label.append(control, makeHelp('Walking speed in feet. Optional movement modes remain available in Advanced content data.'));
+        } else if (controlKind === 'string-list') {
+            control = document.createElement('input');
+            control.type = 'text'; control.placeholder = 'e.g. Common, Market Tongue';
+            control.value = friendlyValue(controlKind, value);
+            label.append(control, makeHelp('Separate languages with commas. Only enter languages established for this race.'));
+        } else if (controlKind === 'trait-lines') {
+            control = document.createElement('textarea'); control.rows = 7; control.spellcheck = false;
+            control.value = friendlyValue(controlKind, value);
+            label.append(control, makeHelp('One trait per line: canonical-key | Trait Name | Description. The Keeper supplies the key.'));
+        } else if (field.type === 'map' || field.type === 'array') {
             control = document.createElement('textarea');
             control.rows = 5;
             control.spellcheck = false;
@@ -94,7 +150,7 @@
 
         control.name = name;
         control.required = true;
-        label.insertBefore(control, label.querySelector('.gmrexp-reading-room__field-help'));
+        if (!control.parentNode) label.append(control);
         return label;
     };
 
@@ -127,7 +183,7 @@
                 return;
             }
 
-            help.textContent = 'Complete the required fields below before accepting this classification. Complex map/array fields use JSON.';
+            help.textContent = 'Complete the required fields below before accepting this classification. The Review Desk uses friendly controls where the canonical shape is known; remaining complex fields use JSON.';
             fields.forEach((field) => fieldsContainer.append(makeField(field, values[field.name])));
         };
 

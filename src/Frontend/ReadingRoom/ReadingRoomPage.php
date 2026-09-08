@@ -1341,6 +1341,7 @@ final class ReadingRoomPage
                     'type' => $field->type(),
                     'label' => $this->schemaFieldLabel($field->name()),
                     'required' => true,
+                    'control' => $this->schemaFieldControl($type, $field->name()),
                 ];
             }
         }
@@ -1372,10 +1373,26 @@ final class ReadingRoomPage
             $name = $field->name();
             $value = $data[$name] ?? null;
             $inputName = 'gmrexp_review_schema[' . $name . ']';
+            $control = $this->schemaFieldControl($type, $name);
             ?>
-            <label class="gmrexp-reading-room__schema-field" data-schema-field="<?php echo $this->escAttr($name); ?>">
+            <label class="gmrexp-reading-room__schema-field" data-schema-field="<?php echo $this->escAttr($name); ?>" data-schema-control="<?php echo $this->escAttr($control); ?>">
                 <span><?php echo $this->escHtml($this->schemaFieldLabel($name)); ?> <strong aria-hidden="true">*</strong> <small><?php echo $this->escHtml($field->type()); ?></small></span>
-                <?php if (in_array($field->type(), [FieldDefinition::MAP, FieldDefinition::ARRAY], true)): ?>
+                <?php if ($control === 'creature-type'): ?>
+                    <input type="text" name="<?php echo $this->escAttr($inputName); ?>" value="<?php echo $this->escAttr($this->schemaFriendlyValue($control, $value)); ?>" list="gmrexp-creature-types" placeholder="e.g. Humanoid" required>
+                    <small class="gmrexp-reading-room__field-help">Choose the creature classification intended by the source. Common examples include Humanoid, Fey, Construct, Undead, and Monstrosity; the Review Desk does not choose one for you.</small>
+                <?php elseif ($control === 'size'): ?>
+                    <input type="text" name="<?php echo $this->escAttr($inputName); ?>" value="<?php echo $this->escAttr($this->schemaFriendlyValue($control, $value)); ?>" list="gmrexp-creature-sizes" placeholder="e.g. Medium" required>
+                    <small class="gmrexp-reading-room__field-help">Enter the race's fixed size. More complex size choices can still be represented in Advanced content data.</small>
+                <?php elseif ($control === 'walking-speed'): ?>
+                    <input type="number" min="1" step="1" name="<?php echo $this->escAttr($inputName); ?>" value="<?php echo $this->escAttr($this->schemaFriendlyValue($control, $value)); ?>" placeholder="30" required>
+                    <small class="gmrexp-reading-room__field-help">Walking speed in feet. Optional swim, climb, fly, burrow, or hover movement can be added in Advanced content data.</small>
+                <?php elseif ($control === 'string-list'): ?>
+                    <input type="text" name="<?php echo $this->escAttr($inputName); ?>" value="<?php echo $this->escAttr($this->schemaFriendlyValue($control, $value)); ?>" placeholder="e.g. Common, Market Tongue" required>
+                    <small class="gmrexp-reading-room__field-help">Separate languages with commas. Only enter languages actually established for this race.</small>
+                <?php elseif ($control === 'trait-lines'): ?>
+                    <textarea name="<?php echo $this->escAttr($inputName); ?>" rows="7" spellcheck="false" required><?php echo $this->escHtml($this->schemaFriendlyValue($control, $value)); ?></textarea>
+                    <small class="gmrexp-reading-room__field-help">One trait per line: <code>canonical-key | Trait Name | Description</code>. The Keeper supplies the key; Pippin does not invent it. Rules can be refined later in Advanced content data.</small>
+                <?php elseif (in_array($field->type(), [FieldDefinition::MAP, FieldDefinition::ARRAY], true)): ?>
                     <textarea name="<?php echo $this->escAttr($inputName); ?>" rows="5" spellcheck="false" required><?php echo $this->escHtml($this->schemaFieldValue($field, $value)); ?></textarea>
                     <small class="gmrexp-reading-room__field-help"><?php echo $field->type() === FieldDefinition::MAP ? 'Enter a JSON object, for example {"walk": 30}.' : 'Enter a JSON array, for example ["Common"].'; ?></small>
                 <?php elseif ($field->type() === FieldDefinition::BOOLEAN): ?>
@@ -1392,7 +1409,53 @@ final class ReadingRoomPage
             </label>
             <?php
         }
+        ?>
+        <datalist id="gmrexp-creature-types"><option value="Humanoid"><option value="Fey"><option value="Construct"><option value="Undead"><option value="Monstrosity"><option value="Elemental"><option value="Plant"><option value="Ooze"><option value="Aberration"><option value="Beast"><option value="Celestial"><option value="Dragon"><option value="Fiend"><option value="Giant"></datalist>
+        <datalist id="gmrexp-creature-sizes"><option value="Tiny"><option value="Small"><option value="Medium"><option value="Large"><option value="Huge"><option value="Gargantuan"></datalist>
+        <?php
         return trim((string) ob_get_clean());
+    }
+
+    private function schemaFieldControl(string $type, string $name): string
+    {
+        if ($type === 'race') {
+            return match ($name) {
+                'creature_type' => 'creature-type',
+                'size' => 'size',
+                'speed' => 'walking-speed',
+                'languages' => 'string-list',
+                'traits' => 'trait-lines',
+                default => 'schema',
+            };
+        }
+        if ($type === 'subrace' && $name === 'traits') { return 'trait-lines'; }
+        return 'schema';
+    }
+
+    private function schemaFriendlyValue(string $control, mixed $value): string
+    {
+        if ($control === 'size') {
+            return is_array($value) && isset($value['value']) && is_string($value['value']) ? $value['value'] : '';
+        }
+        if ($control === 'walking-speed') {
+            return is_array($value) && isset($value['walk']) && is_int($value['walk']) ? (string) $value['walk'] : '';
+        }
+        if ($control === 'string-list') {
+            return is_array($value) ? implode(', ', array_values(array_filter($value, 'is_string'))) : '';
+        }
+        if ($control === 'trait-lines') {
+            if (!is_array($value)) { return ''; }
+            $lines = [];
+            foreach ($value as $trait) {
+                if (!is_array($trait) || array_is_list($trait)) { continue; }
+                $key = isset($trait['key']) && is_string($trait['key']) ? $trait['key'] : '';
+                $name = isset($trait['name']) && is_string($trait['name']) ? $trait['name'] : '';
+                $description = isset($trait['description']) && is_string($trait['description']) ? $trait['description'] : '';
+                if ($key !== '' || $name !== '') { $lines[] = $key . ' | ' . $name . ($description !== '' ? ' | ' . $description : ''); }
+            }
+            return implode("\n", $lines);
+        }
+        return is_scalar($value) ? (string) $value : '';
     }
 
     private function schemaFieldLabel(string $name): string
@@ -1438,17 +1501,59 @@ final class ReadingRoomPage
                 continue;
             }
 
-            $data[$name] = match ($field->type()) {
-                FieldDefinition::STRING => $raw,
-                FieldDefinition::INTEGER => $this->parseReviewInteger($name, $raw),
-                FieldDefinition::NUMBER => $this->parseReviewNumber($name, $raw),
-                FieldDefinition::BOOLEAN => $this->parseReviewBoolean($name, $raw),
-                FieldDefinition::ARRAY => $this->parseReviewJsonCollection($name, $raw, true),
-                FieldDefinition::MAP => $this->parseReviewJsonCollection($name, $raw, false),
-                default => $raw,
+            $control = $this->schemaFieldControl($type, $name);
+            $data[$name] = match ($control) {
+                'creature-type' => $raw,
+                'size' => ['value' => $raw],
+                'walking-speed' => ['walk' => $this->parseReviewInteger($name, $raw)],
+                'string-list' => $this->parseReviewStringList($name, $raw),
+                'trait-lines' => $this->parseReviewTraitLines($raw),
+                default => match ($field->type()) {
+                    FieldDefinition::STRING => $raw,
+                    FieldDefinition::INTEGER => $this->parseReviewInteger($name, $raw),
+                    FieldDefinition::NUMBER => $this->parseReviewNumber($name, $raw),
+                    FieldDefinition::BOOLEAN => $this->parseReviewBoolean($name, $raw),
+                    FieldDefinition::ARRAY => $this->parseReviewJsonCollection($name, $raw, true),
+                    FieldDefinition::MAP => $this->parseReviewJsonCollection($name, $raw, false),
+                    default => $raw,
+                },
             };
         }
         return $data;
+    }
+
+    /** @return list<string> */
+    private function parseReviewStringList(string $name, string $raw): array
+    {
+        $values = preg_split('/[\r\n,]+/', $raw) ?: [];
+        $values = array_values(array_filter(array_map('trim', $values), static fn (string $value): bool => $value !== ''));
+        if ($values === []) {
+            throw new ReviewDecisionException(sprintf('%s requires at least one value.', $this->schemaFieldLabel($name)));
+        }
+        return $values;
+    }
+
+    /** @return list<array{key:string,name:string,description?:string}> */
+    private function parseReviewTraitLines(string $raw): array
+    {
+        $lines = preg_split('/\r\n|\r|\n/', $raw) ?: [];
+        $traits = [];
+        foreach ($lines as $index => $line) {
+            $line = trim($line);
+            if ($line === '') { continue; }
+            $parts = array_map('trim', explode('|', $line, 3));
+            $key = $parts[0] ?? '';
+            $name = $parts[1] ?? '';
+            $description = $parts[2] ?? '';
+            if ($key === '' || $name === '') {
+                throw new ReviewDecisionException(sprintf('Race trait line %d must use: canonical-key | Trait Name | Description.', $index + 1));
+            }
+            $trait = ['key' => $key, 'name' => $name];
+            if ($description !== '') { $trait['description'] = $description; }
+            $traits[] = $trait;
+        }
+        if ($traits === []) { throw new ReviewDecisionException('Race traits require at least one Keeper-defined trait.'); }
+        return $traits;
     }
 
     private function parseReviewInteger(string $name, string $raw): int

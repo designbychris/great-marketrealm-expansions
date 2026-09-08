@@ -409,4 +409,102 @@ final class ReadingRoomReviewDeskTest extends TestCase
         self::assertStringContainsString('&quot;armour_class&quot;', $html);
     }
 
+    public function test_race_requirements_render_keeper_friendly_controls_instead_of_raw_json(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'race',
+            'gmrexp_review_key' => 'pizzakin',
+            'gmrexp_review_name' => 'Pizzakin',
+            'gmrexp_review_description' => 'Synthetic race.',
+            'gmrexp_review_data' => '{"name":"Pizzakin"}',
+        ];
+
+        $html = $this->page->render('review');
+
+        self::assertStringContainsString('list="gmrexp-creature-types"', $html);
+        self::assertStringContainsString('list="gmrexp-creature-sizes"', $html);
+        self::assertStringContainsString('Walking speed in feet', $html);
+        self::assertStringContainsString('Separate languages with commas', $html);
+        self::assertStringContainsString('canonical-key | Trait Name | Description', $html);
+    }
+
+    public function test_keeper_can_accept_race_using_friendly_structured_requirements(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'race',
+            'gmrexp_review_key' => 'pizzakin',
+            'gmrexp_review_name' => 'Pizzakin',
+            'gmrexp_review_description' => 'Synthetic race.',
+            'gmrexp_review_data' => '{"name":"Pizzakin"}',
+            'gmrexp_review_schema' => [
+                'creature_type' => 'Humanoid',
+                'size' => 'Medium',
+                'speed' => '30',
+                'languages' => 'Common, Market Tongue',
+                'traits' => "hot-from-oven | Hot From the Oven | Fire resistance.\ncheese-pull | Cheese Pull | Stretchy cheese.",
+            ],
+        ];
+
+        $html = $this->page->render('review');
+        $decision = $this->queue->load()['decisions']['google-heading-1'];
+
+        self::assertStringContainsString('race:pizzakin', $html);
+        self::assertSame('Humanoid', $decision['data']['creature_type']);
+        self::assertSame(['value' => 'Medium'], $decision['data']['size']);
+        self::assertSame(['walk' => 30], $decision['data']['speed']);
+        self::assertSame(['Common', 'Market Tongue'], $decision['data']['languages']);
+        self::assertSame('hot-from-oven', $decision['data']['traits'][0]['key']);
+        self::assertSame('Hot From the Oven', $decision['data']['traits'][0]['name']);
+    }
+
+    public function test_race_trait_lines_require_keeper_supplied_key_and_name(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'race',
+            'gmrexp_review_key' => 'pizzakin',
+            'gmrexp_review_name' => 'Pizzakin',
+            'gmrexp_review_data' => '{"name":"Pizzakin"}',
+            'gmrexp_review_schema' => [
+                'creature_type' => 'Humanoid', 'size' => 'Medium', 'speed' => '30',
+                'languages' => 'Common', 'traits' => 'Hot From the Oven',
+            ],
+        ];
+
+        $html = $this->page->render('review');
+
+        self::assertStringContainsString('Review decision not recorded.', $html);
+        self::assertStringContainsString('canonical-key | Trait Name | Description', $html);
+        self::assertSame([], $this->queue->load()['decisions']);
+    }
+
+    public function test_race_friendly_controls_still_leave_optional_complex_data_to_advanced_editor(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'race',
+            'gmrexp_review_key' => 'pizzakin',
+            'gmrexp_review_name' => 'Pizzakin',
+            'gmrexp_review_data' => '{"name":"Pizzakin","resistances":["fire"]}',
+        ];
+
+        $html = $this->page->render('review');
+        self::assertStringContainsString('Optional schema fields can still be added here.', $html);
+        self::assertStringContainsString('&quot;resistances&quot;', $html);
+    }
+
 }

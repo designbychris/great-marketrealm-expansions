@@ -2,6 +2,7 @@
 
 ## 0.5.0-alpha9 — Phase V.9: The Shelving Trolley
 
+- Refined the schema-aware Review Desk with Keeper-friendly playable-race controls for creature type, fixed size, walking speed, languages, and traits while preserving canonical schema validation.
 - Refined the Review Desk to read required fields directly from the canonical `SchemaRegistry`.
 - Added dynamic required-field controls for all core content types.
 - Added friendly typed controls for required string/integer/number/boolean values and JSON editors for required map/array values.

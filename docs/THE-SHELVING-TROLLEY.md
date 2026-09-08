@@ -68,3 +68,17 @@ Remote URLs, absolute paths, and traversal paths are rejected by the proposal se
 ## Small V.8 polish
 
 The Review Desk source summary now wraps long Google Doc identifiers instead of allowing them to escape their card.
+
+## V.9 Review Desk refinement — Keeper-friendly race controls
+
+The schema-aware Review Desk now presents the required playable-race structure without asking the Keeper to author routine JSON:
+
+- creature type uses a normal text field with common creature-type suggestions, never an automatic choice;
+- fixed size uses a normal field with standard size suggestions and is converted to the canonical `size.value` map;
+- walking speed is entered in feet and converted to the canonical `speed.walk` map;
+- languages are entered as a comma-separated list and converted to the canonical array;
+- race/subrace traits use one Keeper-authored line per trait: `canonical-key | Trait Name | Description`.
+
+Optional or unusual structures (multiple size options, additional movement modes, rule objects, choices, proficiencies, senses, resistances, and similar details) remain available through Advanced content data. The canonical validator remains the final authority.
+
+This is deliberately a presentation adapter over the existing race schema. It does not change race mechanics, infer missing sourcebook decisions, or weaken validation.

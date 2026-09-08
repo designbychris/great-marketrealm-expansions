@@ -625,6 +625,7 @@ Planned sequence:
 - [x] Tidy long Review Desk source identifiers.
 - [x] Preserve `Proposed ≠ Published`.
 - [x] Keep Catalogue, installation and activation untouched.
+- [x] Refine playable-race Review Desk requirements into Keeper-friendly controls instead of routine JSON, without guessing missing canon.
 - [x] Make Review Desk requirements schema-aware for every core content type.
 - [x] Expose required fields dynamically when the Keeper chooses a content type.
 - [x] Preserve failed amendment drafts for correction.
