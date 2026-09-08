@@ -1326,7 +1326,7 @@ final class ReadingRoomPage
         ];
     }
 
-    /** @return array<string,list<array{name:string,type:string,label:string,required:bool}>> */
+    /** @return array<string,list<array{name:string,type:string,label:string,required:bool,allow_empty:bool,control:string}>> */
     private function reviewRequiredSchemaMap(): array
     {
         if ($this->schemas === null) { return []; }
@@ -1341,6 +1341,7 @@ final class ReadingRoomPage
                     'type' => $field->type(),
                     'label' => $this->schemaFieldLabel($field->name()),
                     'required' => true,
+                    'allow_empty' => $field->allowEmpty(),
                     'control' => $this->schemaFieldControl($type, $field->name()),
                 ];
             }
@@ -1376,7 +1377,7 @@ final class ReadingRoomPage
             $control = $this->schemaFieldControl($type, $name);
             ?>
             <label class="gmrexp-reading-room__schema-field" data-schema-field="<?php echo $this->escAttr($name); ?>" data-schema-control="<?php echo $this->escAttr($control); ?>">
-                <span><?php echo $this->escHtml($this->schemaFieldLabel($name)); ?> <strong aria-hidden="true">*</strong> <small><?php echo $this->escHtml($field->type()); ?></small></span>
+                <span><?php echo $this->escHtml($this->schemaFieldLabel($name)); ?> <strong aria-hidden="true">*</strong> <small><?php echo $this->escHtml($field->type()); ?><?php echo $field->allowEmpty() ? ' · may be empty' : ''; ?></small></span>
                 <?php if ($control === 'creature-type'): ?>
                     <input type="text" name="<?php echo $this->escAttr($inputName); ?>" value="<?php echo $this->escAttr($this->schemaFriendlyValue($control, $value)); ?>" list="gmrexp-creature-types" placeholder="e.g. Humanoid" required>
                     <small class="gmrexp-reading-room__field-help">Choose the creature classification intended by the source. Common examples include Humanoid, Fey, Construct, Undead, and Monstrosity; the Review Desk does not choose one for you.</small>
@@ -1392,6 +1393,15 @@ final class ReadingRoomPage
                 <?php elseif ($control === 'trait-lines'): ?>
                     <textarea name="<?php echo $this->escAttr($inputName); ?>" rows="7" spellcheck="false" required><?php echo $this->escHtml($this->schemaFriendlyValue($control, $value)); ?></textarea>
                     <small class="gmrexp-reading-room__field-help">One trait per line: <code>canonical-key | Trait Name | Description</code>. The Keeper supplies the key; Pippin does not invent it. Rules can be refined later in Advanced content data.</small>
+                <?php elseif ($control === 'proficiency-groups'): ?>
+                    <textarea name="<?php echo $this->escAttr($inputName); ?>" rows="5" spellcheck="false" required><?php echo $this->escHtml($this->schemaFriendlyValue($control, $value)); ?></textarea>
+                    <small class="gmrexp-reading-room__field-help">One proficiency group per line: <code>skills | Athletics, Survival</code> or <code>tools | Cook's Utensils</code>. Use only groups and proficiencies established by the source.</small>
+                <?php elseif ($control === 'feature-lines'): ?>
+                    <textarea name="<?php echo $this->escAttr($inputName); ?>" rows="7" spellcheck="false" required><?php echo $this->escHtml($this->schemaFriendlyValue($control, $value)); ?></textarea>
+                    <small class="gmrexp-reading-room__field-help">One feature per line: <code>canonical-key | Feature Name | Description</code>. The Keeper supplies the canonical key.</small>
+                <?php elseif ($control === 'empty-array-allowed'): ?>
+                    <textarea name="<?php echo $this->escAttr($inputName); ?>" rows="4" spellcheck="false"><?php echo $this->escHtml($this->schemaFieldValue($field, $value)); ?></textarea>
+                    <small class="gmrexp-reading-room__field-help">This field is canonical but may be empty. Leave it as <code>[]</code> (or blank) when the source specifies no starting equipment. If equipment is defined, enter the existing canonical JSON array here.</small>
                 <?php elseif (in_array($field->type(), [FieldDefinition::MAP, FieldDefinition::ARRAY], true)): ?>
                     <textarea name="<?php echo $this->escAttr($inputName); ?>" rows="5" spellcheck="false" required><?php echo $this->escHtml($this->schemaFieldValue($field, $value)); ?></textarea>
                     <small class="gmrexp-reading-room__field-help"><?php echo $field->type() === FieldDefinition::MAP ? 'Enter a JSON object, for example {"walk": 30}.' : 'Enter a JSON array, for example ["Common"].'; ?></small>
@@ -1429,6 +1439,14 @@ final class ReadingRoomPage
             };
         }
         if ($type === 'subrace' && $name === 'traits') { return 'trait-lines'; }
+        if ($type === 'background') {
+            return match ($name) {
+                'proficiencies' => 'proficiency-groups',
+                'starting_equipment' => 'empty-array-allowed',
+                'features' => 'feature-lines',
+                default => 'schema',
+            };
+        }
         return 'schema';
     }
 
@@ -1443,15 +1461,25 @@ final class ReadingRoomPage
         if ($control === 'string-list') {
             return is_array($value) ? implode(', ', array_values(array_filter($value, 'is_string'))) : '';
         }
-        if ($control === 'trait-lines') {
+        if (in_array($control, ['trait-lines', 'feature-lines'], true)) {
             if (!is_array($value)) { return ''; }
             $lines = [];
-            foreach ($value as $trait) {
-                if (!is_array($trait) || array_is_list($trait)) { continue; }
-                $key = isset($trait['key']) && is_string($trait['key']) ? $trait['key'] : '';
-                $name = isset($trait['name']) && is_string($trait['name']) ? $trait['name'] : '';
-                $description = isset($trait['description']) && is_string($trait['description']) ? $trait['description'] : '';
+            foreach ($value as $feature) {
+                if (!is_array($feature) || array_is_list($feature)) { continue; }
+                $key = isset($feature['key']) && is_string($feature['key']) ? $feature['key'] : '';
+                $name = isset($feature['name']) && is_string($feature['name']) ? $feature['name'] : '';
+                $description = isset($feature['description']) && is_string($feature['description']) ? $feature['description'] : '';
                 if ($key !== '' || $name !== '') { $lines[] = $key . ' | ' . $name . ($description !== '' ? ' | ' . $description : ''); }
+            }
+            return implode("\n", $lines);
+        }
+        if ($control === 'proficiency-groups') {
+            if (!is_array($value) || array_is_list($value)) { return ''; }
+            $lines = [];
+            foreach ($value as $group => $entries) {
+                if (!is_string($group) || !is_array($entries) || !array_is_list($entries)) { continue; }
+                $entries = array_values(array_filter($entries, 'is_string'));
+                if ($entries !== []) { $lines[] = $group . ' | ' . implode(', ', $entries); }
             }
             return implode("\n", $lines);
         }
@@ -1497,7 +1525,11 @@ final class ReadingRoomPage
             }
             $raw = trim($this->unslash($raw));
             if ($raw === '') {
-                unset($data[$name]);
+                if ($field->allowEmpty()) {
+                    $data[$name] = $field->type() === FieldDefinition::ARRAY ? [] : ($field->type() === FieldDefinition::MAP ? [] : '');
+                } else {
+                    unset($data[$name]);
+                }
                 continue;
             }
 
@@ -1507,7 +1539,10 @@ final class ReadingRoomPage
                 'size' => ['value' => $raw],
                 'walking-speed' => ['walk' => $this->parseReviewInteger($name, $raw)],
                 'string-list' => $this->parseReviewStringList($name, $raw),
-                'trait-lines' => $this->parseReviewTraitLines($raw),
+                'trait-lines' => $this->parseReviewFeatureLines($raw, 'Race traits'),
+                'feature-lines' => $this->parseReviewFeatureLines($raw, 'Background features'),
+                'proficiency-groups' => $this->parseReviewProficiencyGroups($raw),
+                'empty-array-allowed' => $this->parseReviewJsonCollection($name, $raw, true),
                 default => match ($field->type()) {
                     FieldDefinition::STRING => $raw,
                     FieldDefinition::INTEGER => $this->parseReviewInteger($name, $raw),
@@ -1534,10 +1569,10 @@ final class ReadingRoomPage
     }
 
     /** @return list<array{key:string,name:string,description?:string}> */
-    private function parseReviewTraitLines(string $raw): array
+    private function parseReviewFeatureLines(string $raw, string $label): array
     {
         $lines = preg_split('/\r\n|\r|\n/', $raw) ?: [];
-        $traits = [];
+        $features = [];
         foreach ($lines as $index => $line) {
             $line = trim($line);
             if ($line === '') { continue; }
@@ -1546,14 +1581,41 @@ final class ReadingRoomPage
             $name = $parts[1] ?? '';
             $description = $parts[2] ?? '';
             if ($key === '' || $name === '') {
-                throw new ReviewDecisionException(sprintf('Race trait line %d must use: canonical-key | Trait Name | Description.', $index + 1));
+                throw new ReviewDecisionException(sprintf('%s line %d must use: canonical-key | Name | Description.', $label, $index + 1));
             }
-            $trait = ['key' => $key, 'name' => $name];
-            if ($description !== '') { $trait['description'] = $description; }
-            $traits[] = $trait;
+            $feature = ['key' => $key, 'name' => $name];
+            if ($description !== '') { $feature['description'] = $description; }
+            $features[] = $feature;
         }
-        if ($traits === []) { throw new ReviewDecisionException('Race traits require at least one Keeper-defined trait.'); }
-        return $traits;
+        if ($features === []) { throw new ReviewDecisionException(sprintf('%s require at least one Keeper-defined entry.', $label)); }
+        return $features;
+    }
+
+    /** @return array<string,list<string>> */
+    private function parseReviewProficiencyGroups(string $raw): array
+    {
+        $lines = preg_split('/\r\n|\r|\n/', $raw) ?: [];
+        $groups = [];
+        foreach ($lines as $index => $line) {
+            $line = trim($line);
+            if ($line === '') { continue; }
+            $parts = array_map('trim', explode('|', $line, 2));
+            $group = $parts[0] ?? '';
+            $valuesRaw = $parts[1] ?? '';
+            if ($group === '' || $valuesRaw === '') {
+                throw new ReviewDecisionException(sprintf('Proficiencies line %d must use: group | Value, Value.', $index + 1));
+            }
+            $values = array_values(array_filter(array_map('trim', explode(',', $valuesRaw)), static fn (string $value): bool => $value !== ''));
+            if ($values === []) {
+                throw new ReviewDecisionException(sprintf('Proficiencies group "%s" requires at least one value.', $group));
+            }
+            if (isset($groups[$group])) {
+                throw new ReviewDecisionException(sprintf('Proficiencies group "%s" is duplicated.', $group));
+            }
+            $groups[$group] = $values;
+        }
+        if ($groups === []) { throw new ReviewDecisionException('Proficiencies require at least one Keeper-defined group.'); }
+        return $groups;
     }
 
     private function parseReviewInteger(string $name, string $raw): int

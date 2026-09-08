@@ -11,7 +11,7 @@ final class BackgroundSchemaFactory
     {
         return CoreSchemaFactory::make('background', [
             new FieldDefinition('proficiencies', FieldDefinition::MAP, true),
-            new FieldDefinition('starting_equipment', FieldDefinition::ARRAY, true),
+            new FieldDefinition('starting_equipment', FieldDefinition::ARRAY, true, true),
             new FieldDefinition('features', FieldDefinition::ARRAY, true),
             new FieldDefinition('languages', FieldDefinition::ARRAY, false),
             new FieldDefinition('language_choices', FieldDefinition::ARRAY, false),

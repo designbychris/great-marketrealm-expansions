@@ -176,4 +176,25 @@ final class BackgroundSchemaTest extends TestCase
             self::assertArrayHasKey($field, $schema->fields(), 'Expected background schema field: ' . $field);
         }
     }
+    public function test_background_may_explicitly_have_no_starting_equipment(): void
+    {
+        $data = $this->backgroundData();
+        $data['starting_equipment'] = [];
+
+        self::assertTrue($this->validator()->validate(new ContentDefinition('background', 'no-equipment', $data))->valid());
+    }
+
+    public function test_starting_equipment_is_required_but_may_be_empty(): void
+    {
+        $types = new ContentTypeCatalogue();
+        foreach (CoreContentTypes::all() as $type) { $types->add($type); }
+        $schemas = new SchemaRegistry();
+        CoreSchemas::register($schemas, $types);
+        $field = $schemas->get('background')?->fields()['starting_equipment'] ?? null;
+
+        self::assertNotNull($field);
+        self::assertTrue($field->required());
+        self::assertTrue($field->allowEmpty());
+    }
+
 }

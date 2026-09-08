@@ -2,6 +2,9 @@
 
 ## 0.5.0-alpha9 — Phase V.9: The Shelving Trolley
 
+- Refined Background review with friendly proficiency-group and feature-line editors while keeping canonical schema validation authoritative.
+- Corrected Background `starting_equipment` semantics: the field remains required in canonical data but may explicitly be an empty array when the source defines no starting equipment.
+- Review Desk now accepts `[]` or a blank Starting Equipment control for that intentional empty state instead of forcing invented equipment.
 - Refined the schema-aware Review Desk with Keeper-friendly playable-race controls for creature type, fixed size, walking speed, languages, and traits while preserving canonical schema validation.
 - Refined the Review Desk to read required fields directly from the canonical `SchemaRegistry`.
 - Added dynamic required-field controls for all core content types.

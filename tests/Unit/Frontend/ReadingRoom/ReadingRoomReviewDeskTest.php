@@ -507,4 +507,76 @@ final class ReadingRoomReviewDeskTest extends TestCase
         self::assertStringContainsString('&quot;resistances&quot;', $html);
     }
 
+    public function test_background_requirements_render_keeper_friendly_controls(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'background',
+            'gmrexp_review_key' => 'former-fry-cook',
+            'gmrexp_review_name' => 'Former Fry Cook',
+            'gmrexp_review_data' => '{"name":"Former Fry Cook"}',
+        ];
+
+        $html = $this->page->render('review');
+
+        self::assertStringContainsString('skills | Athletics, Survival', $html);
+        self::assertStringContainsString('canonical-key | Feature Name | Description', $html);
+        self::assertStringContainsString('may be empty', $html);
+        self::assertStringContainsString('source specifies no starting equipment', $html);
+    }
+
+    public function test_keeper_can_accept_background_with_explicitly_empty_starting_equipment(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'background',
+            'gmrexp_review_key' => 'former-fry-cook',
+            'gmrexp_review_name' => 'Former Fry Cook',
+            'gmrexp_review_description' => 'Synthetic background.',
+            'gmrexp_review_data' => '{"name":"Former Fry Cook"}',
+            'gmrexp_review_schema' => [
+                'proficiencies' => "skills | Athletics\ntools | Cook's Utensils",
+                'starting_equipment' => '[]',
+                'features' => 'kitchen-reflexes | Kitchen Reflexes | Advantage against mundane kitchen hazards.',
+            ],
+        ];
+
+        $html = $this->page->render('review');
+        $decision = $this->queue->load()['decisions']['google-heading-1'];
+
+        self::assertStringContainsString('background:former-fry-cook', $html);
+        self::assertSame(['skills' => ['Athletics'], 'tools' => ["Cook's Utensils"]], $decision['data']['proficiencies']);
+        self::assertSame([], $decision['data']['starting_equipment']);
+        self::assertSame('kitchen-reflexes', $decision['data']['features'][0]['key']);
+    }
+
+    public function test_background_blank_starting_equipment_is_normalised_to_empty_array(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'background',
+            'gmrexp_review_key' => 'street-vendor',
+            'gmrexp_review_name' => 'Street Vendor',
+            'gmrexp_review_data' => '{"name":"Street Vendor"}',
+            'gmrexp_review_schema' => [
+                'proficiencies' => 'skills | Persuasion, Insight',
+                'starting_equipment' => '',
+                'features' => 'regular-customer | Regular Customer | Find inexpensive lodging, meals, rumours and local gossip.',
+            ],
+        ];
+
+        $this->page->render('review');
+        $decision = $this->queue->load()['decisions']['google-heading-1'];
+        self::assertSame([], $decision['data']['starting_equipment']);
+    }
+
 }

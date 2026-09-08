@@ -49,13 +49,19 @@
         if (control === 'size') return typeof value === 'string' ? value : (value && typeof value === 'object' && typeof value.value === 'string' ? value.value : '');
         if (control === 'walking-speed') return typeof value === 'string' ? value : (value && typeof value === 'object' && Number.isInteger(value.walk) ? String(value.walk) : '');
         if (control === 'string-list') return typeof value === 'string' ? value : (Array.isArray(value) ? value.filter((item) => typeof item === 'string').join(', ') : '');
-        if (control === 'trait-lines' && typeof value === 'string') return value;
-        if (control === 'trait-lines' && Array.isArray(value)) {
-            return value.filter((trait) => trait && typeof trait === 'object' && !Array.isArray(trait)).map((trait) => {
-                const key = typeof trait.key === 'string' ? trait.key : '';
-                const name = typeof trait.name === 'string' ? trait.name : '';
-                const description = typeof trait.description === 'string' ? trait.description : '';
+        if ((control === 'trait-lines' || control === 'feature-lines') && typeof value === 'string') return value;
+        if ((control === 'trait-lines' || control === 'feature-lines') && Array.isArray(value)) {
+            return value.filter((feature) => feature && typeof feature === 'object' && !Array.isArray(feature)).map((feature) => {
+                const key = typeof feature.key === 'string' ? feature.key : '';
+                const name = typeof feature.name === 'string' ? feature.name : '';
+                const description = typeof feature.description === 'string' ? feature.description : '';
                 return `${key} | ${name}${description ? ` | ${description}` : ''}`;
+            }).join('\n');
+        }
+        if (control === 'proficiency-groups' && typeof value === 'string') return value;
+        if (control === 'proficiency-groups' && value && typeof value === 'object' && !Array.isArray(value)) {
+            return Object.entries(value).filter(([, entries]) => Array.isArray(entries)).map(([group, entries]) => {
+                return `${group} | ${entries.filter((entry) => typeof entry === 'string').join(', ')}`;
             }).join('\n');
         }
         return value === undefined || value === null ? '' : String(value);
@@ -82,7 +88,7 @@
         required.textContent = '*';
         heading.append(required, document.createTextNode(' '));
         const type = document.createElement('small');
-        type.textContent = field.type;
+        type.textContent = `${field.type}${field.allow_empty ? ' · may be empty' : ''}`;
         heading.append(type);
         label.append(heading);
 
@@ -120,6 +126,18 @@
             control = document.createElement('textarea'); control.rows = 7; control.spellcheck = false;
             control.value = friendlyValue(controlKind, value);
             label.append(control, makeHelp('One trait per line: canonical-key | Trait Name | Description. The Keeper supplies the key.'));
+        } else if (controlKind === 'proficiency-groups') {
+            control = document.createElement('textarea'); control.rows = 5; control.spellcheck = false;
+            control.value = friendlyValue(controlKind, value);
+            label.append(control, makeHelp("One proficiency group per line: skills | Athletics, Survival or tools | Cook's Utensils."));
+        } else if (controlKind === 'feature-lines') {
+            control = document.createElement('textarea'); control.rows = 7; control.spellcheck = false;
+            control.value = friendlyValue(controlKind, value);
+            label.append(control, makeHelp('One feature per line: canonical-key | Feature Name | Description. The Keeper supplies the key.'));
+        } else if (controlKind === 'empty-array-allowed') {
+            control = document.createElement('textarea'); control.rows = 4; control.spellcheck = false;
+            control.value = prettyJson(value, '[]');
+            label.append(control, makeHelp('This canonical field may be empty. Leave [] (or blank) when the source specifies no starting equipment.'));
         } else if (field.type === 'map' || field.type === 'array') {
             control = document.createElement('textarea');
             control.rows = 5;
@@ -149,7 +167,7 @@
         }
 
         control.name = name;
-        control.required = true;
+        control.required = field.required !== false && !field.allow_empty;
         if (!control.parentNode) label.append(control);
         return label;
     };

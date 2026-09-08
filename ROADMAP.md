@@ -630,4 +630,6 @@ Planned sequence:
 - [x] Expose required fields dynamically when the Keeper chooses a content type.
 - [x] Preserve failed amendment drafts for correction.
 - [x] Keep canonical validation authoritative; do not invent requirement values.
+- [x] Refine Background requirements into friendly proficiency/feature controls.
+- [x] Permit required-but-empty Background starting equipment when the source defines none.
 - [ ] Server-side PHPUnit certification after schema-aware refinement.
