@@ -548,3 +548,20 @@ Planned sequence:
 - [x] Existing Reading Room route contract remains `1.0.0`.
 - [x] Responsive/accessibility styling and regression coverage.
 - [ ] Server-side PHPUnit certification.
+
+
+## Phase V.6A — The Keeper Locks the Staff Door
+
+- [x] Plugin version `0.5.0-alpha6.1`.
+- [x] Record certified V.6 regression-hotfix baseline: 567 tests / 1366 assertions.
+- [x] Keep Library and Browse readable for signed-in users.
+- [x] Restrict Import Desk to WordPress Administrator-level `manage_options`.
+- [x] Restrict Review Desk to the same administrator capability.
+- [x] Hide Import/Review navigation entries from non-administrator users.
+- [x] Reject direct Import/Review section requests before desk workflows render.
+- [x] Prevent direct Import POST staging by non-administrator users.
+- [x] Hide Living Library Activate/Deactivate controls from non-administrators.
+- [x] Preserve server-side activation capability enforcement.
+- [x] Preserve Catalogue, Import API, Review API and route contracts.
+- [x] Add access-boundary regression coverage and documentation.
+- [ ] Server-side PHPUnit certification.

@@ -6,6 +6,14 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
+**Phase V.6A — The Keeper Locks the Staff Door**
+
+Import Desk and Review Desk are now Administrator-only (`manage_options`). Signed-in non-admin users may read Library/Browse, but cannot stage/review source material or use activation controls. The certified V.6 regression-hotfix baseline is **567 tests / 1366 assertions**.
+
+See `docs/ADMINISTRATOR-DESK-ACCESS.md`.
+
+## Previous milestone
+
 **Phase V.6 — The Keeper's Import Desk**
 
 Phase V.5 is certified at **549 tests / 1,322 assertions**.

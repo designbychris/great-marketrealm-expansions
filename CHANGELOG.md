@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0-alpha6.1 — Phase V.6A: The Keeper Locks the Staff Door
+
+- Restricted the Import Desk and Review Desk to the WordPress `manage_options` capability.
+- Kept Library and Browse available as read-only desks for signed-in users.
+- Hid Import/Review navigation entries from non-administrator accounts.
+- Added section-level authorization so manually entered Import/Review URLs cannot bypass the UI boundary.
+- Prevented non-administrator Import POST staging by gating the section before its workflow executes.
+- Hid Living Library Activate/Deactivate controls from non-administrator users while preserving the existing server-side capability check.
+- Kept Catalogue, Import API, Review API and route contracts unchanged.
+- Recorded the certified V.6 regression-hotfix baseline: 567 tests / 1366 assertions.
+
 ## 0.5.0-alpha6 — Phase V.6: The Keeper's Import Desk
 
 - Opened the Reading Room Import Desk.

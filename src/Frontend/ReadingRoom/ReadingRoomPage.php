@@ -243,9 +243,12 @@ final class ReadingRoomPage
     public function render(string $section = 'library', ?string $baseUrl = null): string
     {
         $section = $this->navigation->normalizeSection($section);
-        $state = $this->access->state(
-            function_exists('is_user_logged_in') ? is_user_logged_in() : true,
-            function_exists('current_user_can') ? current_user_can('manage_options') : true
+        $loggedIn = function_exists('is_user_logged_in') ? is_user_logged_in() : true;
+        $canManageExpansions = function_exists('current_user_can') ? current_user_can('manage_options') : true;
+        $state = $this->access->sectionState(
+            $section,
+            $loggedIn,
+            $canManageExpansions
         );
 
         if ($state === ReadingRoomAccess::LOGIN_REQUIRED) {
@@ -267,7 +270,7 @@ final class ReadingRoomPage
                 <p class="gmrexp-reading-room__lede">The Keeper's front desk for the Living Library. Installed Almanacs remain canonical; this room reads their state through the Catalogue and Library APIs.</p>
             </header>
 
-            <?php echo $this->renderNavigation($section, $baseUrl); ?>
+            <?php echo $this->renderNavigation($section, $baseUrl, $canManageExpansions); ?>
 
             <?php if ($section === 'browse'): ?>
                 <?php echo $this->renderBrowse($baseUrl); ?>
@@ -342,13 +345,14 @@ final class ReadingRoomPage
         return trim((string) ob_get_clean());
     }
 
-    private function renderNavigation(string $current, ?string $baseUrl = null): string
+    private function renderNavigation(string $current, ?string $baseUrl = null, bool $canManageExpansions = true): string
     {
         ob_start();
         ?>
         <nav class="gmrexp-reading-room__nav" aria-label="Reading Room">
             <ul>
                 <?php foreach ($this->navigation->items() as $section => $item): ?>
+                    <?php if ($this->access->administratorOnly($section) && !$canManageExpansions) { continue; } ?>
                     <li>
                         <a
                             href="<?php echo $this->escAttr($this->navigationUrl($section, $baseUrl)); ?>"
@@ -664,6 +668,10 @@ final class ReadingRoomPage
 
     private function renderActivationForm(string $expansionKey, bool $active): string
     {
+        if (function_exists('current_user_can') && !current_user_can('manage_options')) {
+            return '';
+        }
+
         $actionUrl = function_exists('admin_url') ? admin_url('admin-post.php') : '#';
         $nextState = $active ? '0' : '1';
         $buttonLabel = $active ? 'Deactivate' : 'Activate';
@@ -998,7 +1006,7 @@ final class ReadingRoomPage
 
     private function renderForbidden(): string
     {
-        return '<main class="gmrexp-reading-room gmrexp-reading-room--gate"><section class="gmrexp-reading-room__gate"><p class="gmrexp-reading-room__eyebrow">Great MarketRealm Expansions</p><h1>Keeper access required.</h1><p>Your account is signed in, but it does not currently have permission to manage the Expansion Library.</p></section></main>';
+        return '<main class="gmrexp-reading-room gmrexp-reading-room--gate"><section class="gmrexp-reading-room__gate"><p class="gmrexp-reading-room__eyebrow">Great MarketRealm Expansions</p><h1>Administrator access required.</h1><p>The Import Desk and Review Desk are restricted to administrators. Source material cannot be staged or reviewed from this account.</p></section></main>';
     }
 
     private function summaryCard(string $label, int $value): string
