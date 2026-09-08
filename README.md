@@ -6,11 +6,13 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
-**Phase V.6A — The Keeper Locks the Staff Door**
+**Phase V.7 — Pippin Finds the Google Docs**
 
-Import Desk and Review Desk are now Administrator-only (`manage_options`). Signed-in non-admin users may read Library/Browse, but cannot stage/review source material or use activation controls. The certified V.6 regression-hotfix baseline is **567 tests / 1366 assertions**.
+The administrator-only Import Desk can now acquire an accessible Google Docs HTML export, preserve its source identity/headings, transform it into the neutral Import API document shape, and stage it through the existing V.6 pipeline without guessing canonical type/key identity. The certified V.6A baseline is **572 tests / 1380 assertions**.
 
-See `docs/ADMINISTRATOR-DESK-ACCESS.md`.
+Private Docs remain safely unsupported by the built-in unauthenticated fetcher; a future authenticated connector can sit behind the same source-adapter boundary.
+
+See `docs/PIPPIN-FINDS-THE-GOOGLE-DOCS.md`.
 
 ## Previous milestone
 

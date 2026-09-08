@@ -109,7 +109,7 @@ final class ReadingRoomImportDeskTest extends TestCase
         $html = $this->page->render('import');
 
         self::assertStringContainsString('Imported ≠ Canonical.', $html);
-        self::assertStringContainsString('does not fetch remote documents', $html);
+        self::assertStringContainsString('V.7 can acquire an accessible Google Doc HTML export', $html);
     }
 
     public function test_import_form_posts_back_to_shortcode_host_import_section(): void

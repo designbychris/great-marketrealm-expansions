@@ -884,3 +884,21 @@ a.gmrexp-reading-room__compatibility:hover {
 @media (max-width: 520px) {
     .gmrexp-reading-room__import-counts { grid-template-columns: 1fr; }
 }
+
+/* Phase V.7 — Pippin Finds the Google Docs */
+.gmrexp-reading-room__google-doc {
+    margin: 1.25rem 0;
+    padding: 1rem;
+    border: 1px solid currentColor;
+    border-radius: 0.35rem;
+}
+.gmrexp-reading-room__google-doc-form {
+    display: grid;
+    gap: 0.65rem;
+}
+.gmrexp-reading-room__google-doc-form input[type="url"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.7rem 0.8rem;
+    font: inherit;
+}

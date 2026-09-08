@@ -23,7 +23,7 @@ A V.6 submission does not:
 - execute PHP or another executable payload;
 - fetch a Google Doc or other remote source.
 
-The staged result is request-local. V.7 owns the Google Docs source adapter, V.8 owns Keeper review, and later phases own proposed-Almanac and publication workflows.
+The staged result is request-local. V.7 now owns the Google Docs source adapter; V.8 owns Keeper review, and later phases own proposed-Almanac and publication workflows. See `PIPPIN-FINDS-THE-GOOGLE-DOCS.md`.
 
 ## Input contract
 

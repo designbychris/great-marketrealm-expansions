@@ -18,6 +18,7 @@ use GreatMarketrealmExpansions\Expansions\Loading\ExpansionFileLoader;
 use GreatMarketrealmExpansions\Integration\Bridge;
 use GreatMarketrealmExpansions\Integration\ConsumerRegistry;
 use GreatMarketrealmExpansions\Import\ImportService;
+use GreatMarketrealmExpansions\Import\GoogleDocsSourceAdapter;
 use GreatMarketrealmExpansions\Library\ActivationStore;
 use GreatMarketrealmExpansions\Library\Library;
 use GreatMarketrealmExpansions\Library\WordPressOptionActivationStore;
@@ -52,6 +53,7 @@ final class ExpansionServiceProvider extends ServiceProvider
         $this->container->singleton(ImportService::class, static fn (Container $container): ImportService => new ImportService(
             $container->get(ContentValidator::class)
         ));
+        $this->container->singleton(GoogleDocsSourceAdapter::class, static fn (Container $container): GoogleDocsSourceAdapter => new GoogleDocsSourceAdapter());
         $this->container->singleton(ReviewService::class, static fn (Container $container): ReviewService => new ReviewService(
             $container->get(ContentValidator::class)
         ));
@@ -92,7 +94,8 @@ final class ExpansionServiceProvider extends ServiceProvider
             $container->get(Library::class),
             $container->get(ReadingRoomAccess::class),
             $container->get(ReadingRoomNavigation::class),
-            $container->get(ImportService::class)
+            $container->get(ImportService::class),
+            $container->get(GoogleDocsSourceAdapter::class)
         ));
         $this->container->singleton(CatalogueAdminPage::class, static fn (Container $container): CatalogueAdminPage => new CatalogueAdminPage(
             $container->get(Catalogue::class),

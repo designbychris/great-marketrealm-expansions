@@ -547,7 +547,7 @@ Planned sequence:
 - [x] No remote Google Docs fetch; source adapter remains V.7.
 - [x] Existing Reading Room route contract remains `1.0.0`.
 - [x] Responsive/accessibility styling and regression coverage.
-- [ ] Server-side PHPUnit certification.
+- [x] Server-side PHPUnit certification — 567 tests / 1366 assertions.
 
 
 ## Phase V.6A — The Keeper Locks the Staff Door
@@ -564,4 +564,26 @@ Planned sequence:
 - [x] Preserve server-side activation capability enforcement.
 - [x] Preserve Catalogue, Import API, Review API and route contracts.
 - [x] Add access-boundary regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 572 tests / 1380 assertions.
+
+
+## Phase V.7 — Pippin Finds the Google Docs
+
+- [x] Plugin version `0.5.0-alpha7`.
+- [x] Record certified V.6A baseline: 572 tests / 1380 assertions.
+- [x] Add strict Google Docs document URL/reference parsing.
+- [x] Add bounded Google Docs HTML-export acquisition through WordPress HTTP.
+- [x] Restrict acquisition to derived `https://docs.google.com/document/d/.../export?format=html` URLs.
+- [x] Transform headings and source prose into the neutral Import API document shape.
+- [x] Preserve document and heading provenance.
+- [x] Leave canonical type/key unresolved rather than guessing.
+- [x] Mark extracted records for Keeper review.
+- [x] Feed successful acquisition into existing Import API staging.
+- [x] Preserve generated JSON in the V.6 correction ledger.
+- [x] Keep Import Desk Administrator-only under V.6A.
+- [x] Fail safely for inaccessible/private documents.
+- [x] No Catalogue, activation, review-queue, filesystem or publication mutation.
+- [x] No Google Docs dependency at gameplay/runtime.
+- [x] Reading Room route and Import API contracts remain `1.0.0`.
+- [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.

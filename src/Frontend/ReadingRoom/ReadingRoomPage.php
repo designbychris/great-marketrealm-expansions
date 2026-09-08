@@ -8,6 +8,8 @@ use GreatMarketrealmExpansions\Library\Library;
 use GreatMarketrealmExpansions\Import\ImportIssue;
 use GreatMarketrealmExpansions\Import\ImportResult;
 use GreatMarketrealmExpansions\Import\ImportService;
+use GreatMarketrealmExpansions\Import\GoogleDocsAcquisition;
+use GreatMarketrealmExpansions\Import\GoogleDocsSourceAdapter;
 use GreatMarketrealmExpansions\Import\StagedDefinition;
 
 final class ReadingRoomPage
@@ -24,6 +26,10 @@ final class ReadingRoomPage
     public const IMPORT_NONCE_ACTION = 'gmrexp_reading_room_import';
     public const IMPORT_NONCE_FIELD = '_gmrexp_import_nonce';
     public const IMPORT_JSON_FIELD = 'gmrexp_import_json';
+    public const GOOGLE_DOC_SUBMIT_FIELD = 'gmrexp_google_doc_submit';
+    public const GOOGLE_DOC_URL_FIELD = 'gmrexp_google_doc_url';
+    public const GOOGLE_DOC_NONCE_ACTION = 'gmrexp_reading_room_google_doc';
+    public const GOOGLE_DOC_NONCE_FIELD = '_gmrexp_google_doc_nonce';
     public const STYLE_HANDLE = 'gmrexp-reading-room';
     public const ROUTE_VERSION = '1.0.0';
 
@@ -32,7 +38,8 @@ final class ReadingRoomPage
         private Library $library,
         private ReadingRoomAccess $access,
         private ReadingRoomNavigation $navigation,
-        private ?ImportService $importer = null
+        private ?ImportService $importer = null,
+        private ?GoogleDocsSourceAdapter $googleDocs = null
     ) {}
 
     public function register(): void
@@ -714,8 +721,9 @@ final class ReadingRoomPage
 
     private function renderImportDesk(?string $baseUrl = null): string
     {
-        $submittedJson = $this->submittedImportJson();
-        $submission = $this->importSubmission($submittedJson);
+        $googleSubmission = $this->googleDocSubmission();
+        $submittedJson = $googleSubmission['json'] ?? $this->submittedImportJson();
+        $submission = $this->importSubmission($submittedJson, $googleSubmission['successful']);
         $actionUrl = $this->navigationUrl('import', $baseUrl);
 
         ob_start();
@@ -725,14 +733,14 @@ final class ReadingRoomPage
                 <div>
                     <p class="gmrexp-reading-room__kicker">The Keeper's Import Desk</p>
                     <h2 id="gmrexp-import-heading">Stage Structured Source Material</h2>
-                    <p class="gmrexp-reading-room__section-intro">Paste a neutral Import API document here to validate and stage source material before Keeper review. Nothing staged at this desk is published, installed, activated, or written into the canonical Catalogue.</p>
+                    <p class="gmrexp-reading-room__section-intro">Bring a Google Doc to Pippin or paste a neutral Import API document here to validate and stage source material before Keeper review. Nothing staged at this desk is published, installed, activated, or written into the canonical Catalogue.</p>
                 </div>
                 <span class="gmrexp-reading-room__status">Import API <?php echo $this->escHtml($this->importer?->apiVersion() ?? 'unavailable'); ?></span>
             </div>
 
             <div class="gmrexp-reading-room__import-boundary">
                 <strong>Imported ≠ Canonical.</strong>
-                <span>This desk stages non-executable structured data for inspection only. Google Docs acquisition belongs to V.7; this phase does not fetch remote documents or accept executable PHP.</span>
+                <span>This desk stages non-executable structured data for inspection only. V.7 can acquire an accessible Google Doc HTML export, but it never treats headings as canonical types or keys and never accepts executable PHP.</span>
             </div>
 
             <?php if ($this->importer === null): ?>
@@ -741,6 +749,38 @@ final class ReadingRoomPage
                     <p>The Import API has not been supplied to this Reading Room instance.</p>
                 </div>
             <?php else: ?>
+                <section class="gmrexp-reading-room__google-doc" aria-labelledby="gmrexp-google-doc-heading">
+                    <div class="gmrexp-reading-room__section-heading">
+                        <div>
+                            <p class="gmrexp-reading-room__kicker">Pippin finds the Google Docs</p>
+                            <h3 id="gmrexp-google-doc-heading">Acquire a Google Doc</h3>
+                            <p class="gmrexp-reading-room__field-help">Paste a Google Docs document URL. The site requests Google's HTML export, preserves headings and source text, and converts them into neutral review records. Content type and canonical key are deliberately left unresolved.</p>
+                        </div>
+                        <span class="gmrexp-reading-room__status">Adapter <?php echo $this->escHtml(GoogleDocsSourceAdapter::ADAPTER_VERSION); ?></span>
+                    </div>
+                    <form class="gmrexp-reading-room__google-doc-form" method="post" action="<?php echo $this->escAttr($actionUrl); ?>">
+                        <?php echo $this->renderGoogleDocNonce(); ?>
+                        <input type="hidden" name="<?php echo $this->escAttr(self::GOOGLE_DOC_SUBMIT_FIELD); ?>" value="1">
+                        <label for="gmrexp-google-doc-url"><strong>Google Doc URL</strong></label>
+                        <input id="gmrexp-google-doc-url" type="url" name="<?php echo $this->escAttr(self::GOOGLE_DOC_URL_FIELD); ?>" value="<?php echo $this->escAttr($googleSubmission['url']); ?>" placeholder="https://docs.google.com/document/d/…/edit" required>
+                        <div class="gmrexp-reading-room__import-actions">
+                            <button class="gmrexp-reading-room__button" type="submit">Find Google Doc</button>
+                            <span>Accessible documents only; private Docs need a future authenticated source connector.</span>
+                        </div>
+                    </form>
+                    <?php if ($googleSubmission['attempted'] && !$googleSubmission['nonce_valid']): ?>
+                        <div class="gmrexp-reading-room__import-security" role="alert"><h3>The Google Docs intake stamp could not be verified.</h3><p>Reload the Import Desk and try again.</p></div>
+                    <?php elseif ($googleSubmission['acquisition'] instanceof GoogleDocsAcquisition && !$googleSubmission['acquisition']->successful()): ?>
+                        <?php $googleIssue = $googleSubmission['acquisition']->issue(); ?>
+                        <div class="gmrexp-reading-room__import-security" role="alert">
+                            <h3>Pippin could not retrieve that document.</h3>
+                            <?php if ($googleIssue !== null): ?><p><code><?php echo $this->escHtml($googleIssue->code()); ?></code> — <?php echo $this->escHtml($googleIssue->message()); ?></p><?php endif; ?>
+                        </div>
+                    <?php elseif ($googleSubmission['successful']): ?>
+                        <div class="gmrexp-reading-room__notice" role="status"><strong>Google Doc acquired.</strong> Its neutral transformation has been copied into the structured staging ledger below. Unresolved identities are expected until Keeper review.</div>
+                    <?php endif; ?>
+                </section>
+
                 <form class="gmrexp-reading-room__import-form" method="post" action="<?php echo $this->escAttr($actionUrl); ?>">
                     <?php echo $this->renderImportNonce(); ?>
                     <input type="hidden" name="<?php echo $this->escAttr(self::IMPORT_SUBMIT_FIELD); ?>" value="1">
@@ -775,19 +815,59 @@ final class ReadingRoomPage
     }
 
     /** @return array{attempted:bool,nonce_valid:bool,result:?ImportResult} */
-    private function importSubmission(string $json): array
+    private function importSubmission(string $json, bool $forcedAttempt = false): array
     {
-        $attempted = isset($_POST[self::IMPORT_SUBMIT_FIELD]) && (string) $_POST[self::IMPORT_SUBMIT_FIELD] === '1';
+        $attempted = $forcedAttempt || (isset($_POST[self::IMPORT_SUBMIT_FIELD]) && (string) $_POST[self::IMPORT_SUBMIT_FIELD] === '1');
         if (!$attempted || $this->importer === null) {
             return ['attempted' => $attempted, 'nonce_valid' => true, 'result' => null];
         }
 
-        $nonceValid = $this->verifyImportNonce();
+        $nonceValid = $forcedAttempt ? true : $this->verifyImportNonce();
         if (!$nonceValid) {
             return ['attempted' => true, 'nonce_valid' => false, 'result' => null];
         }
 
         return ['attempted' => true, 'nonce_valid' => true, 'result' => $this->importer->stageJson($json)];
+    }
+
+    /** @return array{attempted:bool,nonce_valid:bool,successful:bool,url:string,json:?string,acquisition:?GoogleDocsAcquisition} */
+    private function googleDocSubmission(): array
+    {
+        $attempted = isset($_POST[self::GOOGLE_DOC_SUBMIT_FIELD]) && (string) $_POST[self::GOOGLE_DOC_SUBMIT_FIELD] === '1';
+        $url = isset($_POST[self::GOOGLE_DOC_URL_FIELD]) && is_string($_POST[self::GOOGLE_DOC_URL_FIELD])
+            ? trim($this->unslash($_POST[self::GOOGLE_DOC_URL_FIELD]))
+            : '';
+
+        if (!$attempted) {
+            return ['attempted' => false, 'nonce_valid' => true, 'successful' => false, 'url' => $url, 'json' => null, 'acquisition' => null];
+        }
+        if (!$this->verifyGoogleDocNonce()) {
+            return ['attempted' => true, 'nonce_valid' => false, 'successful' => false, 'url' => $url, 'json' => null, 'acquisition' => null];
+        }
+        if ($this->googleDocs === null) {
+            $acquisition = GoogleDocsAcquisition::failure(null, new ImportIssue(ImportIssue::ERROR, 'google_docs_adapter_unavailable', 'The Google Docs source adapter is unavailable.'));
+            return ['attempted' => true, 'nonce_valid' => true, 'successful' => false, 'url' => $url, 'json' => null, 'acquisition' => $acquisition];
+        }
+
+        $acquisition = $this->googleDocs->acquire($url);
+        $json = $acquisition->json();
+        return ['attempted' => true, 'nonce_valid' => true, 'successful' => $acquisition->successful() && $json !== null, 'url' => $url, 'json' => $json, 'acquisition' => $acquisition];
+    }
+
+    private function verifyGoogleDocNonce(): bool
+    {
+        if (!function_exists('wp_verify_nonce')) { return true; }
+        $nonce = isset($_POST[self::GOOGLE_DOC_NONCE_FIELD]) && is_string($_POST[self::GOOGLE_DOC_NONCE_FIELD])
+            ? $this->unslash($_POST[self::GOOGLE_DOC_NONCE_FIELD]) : '';
+        return $nonce !== '' && (bool) wp_verify_nonce($nonce, self::GOOGLE_DOC_NONCE_ACTION);
+    }
+
+    private function renderGoogleDocNonce(): string
+    {
+        if (!function_exists('wp_nonce_field')) { return ''; }
+        ob_start();
+        wp_nonce_field(self::GOOGLE_DOC_NONCE_ACTION, self::GOOGLE_DOC_NONCE_FIELD, false);
+        return (string) ob_get_clean();
     }
 
     private function submittedImportJson(): string

@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.5.0-alpha7 — Phase V.7: Pippin Finds the Google Docs
+
+- Added strict Google Docs URL/document identity parsing and a bounded HTML-export source adapter.
+- Added Google Docs acquisition to the administrator-only Import Desk.
+- Transformed document headings/source prose into neutral review records and reused Import API `1.0.0` for staging.
+- Deliberately left canonical content type/key unresolved rather than guessing from headings.
+- Preserved Google document/source/heading provenance and marked extracted records for Keeper review.
+- Added stable acquisition errors for invalid URLs, inaccessible/empty/oversized documents and unavailable adapter state.
+- Restricted remote acquisition to derived HTTPS `docs.google.com` document export URLs; no generic URL fetcher.
+- Kept private Google Docs outside the unauthenticated built-in fetcher and documented the future authenticated-connector seam.
+- Added no Catalogue, activation, review-queue, filesystem, publication or runtime Google Docs dependency.
+- Kept Reading Room route contract `1.0.0` and Import API `1.0.0` unchanged.
+- Recorded the certified Phase V.6A baseline: 572 tests / 1380 assertions.
+
 ## 0.5.0-alpha6.1 — Phase V.6A: The Keeper Locks the Staff Door
 
 - Restricted the Import Desk and Review Desk to the WordPress `manage_options` capability.
