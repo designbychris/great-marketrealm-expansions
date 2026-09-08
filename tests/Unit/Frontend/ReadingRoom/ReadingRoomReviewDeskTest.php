@@ -197,4 +197,19 @@ final class ReadingRoomReviewDeskTest extends TestCase
         self::assertSame('1.0.0', ReadingRoomPage::ROUTE_VERSION);
         self::assertSame('1.0.0', ReviewService::API_VERSION);
     }
+
+    public function test_import_staging_renders_send_to_review_desk_handoff(): void
+    {
+        $_POST = [
+            ReadingRoomPage::IMPORT_SUBMIT_FIELD => '1',
+            ReadingRoomPage::IMPORT_JSON_FIELD => $this->unresolvedJson(),
+        ];
+
+        $html = $this->page->render('import', 'https://example.test/expansions/');
+
+        self::assertStringContainsString('Send to Review Desk', $html);
+        self::assertStringContainsString('gmrexp_review_queue_submit', $html);
+        self::assertStringContainsString('gmrexp_section=review', $html);
+    }
+
 }

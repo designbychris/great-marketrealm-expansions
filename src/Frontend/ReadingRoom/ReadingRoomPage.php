@@ -824,6 +824,7 @@ final class ReadingRoomPage
                         </div>
                     <?php elseif ($submission['result'] instanceof ImportResult): ?>
                         <?php echo $this->renderImportResult($submission['result']); ?>
+                        <?php echo $this->renderSendToReviewDesk($submittedJson, $baseUrl); ?>
                     <?php endif; ?>
                 <?php endif; ?>
             <?php endif; ?>
