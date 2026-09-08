@@ -1390,6 +1390,12 @@ final class ReadingRoomPage
                 <?php elseif ($control === 'string-list'): ?>
                     <input type="text" name="<?php echo $this->escAttr($inputName); ?>" value="<?php echo $this->escAttr($this->schemaFriendlyValue($control, $value)); ?>" placeholder="e.g. Common, Market Tongue" required>
                     <small class="gmrexp-reading-room__field-help">Separate languages with commas. Only enter languages actually established for this race.</small>
+                <?php elseif ($control === 'canonical-string-list'): ?>
+                    <input type="text" name="<?php echo $this->escAttr($inputName); ?>" value="<?php echo $this->escAttr($this->schemaFriendlyValue($control, $value)); ?>" placeholder="e.g. Strength, Constitution" required>
+                    <small class="gmrexp-reading-room__field-help">Separate canonical values with commas. The Review Desk preserves exactly what the Keeper enters; it does not infer missing proficiencies.</small>
+                <?php elseif ($control === 'progression-lines'): ?>
+                    <textarea name="<?php echo $this->escAttr($inputName); ?>" rows="8" spellcheck="false" required><?php echo $this->escHtml($this->schemaFriendlyValue($control, $value)); ?></textarea>
+                    <small class="gmrexp-reading-room__field-help">One level per line: <code>3 | hangry-rage</code> or <code>6 | feed-me, second-feature</code>. A class must still define every level through Max Level; subclasses may use only the levels at which they grant features.</small>
                 <?php elseif ($control === 'trait-lines'): ?>
                     <textarea name="<?php echo $this->escAttr($inputName); ?>" rows="7" spellcheck="false" required><?php echo $this->escHtml($this->schemaFriendlyValue($control, $value)); ?></textarea>
                     <small class="gmrexp-reading-room__field-help">One trait per line: <code>canonical-key | Trait Name | Description</code>. The Keeper supplies the key; Pippin does not invent it. Rules can be refined later in Advanced content data.</small>
@@ -1447,6 +1453,22 @@ final class ReadingRoomPage
                 default => 'schema',
             };
         }
+        if ($type === 'class') {
+            return match ($name) {
+                'saving_throw_proficiencies' => 'canonical-string-list',
+                'proficiencies' => 'proficiency-groups',
+                'features' => 'feature-lines',
+                'progression' => 'progression-lines',
+                default => 'schema',
+            };
+        }
+        if ($type === 'subclass') {
+            return match ($name) {
+                'features' => 'feature-lines',
+                'progression' => 'progression-lines',
+                default => 'schema',
+            };
+        }
         return 'schema';
     }
 
@@ -1458,8 +1480,20 @@ final class ReadingRoomPage
         if ($control === 'walking-speed') {
             return is_array($value) && isset($value['walk']) && is_int($value['walk']) ? (string) $value['walk'] : '';
         }
-        if ($control === 'string-list') {
+        if (in_array($control, ['string-list', 'canonical-string-list'], true)) {
             return is_array($value) ? implode(', ', array_values(array_filter($value, 'is_string'))) : '';
+        }
+        if ($control === 'progression-lines') {
+            if (!is_array($value)) { return ''; }
+            $lines = [];
+            foreach ($value as $row) {
+                if (!is_array($row) || array_is_list($row) || !isset($row['level']) || !is_int($row['level'])) { continue; }
+                $features = isset($row['features']) && is_array($row['features']) && array_is_list($row['features'])
+                    ? array_values(array_filter($row['features'], 'is_string'))
+                    : [];
+                $lines[] = (string) $row['level'] . ' | ' . implode(', ', $features);
+            }
+            return implode("\n", $lines);
         }
         if (in_array($control, ['trait-lines', 'feature-lines'], true)) {
             if (!is_array($value)) { return ''; }
@@ -1538,9 +1572,10 @@ final class ReadingRoomPage
                 'creature-type' => $raw,
                 'size' => ['value' => $raw],
                 'walking-speed' => ['walk' => $this->parseReviewInteger($name, $raw)],
-                'string-list' => $this->parseReviewStringList($name, $raw),
+                'string-list', 'canonical-string-list' => $this->parseReviewStringList($name, $raw),
+                'progression-lines' => $this->parseReviewProgressionLines($raw),
                 'trait-lines' => $this->parseReviewFeatureLines($raw, 'Race traits'),
-                'feature-lines' => $this->parseReviewFeatureLines($raw, 'Background features'),
+                'feature-lines' => $this->parseReviewFeatureLines($raw, in_array($type, ['class', 'subclass'], true) ? 'Class features' : 'Background features'),
                 'proficiency-groups' => $this->parseReviewProficiencyGroups($raw),
                 'empty-array-allowed' => $this->parseReviewJsonCollection($name, $raw, true),
                 default => match ($field->type()) {
@@ -1616,6 +1651,37 @@ final class ReadingRoomPage
         }
         if ($groups === []) { throw new ReviewDecisionException('Proficiencies require at least one Keeper-defined group.'); }
         return $groups;
+    }
+
+    /** @return list<array{level:int,features?:list<string>}> */
+    private function parseReviewProgressionLines(string $raw): array
+    {
+        $lines = preg_split('/\r\n|\r|\n/', $raw) ?: [];
+        $progression = [];
+        $seen = [];
+        foreach ($lines as $index => $line) {
+            $line = trim($line);
+            if ($line === '') { continue; }
+            $parts = array_map('trim', explode('|', $line, 2));
+            $levelRaw = $parts[0] ?? '';
+            $featuresRaw = $parts[1] ?? '';
+            if (!preg_match('/^\d+$/', $levelRaw) || (int) $levelRaw < 1) {
+                throw new ReviewDecisionException(sprintf('Progression line %d must begin with a positive level: level | feature-key, feature-key.', $index + 1));
+            }
+            $level = (int) $levelRaw;
+            if (isset($seen[$level])) {
+                throw new ReviewDecisionException(sprintf('Progression level %d is duplicated.', $level));
+            }
+            $seen[$level] = true;
+            $row = ['level' => $level];
+            $features = array_values(array_filter(array_map('trim', explode(',', $featuresRaw)), static fn (string $value): bool => $value !== ''));
+            if ($features !== []) { $row['features'] = $features; }
+            $progression[] = $row;
+        }
+        if ($progression === []) {
+            throw new ReviewDecisionException('Progression requires at least one Keeper-defined level.');
+        }
+        return $progression;
     }
 
     private function parseReviewInteger(string $name, string $raw): int

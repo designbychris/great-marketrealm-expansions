@@ -2,6 +2,10 @@
 
 ## 0.5.0-alpha9 — Phase V.9: The Shelving Trolley
 
+- Refined Class and Subclass review with friendly saving-throw lists, proficiency groups, feature lines, and level/progression lines while preserving the existing canonical schemas.
+- Class progression lines can represent feature-free levels without inventing mechanics; the canonical class validator still requires every level through `max_level`.
+- Subclass progression may remain sparse and records only the source-established feature-grant levels.
+- Parent class, entry level, hit die, and maximum level remain typed ordinary fields; Advanced content data remains available for optional resources, spellcasting, choices, and other richer structures.
 - Refined Background review with friendly proficiency-group and feature-line editors while keeping canonical schema validation authoritative.
 - Corrected Background `starting_equipment` semantics: the field remains required in canonical data but may explicitly be an empty array when the source defines no starting equipment.
 - Review Desk now accepts `[]` or a blank Starting Equipment control for that intentional empty state instead of forcing invented equipment.

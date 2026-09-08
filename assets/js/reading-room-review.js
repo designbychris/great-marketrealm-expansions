@@ -48,7 +48,14 @@
     const friendlyValue = (control, value) => {
         if (control === 'size') return typeof value === 'string' ? value : (value && typeof value === 'object' && typeof value.value === 'string' ? value.value : '');
         if (control === 'walking-speed') return typeof value === 'string' ? value : (value && typeof value === 'object' && Number.isInteger(value.walk) ? String(value.walk) : '');
-        if (control === 'string-list') return typeof value === 'string' ? value : (Array.isArray(value) ? value.filter((item) => typeof item === 'string').join(', ') : '');
+        if (control === 'string-list' || control === 'canonical-string-list') return typeof value === 'string' ? value : (Array.isArray(value) ? value.filter((item) => typeof item === 'string').join(', ') : '');
+        if (control === 'progression-lines' && typeof value === 'string') return value;
+        if (control === 'progression-lines' && Array.isArray(value)) {
+            return value.filter((row) => row && typeof row === 'object' && !Array.isArray(row) && Number.isInteger(row.level)).map((row) => {
+                const features = Array.isArray(row.features) ? row.features.filter((feature) => typeof feature === 'string').join(', ') : '';
+                return `${row.level} | ${features}`;
+            }).join('\n');
+        }
         if ((control === 'trait-lines' || control === 'feature-lines') && typeof value === 'string') return value;
         if ((control === 'trait-lines' || control === 'feature-lines') && Array.isArray(value)) {
             return value.filter((feature) => feature && typeof feature === 'object' && !Array.isArray(feature)).map((feature) => {
@@ -122,6 +129,15 @@
             control.type = 'text'; control.placeholder = 'e.g. Common, Market Tongue';
             control.value = friendlyValue(controlKind, value);
             label.append(control, makeHelp('Separate languages with commas. Only enter languages established for this race.'));
+        } else if (controlKind === 'canonical-string-list') {
+            control = document.createElement('input');
+            control.type = 'text'; control.placeholder = 'e.g. Strength, Constitution';
+            control.value = friendlyValue(controlKind, value);
+            label.append(control, makeHelp('Separate canonical values with commas. The Review Desk preserves exactly what the Keeper enters.'));
+        } else if (controlKind === 'progression-lines') {
+            control = document.createElement('textarea'); control.rows = 8; control.spellcheck = false;
+            control.value = friendlyValue(controlKind, value);
+            label.append(control, makeHelp('One level per line: 3 | feature-key or 6 | feature-key, second-feature. Classes must still define every level through Max Level.'));
         } else if (controlKind === 'trait-lines') {
             control = document.createElement('textarea'); control.rows = 7; control.spellcheck = false;
             control.value = friendlyValue(controlKind, value);

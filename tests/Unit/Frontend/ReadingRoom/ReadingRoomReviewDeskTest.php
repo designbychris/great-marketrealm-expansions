@@ -579,4 +579,136 @@ final class ReadingRoomReviewDeskTest extends TestCase
         self::assertSame([], $decision['data']['starting_equipment']);
     }
 
+
+    public function test_class_requirements_render_keeper_friendly_controls(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'class',
+            'gmrexp_review_key' => 'synthetic-class',
+            'gmrexp_review_name' => 'Synthetic Class',
+            'gmrexp_review_data' => '{"name":"Synthetic Class"}',
+        ];
+
+        $html = $this->page->render('review');
+
+        self::assertStringContainsString('Separate canonical values with commas', $html);
+        self::assertStringContainsString('skills | Athletics, Survival', $html);
+        self::assertStringContainsString('canonical-key | Feature Name | Description', $html);
+        self::assertStringContainsString('3 | hangry-rage', $html);
+    }
+
+    public function test_subclass_requirements_render_keeper_friendly_feature_and_progression_controls(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'subclass',
+            'gmrexp_review_key' => 'path-of-the-hangry',
+            'gmrexp_review_name' => 'Path of the Hangry',
+            'gmrexp_review_data' => '{"name":"Path of the Hangry"}',
+        ];
+
+        $html = $this->page->render('review');
+
+        self::assertStringContainsString('Parent Class', $html);
+        self::assertStringContainsString('Entry Level', $html);
+        self::assertStringContainsString('canonical-key | Feature Name | Description', $html);
+        self::assertStringContainsString('subclasses may use only the levels at which they grant features', $html);
+    }
+
+    public function test_keeper_can_accept_subclass_using_friendly_feature_and_progression_lines(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'subclass',
+            'gmrexp_review_key' => 'path-of-the-hangry',
+            'gmrexp_review_name' => 'Path of the Hangry',
+            'gmrexp_review_description' => 'Synthetic subclass.',
+            'gmrexp_review_data' => '{"name":"Path of the Hangry"}',
+            'gmrexp_review_schema' => [
+                'parent_class' => 'barbarian',
+                'entry_level' => '3',
+                'features' => "hangry-rage | Hangry Rage | Gain temporary hit points.\nfeed-me | Feed Me | Improve Hit Die recovery.",
+                'progression' => "3 | hangry-rage\n6 | feed-me",
+            ],
+        ];
+
+        $html = $this->page->render('review');
+        $decision = $this->queue->load()['decisions']['google-heading-1'];
+
+        self::assertStringContainsString('subclass:path-of-the-hangry', $html);
+        self::assertSame('barbarian', $decision['data']['parent_class']);
+        self::assertSame(3, $decision['data']['entry_level']);
+        self::assertSame('hangry-rage', $decision['data']['features'][0]['key']);
+        self::assertSame(['level' => 3, 'features' => ['hangry-rage']], $decision['data']['progression'][0]);
+        self::assertSame(['level' => 6, 'features' => ['feed-me']], $decision['data']['progression'][1]);
+    }
+
+    public function test_keeper_can_accept_class_using_friendly_required_fields(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'class',
+            'gmrexp_review_key' => 'synthetic-class',
+            'gmrexp_review_name' => 'Synthetic Class',
+            'gmrexp_review_data' => '{"name":"Synthetic Class"}',
+            'gmrexp_review_schema' => [
+                'hit_die' => '8',
+                'max_level' => '3',
+                'saving_throw_proficiencies' => 'Dexterity, Wisdom',
+                'proficiencies' => "skills | Acrobatics, Insight\ntools | Cook's Utensils",
+                'features' => 'market-training | Market Training | Synthetic feature.',
+                'progression' => "1 | market-training\n2 |\n3 |",
+            ],
+        ];
+
+        $html = $this->page->render('review');
+        $decision = $this->queue->load()['decisions']['google-heading-1'];
+
+        self::assertStringContainsString('class:synthetic-class', $html);
+        self::assertSame(8, $decision['data']['hit_die']);
+        self::assertSame(3, $decision['data']['max_level']);
+        self::assertSame(['Dexterity', 'Wisdom'], $decision['data']['saving_throw_proficiencies']);
+        self::assertSame(['skills' => ['Acrobatics', 'Insight'], 'tools' => ["Cook's Utensils"]], $decision['data']['proficiencies']);
+        self::assertSame(['level' => 2], $decision['data']['progression'][1]);
+    }
+
+    public function test_friendly_progression_rejects_duplicate_levels_before_canonical_review(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'subclass',
+            'gmrexp_review_key' => 'synthetic-subclass',
+            'gmrexp_review_name' => 'Synthetic Subclass',
+            'gmrexp_review_data' => '{"name":"Synthetic Subclass"}',
+            'gmrexp_review_schema' => [
+                'parent_class' => 'barbarian',
+                'entry_level' => '3',
+                'features' => 'first | First | Synthetic.',
+                'progression' => "3 | first\n3 | first",
+            ],
+        ];
+
+        $html = $this->page->render('review');
+
+        self::assertStringContainsString('Review decision not recorded.', $html);
+        self::assertStringContainsString('Progression level 3 is duplicated.', $html);
+        self::assertSame([], $this->queue->load()['decisions']);
+    }
+
 }
