@@ -20,6 +20,8 @@ use GreatMarketrealmExpansions\Review\ReviewQueueStore;
 use GreatMarketrealmExpansions\Review\ReviewService;
 use GreatMarketrealmExpansions\Review\ReviewSession;
 use GreatMarketrealmExpansions\Content\Types\CoreContentTypes;
+use GreatMarketrealmExpansions\Content\Schema\FieldDefinition;
+use GreatMarketrealmExpansions\Content\Schema\SchemaRegistry;
 
 final class ReadingRoomPage
 {
@@ -49,6 +51,7 @@ final class ReadingRoomPage
     public const REVIEW_ACTION_FIELD = 'gmrexp_review_action';
     public const ALMANAC_PROPOSAL_SUBMIT_FIELD = 'gmrexp_almanac_proposal_submit';
     public const STYLE_HANDLE = 'gmrexp-reading-room';
+    public const SCRIPT_HANDLE = 'gmrexp-reading-room-review';
     public const ROUTE_VERSION = '1.0.0';
 
     public function __construct(
@@ -60,7 +63,8 @@ final class ReadingRoomPage
         private ?GoogleDocsSourceAdapter $googleDocs = null,
         private ?ReviewService $reviewer = null,
         private ?ReviewQueueStore $reviewQueue = null,
-        private ?AlmanacProposalService $proposals = null
+        private ?AlmanacProposalService $proposals = null,
+        private ?SchemaRegistry $schemas = null
     ) {}
 
     public function register(): void
@@ -134,16 +138,29 @@ final class ReadingRoomPage
 
     public function registerAssets(): void
     {
-        if (!function_exists('wp_register_style')) {
+        if (!function_exists('plugins_url') || !defined('GMREXP_FILE')) {
             return;
         }
 
-        $url = function_exists('plugins_url') && defined('GMREXP_FILE')
-            ? plugins_url('assets/css/reading-room.css', GMREXP_FILE)
-            : '';
+        $version = defined('GMREXP_VERSION') ? GMREXP_VERSION : null;
 
-        if ($url !== '') {
-            wp_register_style(self::STYLE_HANDLE, $url, [], defined('GMREXP_VERSION') ? GMREXP_VERSION : null);
+        if (function_exists('wp_register_style')) {
+            wp_register_style(
+                self::STYLE_HANDLE,
+                plugins_url('assets/css/reading-room.css', GMREXP_FILE),
+                [],
+                $version
+            );
+        }
+
+        if (function_exists('wp_register_script')) {
+            wp_register_script(
+                self::SCRIPT_HANDLE,
+                plugins_url('assets/js/reading-room-review.js', GMREXP_FILE),
+                [],
+                $version,
+                true
+            );
         }
     }
 
@@ -1201,16 +1218,32 @@ final class ReadingRoomPage
                     <form method="post" action="<?php echo $this->escAttr($this->navigationUrl('review', $baseUrl) . '#' . $item->reviewId()); ?>"><?php echo $this->renderReviewNonce(); ?><input type="hidden" name="<?php echo $this->escAttr(self::REVIEW_DECISION_SUBMIT_FIELD); ?>" value="1"><input type="hidden" name="<?php echo $this->escAttr(self::REVIEW_RECORD_FIELD); ?>" value="<?php echo $this->escAttr($item->recordId()); ?>"><input type="hidden" name="<?php echo $this->escAttr(self::REVIEW_ACTION_FIELD); ?>" value="reset"><button class="gmrexp-reading-room__back" type="submit">Reconsider</button></form>
                 </div>
             <?php else: ?>
-                <form class="gmrexp-reading-room__review-form" method="post" action="<?php echo $this->escAttr($this->navigationUrl('review', $baseUrl) . '#' . $item->reviewId()); ?>">
+                <?php $draft = $this->reviewDraft($item, $type, $key, $name, $description, $data); ?>
+                <?php $type = $draft['type']; $key = $draft['key']; $name = $draft['name']; $description = $draft['description']; $data = $draft['data']; ?>
+                <?php $dataJson = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?: '{}'; ?>
+                <?php $schemaMap = $this->reviewRequiredSchemaMap(); ?>
+                <form class="gmrexp-reading-room__review-form" data-gmrexp-review-form method="post" action="<?php echo $this->escAttr($this->navigationUrl('review', $baseUrl) . '#' . $item->reviewId()); ?>">
                     <?php echo $this->renderReviewNonce(); ?><input type="hidden" name="<?php echo $this->escAttr(self::REVIEW_DECISION_SUBMIT_FIELD); ?>" value="1"><input type="hidden" name="<?php echo $this->escAttr(self::REVIEW_RECORD_FIELD); ?>" value="<?php echo $this->escAttr($item->recordId()); ?>">
                     <div class="gmrexp-reading-room__review-grid">
-                        <label><span>Content type</span><select name="gmrexp_review_type"><option value="">Choose what this record is…</option><?php foreach (CoreContentTypes::all() as $contentType): ?><option value="<?php echo $this->escAttr($contentType->key()); ?>" <?php echo $contentType->key() === $type ? 'selected' : ''; ?>><?php echo $this->escHtml($contentType->label()); ?></option><?php endforeach; ?></select></label>
+                        <label><span>Content type</span><select name="gmrexp_review_type" data-gmrexp-review-type><option value="">Choose what this record is…</option><?php foreach (CoreContentTypes::all() as $contentType): ?><option value="<?php echo $this->escAttr($contentType->key()); ?>" <?php echo $contentType->key() === $type ? 'selected' : ''; ?>><?php echo $this->escHtml($contentType->label()); ?></option><?php endforeach; ?></select></label>
                         <label><span>Canonical key</span><input type="text" name="gmrexp_review_key" value="<?php echo $this->escAttr($key); ?>" placeholder="e.g. pizza-mimic"></label>
                     </div>
-                    <label><span>Name</span><input type="text" name="gmrexp_review_name" value="<?php echo $this->escAttr($name); ?>"></label>
+                    <label><span>Name <strong aria-hidden="true">*</strong></span><input type="text" name="gmrexp_review_name" value="<?php echo $this->escAttr($name); ?>" required></label>
                     <label><span>Description / source prose</span><textarea name="gmrexp_review_description" rows="5"><?php echo $this->escHtml($description); ?></textarea></label>
-                    <details class="gmrexp-reading-room__review-advanced"><summary>Advanced content data</summary><p class="gmrexp-reading-room__field-help">The existing Review API validates this complete data map. Name and description above overwrite matching values when accepted.</p><textarea name="gmrexp_review_data" rows="10" spellcheck="false"><?php echo $this->escHtml($dataJson); ?></textarea></details>
-                    <label><span>Keeper note (optional)</span><input type="text" name="gmrexp_review_note" value="" placeholder="Why was this classified, amended, or ignored?"></label>
+
+                    <section class="gmrexp-reading-room__schema-requirements" data-gmrexp-schema-requirements data-schema="<?php echo $this->escAttr((string) json_encode($schemaMap, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)); ?>" data-existing="<?php echo $this->escAttr((string) json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)); ?>">
+                        <div class="gmrexp-reading-room__schema-heading">
+                            <div><p class="gmrexp-reading-room__book-label">Canonical requirements</p><h4>Required fields for this content type</h4></div>
+                            <span class="gmrexp-reading-room__pill" data-gmrexp-schema-count><?php echo $this->escHtml((string) count($this->reviewRequiredFields($type))); ?> required</span>
+                        </div>
+                        <p class="gmrexp-reading-room__field-help" data-gmrexp-schema-help><?php echo $type === '' ? 'Choose a content type and the Review Desk will show its required canonical fields here.' : 'Complete the required fields below before accepting this classification. Complex map/array fields use JSON.'; ?></p>
+                        <div class="gmrexp-reading-room__schema-fields" data-gmrexp-schema-fields>
+                            <?php echo $this->renderReviewRequiredFields($type, $data); ?>
+                        </div>
+                    </section>
+
+                    <details class="gmrexp-reading-room__review-advanced"><summary>Advanced content data</summary><p class="gmrexp-reading-room__field-help">The existing Review API validates this complete data map. Name, description, and the schema-aware required fields above overwrite matching values when accepted. Optional schema fields can still be added here.</p><textarea name="gmrexp_review_data" rows="10" spellcheck="false"><?php echo $this->escHtml($dataJson); ?></textarea></details>
+                    <label><span>Keeper note (optional)</span><input type="text" name="gmrexp_review_note" value="<?php echo $this->escAttr($draft['note']); ?>" placeholder="Why was this classified, amended, or ignored?"></label>
                     <div class="gmrexp-reading-room__review-actions"><?php if ($item->canApproveOriginal()): ?><button class="gmrexp-reading-room__button" type="submit" name="<?php echo $this->escAttr(self::REVIEW_ACTION_FIELD); ?>" value="approve">Approve Original</button><?php endif; ?><button class="gmrexp-reading-room__button" type="submit" name="<?php echo $this->escAttr(self::REVIEW_ACTION_FIELD); ?>" value="amend">Accept Classification / Amendment</button><button class="gmrexp-reading-room__back" type="submit" name="<?php echo $this->escAttr(self::REVIEW_ACTION_FIELD); ?>" value="reject">Ignore / Reject</button></div>
                 </form>
             <?php endif; ?>
@@ -1218,6 +1251,250 @@ final class ReadingRoomPage
         <?php return trim((string) ob_get_clean());
     }
 
+
+
+    /**
+     * Preserve a failed amendment on the same request so the Keeper does not
+     * lose a chosen type or schema values after canonical validation refuses it.
+     *
+     * @param array<string,mixed> $data
+     * @return array{type:string,key:string,name:string,description:string,data:array<string,mixed>,note:string}
+     */
+    private function reviewDraft(
+        ReviewItem $item,
+        string $type,
+        string $key,
+        string $name,
+        string $description,
+        array $data
+    ): array {
+        $recordId = isset($_POST[self::REVIEW_RECORD_FIELD]) && is_string($_POST[self::REVIEW_RECORD_FIELD])
+            ? trim($this->unslash($_POST[self::REVIEW_RECORD_FIELD]))
+            : '';
+        $action = isset($_POST[self::REVIEW_ACTION_FIELD]) && is_string($_POST[self::REVIEW_ACTION_FIELD])
+            ? strtolower(trim($this->unslash($_POST[self::REVIEW_ACTION_FIELD])))
+            : '';
+
+        if ($recordId !== $item->recordId() || $action !== 'amend') {
+            return [
+                'type' => $type,
+                'key' => $key,
+                'name' => $name,
+                'description' => $description,
+                'data' => $data,
+                'note' => '',
+            ];
+        }
+
+        $type = isset($_POST['gmrexp_review_type']) && is_string($_POST['gmrexp_review_type'])
+            ? trim($this->unslash($_POST['gmrexp_review_type'])) : $type;
+        $key = isset($_POST['gmrexp_review_key']) && is_string($_POST['gmrexp_review_key'])
+            ? trim($this->unslash($_POST['gmrexp_review_key'])) : $key;
+        $name = isset($_POST['gmrexp_review_name']) && is_string($_POST['gmrexp_review_name'])
+            ? trim($this->unslash($_POST['gmrexp_review_name'])) : $name;
+        $description = isset($_POST['gmrexp_review_description']) && is_string($_POST['gmrexp_review_description'])
+            ? trim($this->unslash($_POST['gmrexp_review_description'])) : $description;
+        $note = isset($_POST['gmrexp_review_note']) && is_string($_POST['gmrexp_review_note'])
+            ? trim($this->unslash($_POST['gmrexp_review_note'])) : '';
+
+        $rawData = isset($_POST['gmrexp_review_data']) && is_string($_POST['gmrexp_review_data'])
+            ? $this->unslash($_POST['gmrexp_review_data']) : '';
+        if ($rawData !== '') {
+            $decoded = json_decode($rawData, true);
+            if (is_array($decoded) && (!array_is_list($decoded) || $decoded === [])) {
+                $data = $decoded;
+            }
+        }
+
+        if ($name !== '') { $data['name'] = $name; }
+        if ($description !== '') { $data['description'] = $description; }
+
+        try {
+            $data = $this->mergePostedReviewSchemaData($type, $data);
+        } catch (ReviewDecisionException) {
+            // Keep whatever can be represented safely; the original validation
+            // message remains visible above the Review Desk.
+        }
+
+        return [
+            'type' => $type,
+            'key' => $key,
+            'name' => $name,
+            'description' => $description,
+            'data' => $data,
+            'note' => $note,
+        ];
+    }
+
+    /** @return array<string,list<array{name:string,type:string,label:string,required:bool}>> */
+    private function reviewRequiredSchemaMap(): array
+    {
+        if ($this->schemas === null) { return []; }
+
+        $map = [];
+        foreach ($this->schemas->all() as $type => $schema) {
+            $map[$type] = [];
+            foreach ($schema->fields() as $field) {
+                if (!$field->required() || $field->name() === 'name') { continue; }
+                $map[$type][] = [
+                    'name' => $field->name(),
+                    'type' => $field->type(),
+                    'label' => $this->schemaFieldLabel($field->name()),
+                    'required' => true,
+                ];
+            }
+        }
+        ksort($map);
+        return $map;
+    }
+
+    /** @return list<FieldDefinition> */
+    private function reviewRequiredFields(string $type): array
+    {
+        if ($type === '' || $this->schemas === null) { return []; }
+        $schema = $this->schemas->get($type);
+        if ($schema === null) { return []; }
+
+        return array_values(array_filter(
+            $schema->fields(),
+            static fn (FieldDefinition $field): bool => $field->required() && $field->name() !== 'name'
+        ));
+    }
+
+    /** @param array<string,mixed> $data */
+    private function renderReviewRequiredFields(string $type, array $data): string
+    {
+        $fields = $this->reviewRequiredFields($type);
+        if ($fields === []) { return ''; }
+
+        ob_start();
+        foreach ($fields as $field) {
+            $name = $field->name();
+            $value = $data[$name] ?? null;
+            $inputName = 'gmrexp_review_schema[' . $name . ']';
+            ?>
+            <label class="gmrexp-reading-room__schema-field" data-schema-field="<?php echo $this->escAttr($name); ?>">
+                <span><?php echo $this->escHtml($this->schemaFieldLabel($name)); ?> <strong aria-hidden="true">*</strong> <small><?php echo $this->escHtml($field->type()); ?></small></span>
+                <?php if (in_array($field->type(), [FieldDefinition::MAP, FieldDefinition::ARRAY], true)): ?>
+                    <textarea name="<?php echo $this->escAttr($inputName); ?>" rows="5" spellcheck="false" required><?php echo $this->escHtml($this->schemaFieldValue($field, $value)); ?></textarea>
+                    <small class="gmrexp-reading-room__field-help"><?php echo $field->type() === FieldDefinition::MAP ? 'Enter a JSON object, for example {"walk": 30}.' : 'Enter a JSON array, for example ["Common"].'; ?></small>
+                <?php elseif ($field->type() === FieldDefinition::BOOLEAN): ?>
+                    <select name="<?php echo $this->escAttr($inputName); ?>" required>
+                        <option value="">Choose…</option>
+                        <option value="1" <?php echo $value === true ? 'selected' : ''; ?>>Yes</option>
+                        <option value="0" <?php echo $value === false ? 'selected' : ''; ?>>No</option>
+                    </select>
+                <?php elseif (in_array($field->type(), [FieldDefinition::INTEGER, FieldDefinition::NUMBER], true)): ?>
+                    <input type="number" name="<?php echo $this->escAttr($inputName); ?>" value="<?php echo $this->escAttr($this->schemaFieldValue($field, $value)); ?>" <?php echo $field->type() === FieldDefinition::NUMBER ? 'step="any"' : 'step="1"'; ?> required>
+                <?php else: ?>
+                    <input type="text" name="<?php echo $this->escAttr($inputName); ?>" value="<?php echo $this->escAttr($this->schemaFieldValue($field, $value)); ?>" required>
+                <?php endif; ?>
+            </label>
+            <?php
+        }
+        return trim((string) ob_get_clean());
+    }
+
+    private function schemaFieldLabel(string $name): string
+    {
+        return ucwords(str_replace('_', ' ', $name));
+    }
+
+    private function schemaFieldValue(FieldDefinition $field, mixed $value): string
+    {
+        if ($value === null) { return ''; }
+        if (in_array($field->type(), [FieldDefinition::MAP, FieldDefinition::ARRAY], true)) {
+            return is_array($value)
+                ? ((string) (json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?: ''))
+                : '';
+        }
+        if ($field->type() === FieldDefinition::BOOLEAN) { return $value === true ? '1' : ($value === false ? '0' : ''); }
+        return is_scalar($value) ? (string) $value : '';
+    }
+
+    /** @param array<string,mixed> $data @return array<string,mixed> */
+    private function mergePostedReviewSchemaData(string $type, array $data): array
+    {
+        $fields = $this->reviewRequiredFields($type);
+        if ($fields === []) { return $data; }
+
+        $posted = $_POST['gmrexp_review_schema'] ?? [];
+        if (!is_array($posted)) { $posted = []; }
+
+        foreach ($fields as $field) {
+            $name = $field->name();
+            if (!array_key_exists($name, $posted)) {
+                unset($data[$name]);
+                continue;
+            }
+
+            $raw = $posted[$name];
+            if (!is_string($raw)) {
+                throw new ReviewDecisionException(sprintf('Required field "%s" could not be read.', $this->schemaFieldLabel($name)));
+            }
+            $raw = trim($this->unslash($raw));
+            if ($raw === '') {
+                unset($data[$name]);
+                continue;
+            }
+
+            $data[$name] = match ($field->type()) {
+                FieldDefinition::STRING => $raw,
+                FieldDefinition::INTEGER => $this->parseReviewInteger($name, $raw),
+                FieldDefinition::NUMBER => $this->parseReviewNumber($name, $raw),
+                FieldDefinition::BOOLEAN => $this->parseReviewBoolean($name, $raw),
+                FieldDefinition::ARRAY => $this->parseReviewJsonCollection($name, $raw, true),
+                FieldDefinition::MAP => $this->parseReviewJsonCollection($name, $raw, false),
+                default => $raw,
+            };
+        }
+        return $data;
+    }
+
+    private function parseReviewInteger(string $name, string $raw): int
+    {
+        if (!preg_match('/^-?\\d+$/', $raw)) {
+            throw new ReviewDecisionException(sprintf('%s must be a whole number.', $this->schemaFieldLabel($name)));
+        }
+        return (int) $raw;
+    }
+
+    private function parseReviewNumber(string $name, string $raw): int|float
+    {
+        if (!is_numeric($raw)) {
+            throw new ReviewDecisionException(sprintf('%s must be a number.', $this->schemaFieldLabel($name)));
+        }
+        return str_contains($raw, '.') ? (float) $raw : (int) $raw;
+    }
+
+    private function parseReviewBoolean(string $name, string $raw): bool
+    {
+        if (!in_array($raw, ['0', '1'], true)) {
+            throw new ReviewDecisionException(sprintf('%s must be Yes or No.', $this->schemaFieldLabel($name)));
+        }
+        return $raw === '1';
+    }
+
+    /** @return array<mixed> */
+    private function parseReviewJsonCollection(string $name, string $raw, bool $list): array
+    {
+        try {
+            $decoded = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $exception) {
+            throw new ReviewDecisionException(sprintf('%s must contain valid JSON.', $this->schemaFieldLabel($name)), 0, $exception);
+        }
+
+        if (!is_array($decoded)) {
+            throw new ReviewDecisionException(sprintf('%s must be a JSON %s.', $this->schemaFieldLabel($name), $list ? 'array' : 'object'));
+        }
+        if ($list && !array_is_list($decoded)) {
+            throw new ReviewDecisionException(sprintf('%s must be a JSON array/list.', $this->schemaFieldLabel($name)));
+        }
+        if (!$list && array_is_list($decoded) && $decoded !== []) {
+            throw new ReviewDecisionException(sprintf('%s must be a JSON object/map.', $this->schemaFieldLabel($name)));
+        }
+        return $decoded;
+    }
 
     private function renderShelvingTrolley(ReviewSession $session, ?string $baseUrl): string
     {
@@ -1336,6 +1613,7 @@ final class ReadingRoomPage
             $description = isset($_POST['gmrexp_review_description']) && is_string($_POST['gmrexp_review_description']) ? trim($this->unslash($_POST['gmrexp_review_description'])) : '';
             if ($name !== '') { $data['name'] = $name; } else { unset($data['name']); }
             if ($description !== '') { $data['description'] = $description; } else { unset($data['description']); }
+            $data = $this->mergePostedReviewSchemaData($type, $data);
             $session->amend($item->reviewId(), $type, $key, $data, $note);
             $decisions[$recordId] = ['action' => 'amend', 'type' => $type, 'key' => $key, 'data' => $data, 'note' => $note];
         } else { throw new ReviewDecisionException('Choose a valid Keeper review action.'); }
@@ -1650,6 +1928,9 @@ final class ReadingRoomPage
 
         if (function_exists('wp_enqueue_style')) {
             wp_enqueue_style(self::STYLE_HANDLE);
+        }
+        if (function_exists('wp_enqueue_script')) {
+            wp_enqueue_script(self::SCRIPT_HANDLE);
         }
     }
 

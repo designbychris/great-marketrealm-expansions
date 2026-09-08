@@ -12,6 +12,8 @@ The Administrator-only Review Desk now feeds **The Shelving Trolley**, which ass
 
 **Proposed ≠ Published.** V.9 does not write Almanac files, install or activate an expansion, or mutate the canonical Catalogue.
 
+The V.9 Review Desk is also schema-aware: selecting a content type reveals its required canonical fields from the existing `SchemaRegistry`, so Magic Items, Weapons, Armour, Spells, Races, Classes and the other core types can be completed without hand-editing the whole data map.
+
 Certified starting baseline: **609 tests / 1,463 assertions** (Phase V.8 live-review hotfix baseline).
 
 See `docs/THE-SHELVING-TROLLEY.md`.

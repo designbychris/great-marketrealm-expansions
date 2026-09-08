@@ -46,7 +46,8 @@ final class ReadingRoomReviewDeskTest extends TestCase
             null,
             new ReviewService($validator),
             $this->queue,
-            new AlmanacProposalService()
+            new AlmanacProposalService(),
+            $schemas
         );
         $_POST = [];
     }
@@ -274,6 +275,138 @@ final class ReadingRoomReviewDeskTest extends TestCase
         $this->page->render('review');
 
         self::assertArrayNotHasKey('proposal', $this->queue->load());
+    }
+
+
+    public function test_magic_item_selection_exposes_schema_required_fields_after_failed_amendment(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'magic-item',
+            'gmrexp_review_key' => 'midnight-trinket',
+            'gmrexp_review_name' => 'Midnight Trinket',
+            'gmrexp_review_description' => 'Synthetic magic item.',
+            'gmrexp_review_data' => '{"name":"Midnight Trinket"}',
+        ];
+
+        $html = $this->page->render('review');
+
+        self::assertStringContainsString('Review decision not recorded.', $html);
+        self::assertStringContainsString('name="gmrexp_review_schema[category]"', $html);
+        self::assertStringContainsString('name="gmrexp_review_schema[rarity]"', $html);
+        self::assertStringContainsString('value="magic-item" selected', $html);
+    }
+
+    public function test_keeper_can_accept_magic_item_after_completing_schema_requirements(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'magic-item',
+            'gmrexp_review_key' => 'midnight-trinket',
+            'gmrexp_review_name' => 'Midnight Trinket',
+            'gmrexp_review_description' => 'Synthetic magic item.',
+            'gmrexp_review_data' => '{"name":"Midnight Trinket"}',
+            'gmrexp_review_schema' => [
+                'category' => 'wondrous-item',
+                'rarity' => 'rare',
+            ],
+        ];
+
+        $html = $this->page->render('review');
+        $decision = $this->queue->load()['decisions']['google-heading-1'];
+
+        self::assertStringContainsString('magic-item:midnight-trinket', $html);
+        self::assertStringContainsString('Accepted for the proposed Almanac', $html);
+        self::assertSame('wondrous-item', $decision['data']['category']);
+        self::assertSame('rare', $decision['data']['rarity']);
+    }
+
+    public function test_weapon_required_map_field_is_schema_aware_json_editor(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'weapon',
+            'gmrexp_review_key' => 'fixture-blade',
+            'gmrexp_review_name' => 'Fixture Blade',
+            'gmrexp_review_description' => '',
+            'gmrexp_review_data' => '{"name":"Fixture Blade"}',
+        ];
+
+        $html = $this->page->render('review');
+
+        self::assertStringContainsString('name="gmrexp_review_schema[category]"', $html);
+        self::assertStringContainsString('name="gmrexp_review_schema[damage]"', $html);
+        self::assertStringContainsString('Enter a JSON object', $html);
+    }
+
+    public function test_schema_required_json_map_is_typed_before_review_validation(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'weapon',
+            'gmrexp_review_key' => 'fixture-blade',
+            'gmrexp_review_name' => 'Fixture Blade',
+            'gmrexp_review_description' => '',
+            'gmrexp_review_data' => '{"name":"Fixture Blade"}',
+            'gmrexp_review_schema' => [
+                'category' => 'simple-melee',
+                'damage' => '{"dice":"1d6","type":"slashing"}',
+            ],
+        ];
+
+        $html = $this->page->render('review');
+        $decision = $this->queue->load()['decisions']['google-heading-1'];
+
+        self::assertStringContainsString('weapon:fixture-blade', $html);
+        self::assertSame(['dice' => '1d6', 'type' => 'slashing'], $decision['data']['damage']);
+    }
+
+    public function test_invalid_required_json_is_refused_with_friendly_field_error(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'weapon',
+            'gmrexp_review_key' => 'fixture-blade',
+            'gmrexp_review_name' => 'Fixture Blade',
+            'gmrexp_review_description' => '',
+            'gmrexp_review_data' => '{"name":"Fixture Blade"}',
+            'gmrexp_review_schema' => [
+                'category' => 'simple-melee',
+                'damage' => '{broken json}',
+            ],
+        ];
+
+        $html = $this->page->render('review');
+
+        self::assertStringContainsString('Review decision not recorded.', $html);
+        self::assertStringContainsString('Damage must contain valid JSON.', $html);
+        self::assertSame([], $this->queue->load()['decisions']);
+    }
+
+    public function test_schema_projection_includes_requirements_for_all_core_types(): void
+    {
+        $html = $this->queueSource();
+
+        self::assertStringContainsString('&quot;magic-item&quot;', $html);
+        self::assertStringContainsString('&quot;parent_class&quot;', $html);
+        self::assertStringContainsString('&quot;parent_race&quot;', $html);
+        self::assertStringContainsString('&quot;casting_time&quot;', $html);
+        self::assertStringContainsString('&quot;armour_class&quot;', $html);
     }
 
 }

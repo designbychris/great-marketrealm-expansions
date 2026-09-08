@@ -1095,3 +1095,49 @@ a.gmrexp-reading-room__compatibility:hover {
     .gmrexp-reading-room__browse-book:hover .gmrexp-reading-room__browse-artwork,
     .gmrexp-reading-room__browse-book:focus-within .gmrexp-reading-room__browse-artwork { transform: none; }
 }
+
+/* Phase V.9 refinement — schema-aware Keeper Review requirements. */
+.gmrexp-reading-room__schema-requirements {
+    margin: .35rem 0;
+    padding: .9rem;
+    border: 1px solid rgba(111, 77, 38, .32);
+    border-radius: 10px;
+    background: rgba(250, 245, 232, .66);
+}
+.gmrexp-reading-room__schema-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .8rem;
+    margin-bottom: .35rem;
+}
+.gmrexp-reading-room__schema-heading h4 {
+    margin: .15rem 0 0;
+}
+.gmrexp-reading-room__schema-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .8rem;
+    margin-top: .75rem;
+}
+.gmrexp-reading-room__schema-field {
+    min-width: 0;
+}
+.gmrexp-reading-room__schema-field > span {
+    display: flex;
+    align-items: baseline;
+    gap: .3rem;
+}
+.gmrexp-reading-room__schema-field > span small {
+    opacity: .66;
+    font-weight: 400;
+}
+.gmrexp-reading-room__schema-field textarea {
+    min-height: 7rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .9em;
+}
+@media (max-width: 760px) {
+    .gmrexp-reading-room__schema-fields { grid-template-columns: 1fr; }
+    .gmrexp-reading-room__schema-heading { flex-direction: column; }
+}

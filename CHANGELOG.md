@@ -2,6 +2,12 @@
 
 ## 0.5.0-alpha9 — Phase V.9: The Shelving Trolley
 
+- Refined the Review Desk to read required fields directly from the canonical `SchemaRegistry`.
+- Added dynamic required-field controls for all core content types.
+- Added friendly typed controls for required string/integer/number/boolean values and JSON editors for required map/array values.
+- Fixed Magic Item review so `category` and `rarity` can be supplied before canonical acceptance.
+- Preserved failed amendment drafts so Keeper corrections do not lose the selected type and form values.
+- Kept `ReviewSession::amend()` and the canonical validator authoritative; the frontend does not invent content values.
 - Added Proposal API `1.0.0` and proposed-Almanac assembly.
 - Added Review Desk Shelving Trolley UI.
 - Proposed Almanacs contain only Keeper-approved definitions.

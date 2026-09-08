@@ -104,7 +104,8 @@ final class ExpansionServiceProvider extends ServiceProvider
             $container->get(GoogleDocsSourceAdapter::class),
             $container->get(ReviewService::class),
             $container->get(ReviewQueueStore::class),
-            $container->get(AlmanacProposalService::class)
+            $container->get(AlmanacProposalService::class),
+            $container->get(SchemaRegistry::class)
         ));
         $this->container->singleton(CatalogueAdminPage::class, static fn (Container $container): CatalogueAdminPage => new CatalogueAdminPage(
             $container->get(Catalogue::class),

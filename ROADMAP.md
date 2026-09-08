@@ -625,4 +625,8 @@ Planned sequence:
 - [x] Tidy long Review Desk source identifiers.
 - [x] Preserve `Proposed ≠ Published`.
 - [x] Keep Catalogue, installation and activation untouched.
-- [ ] Server-side PHPUnit certification.
+- [x] Make Review Desk requirements schema-aware for every core content type.
+- [x] Expose required fields dynamically when the Keeper chooses a content type.
+- [x] Preserve failed amendment drafts for correction.
+- [x] Keep canonical validation authoritative; do not invent requirement values.
+- [ ] Server-side PHPUnit certification after schema-aware refinement.
