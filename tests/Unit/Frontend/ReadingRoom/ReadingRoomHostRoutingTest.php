@@ -118,12 +118,20 @@ final class ReadingRoomHostRoutingTest extends TestCase
         );
     }
 
-    public function test_reserved_desk_back_link_returns_to_shortcode_host_page(): void
+    public function test_open_review_desk_navigation_returns_to_shortcode_host_page(): void
     {
         $html = $this->page()->render('review', 'https://example.test/expansions/');
 
         self::assertStringContainsString(
-            'href="https://example.test/expansions/">Return to Your Library</a>',
+            'href="https://example.test/expansions/"',
+            $html
+        );
+        self::assertStringContainsString(
+            'href="https://example.test/expansions/?gmrexp_section=review"',
+            $html
+        );
+        self::assertStringNotContainsString(
+            'href="/marketrealm-expansions/review/"',
             $html
         );
     }
