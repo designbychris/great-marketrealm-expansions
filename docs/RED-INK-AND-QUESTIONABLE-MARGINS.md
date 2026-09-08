@@ -39,6 +39,8 @@ V.8 introduces an Administrator-private Review Desk queue backed by WordPress us
 
 The queue belongs to the signed-in administrator rather than being global site state.
 
+Because WordPress unslashes metadata values before storage, the queue is pre-slashed on write so source JSON and Keeper-authored data survive the user-meta round trip unchanged.
+
 ## Security
 
 The V.6A `manage_options` boundary remains authoritative. Import and Review are hidden from non-administrators and direct requests are rejected before either workflow runs.

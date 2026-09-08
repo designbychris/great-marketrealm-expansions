@@ -20,7 +20,13 @@ final class WordPressUserReviewQueueStore implements ReviewQueueStore
     {
         if (!function_exists('get_current_user_id') || !function_exists('update_user_meta')) { return; }
         $userId = (int) get_current_user_id();
-        if ($userId > 0) { update_user_meta($userId, self::META_KEY, $state); }
+        if ($userId > 0) {
+            // WordPress unslashes metadata values before storage. Pre-slash the
+            // complete queue so JSON source text and Keeper data survive a
+            // save/load round trip byte-for-byte.
+            $value = function_exists('wp_slash') ? wp_slash($state) : $state;
+            update_user_meta($userId, self::META_KEY, $value);
+        }
     }
 
     public function clear(): void
