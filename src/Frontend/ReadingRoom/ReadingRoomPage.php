@@ -11,6 +11,12 @@ use GreatMarketrealmExpansions\Import\ImportService;
 use GreatMarketrealmExpansions\Import\GoogleDocsAcquisition;
 use GreatMarketrealmExpansions\Import\GoogleDocsSourceAdapter;
 use GreatMarketrealmExpansions\Import\StagedDefinition;
+use GreatMarketrealmExpansions\Review\ReviewDecisionException;
+use GreatMarketrealmExpansions\Review\ReviewItem;
+use GreatMarketrealmExpansions\Review\ReviewQueueStore;
+use GreatMarketrealmExpansions\Review\ReviewService;
+use GreatMarketrealmExpansions\Review\ReviewSession;
+use GreatMarketrealmExpansions\Content\Types\CoreContentTypes;
 
 final class ReadingRoomPage
 {
@@ -30,6 +36,14 @@ final class ReadingRoomPage
     public const GOOGLE_DOC_URL_FIELD = 'gmrexp_google_doc_url';
     public const GOOGLE_DOC_NONCE_ACTION = 'gmrexp_reading_room_google_doc';
     public const GOOGLE_DOC_NONCE_FIELD = '_gmrexp_google_doc_nonce';
+    public const REVIEW_QUEUE_SUBMIT_FIELD = 'gmrexp_review_queue_submit';
+    public const REVIEW_DECISION_SUBMIT_FIELD = 'gmrexp_review_decision_submit';
+    public const REVIEW_CLEAR_SUBMIT_FIELD = 'gmrexp_review_clear_submit';
+    public const REVIEW_NONCE_ACTION = 'gmrexp_reading_room_review';
+    public const REVIEW_NONCE_FIELD = '_gmrexp_review_nonce';
+    public const REVIEW_JSON_FIELD = 'gmrexp_review_json';
+    public const REVIEW_RECORD_FIELD = 'gmrexp_review_record';
+    public const REVIEW_ACTION_FIELD = 'gmrexp_review_action';
     public const STYLE_HANDLE = 'gmrexp-reading-room';
     public const ROUTE_VERSION = '1.0.0';
 
@@ -39,7 +53,9 @@ final class ReadingRoomPage
         private ReadingRoomAccess $access,
         private ReadingRoomNavigation $navigation,
         private ?ImportService $importer = null,
-        private ?GoogleDocsSourceAdapter $googleDocs = null
+        private ?GoogleDocsSourceAdapter $googleDocs = null,
+        private ?ReviewService $reviewer = null,
+        private ?ReviewQueueStore $reviewQueue = null
     ) {}
 
     public function register(): void
@@ -283,6 +299,8 @@ final class ReadingRoomPage
                 <?php echo $this->renderBrowse($baseUrl); ?>
             <?php elseif ($section === 'import'): ?>
                 <?php echo $this->renderImportDesk($baseUrl); ?>
+            <?php elseif ($section === 'review'): ?>
+                <?php echo $this->renderReviewDesk($baseUrl); ?>
             <?php elseif ($section !== 'library'): ?>
                 <?php echo $this->renderPlaceholder($section, $baseUrl); ?>
             <?php else: ?>
