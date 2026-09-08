@@ -172,7 +172,13 @@ final class ImportService
         }
 
         if ($type === '' || $key === '' || !is_array($data) || (array_is_list($data) && $data !== [])) {
-            return new StagedDefinition($recordId, null, $issues, $context);
+            return new StagedDefinition(
+                $recordId,
+                null,
+                $issues,
+                $context,
+                is_array($data) && (!array_is_list($data) || $data === []) ? $data : []
+            );
         }
 
         try {
@@ -184,7 +190,7 @@ final class ImportService
                 $exception->getMessage(),
                 $recordId
             );
-            return new StagedDefinition($recordId, null, $issues, $context);
+            return new StagedDefinition($recordId, null, $issues, $context, $data);
         }
 
         $identity = $definition->type() . ':' . $definition->key();
@@ -219,7 +225,7 @@ final class ImportService
             );
         }
 
-        return new StagedDefinition($recordId, $definition, $issues, $context);
+        return new StagedDefinition($recordId, $definition, $issues, $context, $data);
     }
 
     /**

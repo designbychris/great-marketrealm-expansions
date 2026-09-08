@@ -6,6 +6,15 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
+**Phase V.8 — Red Ink and Questionable Margins**
+
+The Administrator-only Review Desk is open. Staged source can be handed from Import to a private Keeper queue, then approved, explicitly classified/amended through the existing Review API, ignored/rejected, or reconsidered. **Reviewed ≠ Published.**
+
+Certified starting baseline: **590 tests / 1,419 assertions** (Phase V.7).
+
+See `docs/RED-INK-AND-QUESTIONABLE-MARGINS.md`.
+
+
 **Phase V.7 — Pippin Finds the Google Docs**
 
 The administrator-only Import Desk can now acquire an accessible Google Docs HTML export, preserve its source identity/headings, transform it into the neutral Import API document shape, and stage it through the existing V.6 pipeline without guessing canonical type/key identity. The certified V.6A baseline is **572 tests / 1380 assertions**.

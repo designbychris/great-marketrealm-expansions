@@ -31,7 +31,7 @@ final class ReadingRoomNavigation
             'review' => [
                 'label' => 'Review Desk',
                 'path' => self::ROOT . '/review',
-                'available' => false,
+                'available' => true,
             ],
         ];
     }

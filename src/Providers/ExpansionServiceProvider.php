@@ -25,6 +25,8 @@ use GreatMarketrealmExpansions\Library\WordPressOptionActivationStore;
 use GreatMarketrealmExpansions\Migration\MigrationRegistry;
 use GreatMarketrealmExpansions\Migration\MigrationService;
 use GreatMarketrealmExpansions\Review\ReviewService;
+use GreatMarketrealmExpansions\Review\ReviewQueueStore;
+use GreatMarketrealmExpansions\Review\WordPressUserReviewQueueStore;
 use GreatMarketrealmExpansions\Frontend\ReadingRoom\ReadingRoomAccess;
 use GreatMarketrealmExpansions\Frontend\ReadingRoom\ReadingRoomNavigation;
 use GreatMarketrealmExpansions\Frontend\ReadingRoom\ReadingRoomPage;
@@ -57,6 +59,7 @@ final class ExpansionServiceProvider extends ServiceProvider
         $this->container->singleton(ReviewService::class, static fn (Container $container): ReviewService => new ReviewService(
             $container->get(ContentValidator::class)
         ));
+        $this->container->singleton(ReviewQueueStore::class, static fn (Container $container): ReviewQueueStore => new WordPressUserReviewQueueStore());
         $this->container->singleton(MigrationRegistry::class, static fn (Container $container): MigrationRegistry => new MigrationRegistry());
         $this->container->singleton(MigrationService::class, static fn (Container $container): MigrationService => new MigrationService(
             $container->get(MigrationRegistry::class),
@@ -95,7 +98,9 @@ final class ExpansionServiceProvider extends ServiceProvider
             $container->get(ReadingRoomAccess::class),
             $container->get(ReadingRoomNavigation::class),
             $container->get(ImportService::class),
-            $container->get(GoogleDocsSourceAdapter::class)
+            $container->get(GoogleDocsSourceAdapter::class),
+            $container->get(ReviewService::class),
+            $container->get(ReviewQueueStore::class)
         ));
         $this->container->singleton(CatalogueAdminPage::class, static fn (Container $container): CatalogueAdminPage => new CatalogueAdminPage(
             $container->get(Catalogue::class),

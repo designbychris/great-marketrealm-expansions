@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5.0-alpha8 — Phase V.8: Red Ink and Questionable Margins
+
+- Opened the Administrator-only Review Desk.
+- Added explicit staged-source handoff from Import Desk to Review Desk.
+- Added per-administrator WordPress user-meta review queue persistence.
+- Preserved unresolved source data so Google heading names/prose remain available during classification.
+- Added approve, classify/amend, ignore/reject, reconsider and clear-desk workflows.
+- Routed classification/amendment through the existing Review API and canonical schema validation.
+- Kept Review API and Reading Room route contracts at `1.0.0`.
+- Preserved `Reviewed ≠ Published`: no Catalogue mutation, Almanac writing, installation, activation or publication.
+- Recorded certified V.7 baseline: 590 tests / 1419 assertions.
+
 ## 0.5.0-alpha7 — Phase V.7: Pippin Finds the Google Docs
 
 - Added strict Google Docs URL/document identity parsing and a bounded HTML-export source adapter.

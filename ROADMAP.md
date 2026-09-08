@@ -587,3 +587,23 @@ Planned sequence:
 - [x] Reading Room route and Import API contracts remain `1.0.0`.
 - [x] Regression coverage and documentation.
 - [ ] Server-side PHPUnit certification.
+
+
+## Phase V.8 — Red Ink and Questionable Margins
+
+- [x] Plugin version `0.5.0-alpha8`.
+- [x] Record certified V.7 baseline: 590 tests / 1419 assertions.
+- [x] Open Review Desk navigation while retaining V.6A Administrator-only access.
+- [x] Add explicit Import Desk → Review Desk handoff.
+- [x] Add Administrator-private persistent Review queue.
+- [x] Preserve unresolved source data for Keeper correction.
+- [x] Present source context and Import API issues beside each review record.
+- [x] Allow valid staged definitions to be approved unchanged.
+- [x] Allow unresolved records to be explicitly classified and amended through Review API validation.
+- [x] Allow structural/non-canonical source headings to be ignored/rejected.
+- [x] Allow decisions to be reconsidered.
+- [x] Keep Review API and Reading Room route contracts at 1.0.0.
+- [x] Preserve Reviewed ≠ Published boundary.
+- [x] Keep Catalogue, Almanac filesystem, installation and activation untouched.
+- [x] Add regression coverage and frontend styling.
+- [ ] Server-side PHPUnit certification.

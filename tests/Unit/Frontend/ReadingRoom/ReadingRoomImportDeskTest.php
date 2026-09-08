@@ -233,7 +233,7 @@ final class ReadingRoomImportDeskTest extends TestCase
         $html = $this->submit($this->json());
 
         self::assertStringContainsString('these results exist for this request only', $html);
-        self::assertStringContainsString('The Review Desk opens in V.8.', $html);
+        self::assertStringContainsString('request-local until the Keeper explicitly sends it to the Review Desk', $html);
     }
 
     public function test_v6_does_not_change_reading_room_route_contract(): void

@@ -100,7 +100,7 @@ final class ReadingRoomPageTest extends TestCase
         self::assertStringContainsString('/marketrealm-expansions/browse/', $html);
         self::assertStringContainsString('/marketrealm-expansions/import/', $html);
         self::assertStringContainsString('/marketrealm-expansions/review/', $html);
-        self::assertStringContainsString('Coming later', $html);
+        self::assertStringNotContainsString('Coming later', $html);
         self::assertStringNotContainsString('Browse</span><small>Coming later', $html);
         self::assertStringNotContainsString('Import Desk</span>\n                            <small>Coming later', $html);
     }
@@ -206,7 +206,7 @@ final class ReadingRoomPageTest extends TestCase
         self::assertStringContainsString('data-section="library"', $html);
     }
 
-    public function test_shortcode_can_target_reserved_section(): void
+    public function test_shortcode_can_target_review_section(): void
     {
         $html = $this->page()->shortcode(['section' => 'review']);
 

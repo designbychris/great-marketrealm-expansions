@@ -340,7 +340,7 @@ final class ReadingRoomPage
                 <section class="gmrexp-reading-room__section gmrexp-reading-room__section--quiet" aria-labelledby="gmrexp-next-desks-heading">
                     <p class="gmrexp-reading-room__kicker">Doors prepared for later phases</p>
                     <h2 id="gmrexp-next-desks-heading">The rest of the Reading Room</h2>
-                    <p>Browse and the Import Desk are now open. The Review Desk retains its stable route and remains deliberately closed until V.8.</p>
+                    <p>Browse, Import Desk, and the Administrator-only Review Desk are now open. Staged material moves into Review only when the Keeper explicitly sends it there.</p>
                 </section>
             <?php endif; ?>
 
@@ -962,7 +962,7 @@ final class ReadingRoomPage
                 </div>
             <?php endif; ?>
 
-            <p class="gmrexp-reading-room__compatibility-boundary"><strong>Staging boundary:</strong> these results exist for this request only. V.6 does not persist a review queue, mutate the Catalogue, install an Almanac, or activate content. The Review Desk opens in V.8.</p>
+            <p class="gmrexp-reading-room__compatibility-boundary"><strong>Staging boundary:</strong> this staging result remains request-local until the Keeper explicitly sends it to the Review Desk. Review decisions persist privately for that Administrator, but neither desk mutates the Catalogue, installs an Almanac, or activates content.</p>
         </section>
         <?php
         return trim((string) ob_get_clean());
@@ -1054,6 +1054,205 @@ final class ReadingRoomPage
         ];
 
         return (string) json_encode($example, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    }
+
+
+    private function renderSendToReviewDesk(string $json, ?string $baseUrl = null): string
+    {
+        if ($json === '' || $this->reviewer === null || $this->reviewQueue === null) { return ''; }
+        ob_start(); ?>
+        <form class="gmrexp-reading-room__review-handoff" method="post" action="<?php echo $this->escAttr($this->navigationUrl('review', $baseUrl)); ?>">
+            <?php echo $this->renderReviewNonce(); ?>
+            <input type="hidden" name="<?php echo $this->escAttr(self::REVIEW_QUEUE_SUBMIT_FIELD); ?>" value="1">
+            <textarea name="<?php echo $this->escAttr(self::REVIEW_JSON_FIELD); ?>" hidden><?php echo $this->escHtml($json); ?></textarea>
+            <div><p class="gmrexp-reading-room__book-label">Ready for the Keeper</p><p>Move this staged source into your private Review Desk queue. Nothing is published by this action.</p></div>
+            <button class="gmrexp-reading-room__button" type="submit">Send to Review Desk →</button>
+        </form>
+        <?php return trim((string) ob_get_clean());
+    }
+
+    private function renderReviewDesk(?string $baseUrl = null): string
+    {
+        $notice = ''; $error = '';
+        if ($this->reviewer === null || $this->reviewQueue === null || $this->importer === null) {
+            return '<section class="gmrexp-reading-room__section"><p class="gmrexp-reading-room__kicker">Red ink and questionable margins</p><h2>The Review Desk</h2><div class="gmrexp-reading-room__empty"><h3>The red ledger is unavailable.</h3><p>The Review API, Import API, or Review queue has not been supplied.</p></div></section>';
+        }
+
+        if ($this->reviewPostAttempted() && !$this->verifyReviewNonce()) {
+            $error = 'The Review Desk stamp could not be verified. Reload the desk and try again.';
+        } elseif (isset($_POST[self::REVIEW_QUEUE_SUBMIT_FIELD])) {
+            $json = isset($_POST[self::REVIEW_JSON_FIELD]) && is_string($_POST[self::REVIEW_JSON_FIELD]) ? $this->unslash($_POST[self::REVIEW_JSON_FIELD]) : '';
+            $result = $this->importer->stageJson($json);
+            if ($json === '' || $result->definitions() === []) {
+                $error = 'The staged source could not be opened for review.';
+            } else {
+                $this->reviewQueue->save(['json' => $json, 'decisions' => []]);
+                $notice = 'The staged source is now on the Review Desk.';
+            }
+        } elseif (isset($_POST[self::REVIEW_CLEAR_SUBMIT_FIELD])) {
+            $this->reviewQueue->clear();
+            $notice = 'The Review Desk has been cleared. No canonical content was changed.';
+        } elseif (isset($_POST[self::REVIEW_DECISION_SUBMIT_FIELD])) {
+            try {
+                $this->applyReviewDecision();
+                $notice = 'The Keeper\'s decision has been recorded.';
+            } catch (\Throwable $exception) {
+                $error = $exception->getMessage();
+            }
+        }
+
+        $session = $this->reviewSessionFromState($this->reviewQueue->load());
+        ob_start(); ?>
+        <section class="gmrexp-reading-room__section gmrexp-reading-room__review" aria-labelledby="gmrexp-review-heading">
+            <div class="gmrexp-reading-room__section-heading">
+                <div><p class="gmrexp-reading-room__kicker">Red ink and questionable margins</p><h2 id="gmrexp-review-heading">The Keeper's Review Desk</h2><p class="gmrexp-reading-room__section-intro">Classify, amend, approve, or reject staged source records. Pippin may preserve and suggest; the Keeper decides what a record means.</p></div>
+                <span class="gmrexp-reading-room__status">Review API <?php echo $this->escHtml($this->reviewer->apiVersion()); ?></span>
+            </div>
+            <div class="gmrexp-reading-room__review-boundary"><strong>Reviewed ≠ Published.</strong><span>Decisions remain in the Administrator's private Review Desk queue. V.9 will prepare approved definitions for an Almanac; this desk does not publish, install, activate, or mutate the Catalogue.</span></div>
+            <?php if ($notice !== ''): ?><div class="gmrexp-reading-room__notice" role="status"><?php echo $this->escHtml($notice); ?></div><?php endif; ?>
+            <?php if ($error !== ''): ?><div class="gmrexp-reading-room__import-security" role="alert"><strong>Review decision not recorded.</strong><p><?php echo $this->escHtml($error); ?></p></div><?php endif; ?>
+
+            <?php if (!$session instanceof ReviewSession): ?>
+                <div class="gmrexp-reading-room__empty"><h3>No papers on the desk.</h3><p>Stage source material at the Import Desk, then choose <strong>Send to Review Desk</strong>.</p><a class="gmrexp-reading-room__back" href="<?php echo $this->escAttr($this->navigationUrl('import', $baseUrl)); ?>">Go to Import Desk →</a></div>
+            <?php else: ?>
+                <?php $source = $session->source(); ?>
+                <div class="gmrexp-reading-room__review-summary">
+                    <div><span>Source</span><strong><?php echo $this->escHtml($source->title()); ?></strong></div>
+                    <div><span>Records</span><strong><?php echo count($session->items()); ?></strong></div>
+                    <div><span>Pending</span><strong><?php echo $session->pendingCount(); ?></strong></div>
+                    <div><span>Accepted</span><strong><?php echo $session->approvedCount() + $session->amendedCount(); ?></strong></div>
+                    <div><span>Rejected</span><strong><?php echo $session->rejectedCount(); ?></strong></div>
+                </div>
+                <div class="gmrexp-reading-room__review-toolbar">
+                    <p><strong><?php echo $session->resolvedCount(); ?></strong> of <strong><?php echo count($session->items()); ?></strong> records resolved.</p>
+                    <form method="post" action="<?php echo $this->escAttr($this->navigationUrl('review', $baseUrl)); ?>"><?php echo $this->renderReviewNonce(); ?><input type="hidden" name="<?php echo $this->escAttr(self::REVIEW_CLEAR_SUBMIT_FIELD); ?>" value="1"><button class="gmrexp-reading-room__button gmrexp-reading-room__button--compact" type="submit">Clear Review Desk</button></form>
+                </div>
+                <div class="gmrexp-reading-room__review-stack"><?php foreach ($session->items() as $item) { echo $this->renderReviewItem($item, $baseUrl); } ?></div>
+            <?php endif; ?>
+        </section>
+        <?php return trim((string) ob_get_clean());
+    }
+
+    private function renderReviewItem(ReviewItem $item, ?string $baseUrl): string
+    {
+        $staged = $item->staged();
+        $definition = $item->definition();
+        $data = $definition?->data() ?? $staged->sourceData();
+        $name = isset($data['name']) && is_string($data['name']) ? $data['name'] : '';
+        $description = isset($data['description']) && is_string($data['description']) ? $data['description'] : '';
+        $type = $definition?->type() ?? '';
+        $key = $definition?->key() ?? '';
+        $context = $staged->sourceContext();
+        $heading = isset($context['heading']) && is_string($context['heading']) ? $context['heading'] : $name;
+        $dataJson = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?: '{}';
+        ob_start(); ?>
+        <article class="gmrexp-reading-room__review-card" data-status="<?php echo $this->escAttr($item->status()); ?>" id="<?php echo $this->escAttr($item->reviewId()); ?>">
+            <div class="gmrexp-reading-room__review-card-topline"><div><p class="gmrexp-reading-room__book-label"><?php echo $this->escHtml($item->recordId()); ?></p><h3><?php echo $this->escHtml($heading !== '' ? $heading : 'Unresolved staged record'); ?></h3></div><span class="gmrexp-reading-room__pill"><?php echo $this->escHtml(ucfirst($item->status())); ?></span></div>
+            <?php if ($context !== []): ?><details class="gmrexp-reading-room__review-source"><summary>Source context</summary><pre><code><?php echo $this->escHtml((string) json_encode($context, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)); ?></code></pre></details><?php endif; ?>
+            <?php if ($staged->issues() !== []): ?><div class="gmrexp-reading-room__review-questions"><?php foreach ($staged->issues() as $issue): ?><p><strong><?php echo $this->escHtml($issue->code()); ?></strong> — <?php echo $this->escHtml($issue->message()); ?></p><?php endforeach; ?></div><?php endif; ?>
+
+            <?php if ($item->resolved()): ?>
+                <div class="gmrexp-reading-room__review-resolution"><strong><?php echo $this->escHtml($item->rejected() ? 'Ignored / rejected as canonical content' : 'Accepted for the proposed Almanac'); ?></strong><?php if ($item->definition() !== null): ?> <code><?php echo $this->escHtml($item->definition()->type() . ':' . $item->definition()->key()); ?></code><?php endif; ?><?php if ($item->note() !== ''): ?><p><?php echo $this->escHtml($item->note()); ?></p><?php endif; ?>
+                    <form method="post" action="<?php echo $this->escAttr($this->navigationUrl('review', $baseUrl) . '#' . $item->reviewId()); ?>"><?php echo $this->renderReviewNonce(); ?><input type="hidden" name="<?php echo $this->escAttr(self::REVIEW_DECISION_SUBMIT_FIELD); ?>" value="1"><input type="hidden" name="<?php echo $this->escAttr(self::REVIEW_RECORD_FIELD); ?>" value="<?php echo $this->escAttr($item->recordId()); ?>"><input type="hidden" name="<?php echo $this->escAttr(self::REVIEW_ACTION_FIELD); ?>" value="reset"><button class="gmrexp-reading-room__back" type="submit">Reconsider</button></form>
+                </div>
+            <?php else: ?>
+                <form class="gmrexp-reading-room__review-form" method="post" action="<?php echo $this->escAttr($this->navigationUrl('review', $baseUrl) . '#' . $item->reviewId()); ?>">
+                    <?php echo $this->renderReviewNonce(); ?><input type="hidden" name="<?php echo $this->escAttr(self::REVIEW_DECISION_SUBMIT_FIELD); ?>" value="1"><input type="hidden" name="<?php echo $this->escAttr(self::REVIEW_RECORD_FIELD); ?>" value="<?php echo $this->escAttr($item->recordId()); ?>">
+                    <div class="gmrexp-reading-room__review-grid">
+                        <label><span>Content type</span><select name="gmrexp_review_type"><option value="">Choose what this record is…</option><?php foreach (CoreContentTypes::all() as $contentType): ?><option value="<?php echo $this->escAttr($contentType->key()); ?>" <?php echo $contentType->key() === $type ? 'selected' : ''; ?>><?php echo $this->escHtml($contentType->label()); ?></option><?php endforeach; ?></select></label>
+                        <label><span>Canonical key</span><input type="text" name="gmrexp_review_key" value="<?php echo $this->escAttr($key); ?>" placeholder="e.g. pizza-mimic"></label>
+                    </div>
+                    <label><span>Name</span><input type="text" name="gmrexp_review_name" value="<?php echo $this->escAttr($name); ?>"></label>
+                    <label><span>Description / source prose</span><textarea name="gmrexp_review_description" rows="5"><?php echo $this->escHtml($description); ?></textarea></label>
+                    <details class="gmrexp-reading-room__review-advanced"><summary>Advanced content data</summary><p class="gmrexp-reading-room__field-help">The existing Review API validates this complete data map. Name and description above overwrite matching values when accepted.</p><textarea name="gmrexp_review_data" rows="10" spellcheck="false"><?php echo $this->escHtml($dataJson); ?></textarea></details>
+                    <label><span>Keeper note (optional)</span><input type="text" name="gmrexp_review_note" value="" placeholder="Why was this classified, amended, or ignored?"></label>
+                    <div class="gmrexp-reading-room__review-actions"><?php if ($item->canApproveOriginal()): ?><button class="gmrexp-reading-room__button" type="submit" name="<?php echo $this->escAttr(self::REVIEW_ACTION_FIELD); ?>" value="approve">Approve Original</button><?php endif; ?><button class="gmrexp-reading-room__button" type="submit" name="<?php echo $this->escAttr(self::REVIEW_ACTION_FIELD); ?>" value="amend">Accept Classification / Amendment</button><button class="gmrexp-reading-room__back" type="submit" name="<?php echo $this->escAttr(self::REVIEW_ACTION_FIELD); ?>" value="reject">Ignore / Reject</button></div>
+                </form>
+            <?php endif; ?>
+        </article>
+        <?php return trim((string) ob_get_clean());
+    }
+
+    private function applyReviewDecision(): void
+    {
+        if ($this->reviewQueue === null || $this->reviewer === null || $this->importer === null) { throw new ReviewDecisionException('The Review Desk is unavailable.'); }
+        $state = $this->reviewQueue->load();
+        $session = $this->reviewSessionFromState($state);
+        if (!$session instanceof ReviewSession || !is_array($state)) { throw new ReviewDecisionException('There is no staged source on the Review Desk.'); }
+
+        $recordId = isset($_POST[self::REVIEW_RECORD_FIELD]) && is_string($_POST[self::REVIEW_RECORD_FIELD]) ? trim($this->unslash($_POST[self::REVIEW_RECORD_FIELD])) : '';
+        $action = isset($_POST[self::REVIEW_ACTION_FIELD]) && is_string($_POST[self::REVIEW_ACTION_FIELD]) ? strtolower(trim($this->unslash($_POST[self::REVIEW_ACTION_FIELD]))) : '';
+        $item = null;
+        foreach ($session->items() as $candidate) { if ($candidate->recordId() === $recordId) { $item = $candidate; break; } }
+        if (!$item instanceof ReviewItem) { throw new ReviewDecisionException('The selected review record does not exist.'); }
+
+        $decisions = isset($state['decisions']) && is_array($state['decisions']) ? $state['decisions'] : [];
+        if ($action === 'reset') { unset($decisions[$recordId]); $state['decisions'] = $decisions; $this->reviewQueue->save($state); return; }
+
+        $note = isset($_POST['gmrexp_review_note']) && is_string($_POST['gmrexp_review_note']) ? trim($this->unslash($_POST['gmrexp_review_note'])) : '';
+        if ($action === 'reject') {
+            $decisions[$recordId] = ['action' => 'reject', 'note' => $note];
+        } elseif ($action === 'approve') {
+            if (!$item->canApproveOriginal()) { throw new ReviewDecisionException('This record is unresolved or invalid and must be classified/amended before acceptance.'); }
+            $decisions[$recordId] = ['action' => 'approve', 'note' => $note];
+        } elseif ($action === 'amend') {
+            $type = isset($_POST['gmrexp_review_type']) && is_string($_POST['gmrexp_review_type']) ? trim($this->unslash($_POST['gmrexp_review_type'])) : '';
+            $key = isset($_POST['gmrexp_review_key']) && is_string($_POST['gmrexp_review_key']) ? trim($this->unslash($_POST['gmrexp_review_key'])) : '';
+            $rawData = isset($_POST['gmrexp_review_data']) && is_string($_POST['gmrexp_review_data']) ? $this->unslash($_POST['gmrexp_review_data']) : '{}';
+            $data = json_decode($rawData, true, 512, JSON_THROW_ON_ERROR);
+            if (!is_array($data) || (array_is_list($data) && $data !== [])) { throw new ReviewDecisionException('Advanced content data must be a JSON object/map.'); }
+            $name = isset($_POST['gmrexp_review_name']) && is_string($_POST['gmrexp_review_name']) ? trim($this->unslash($_POST['gmrexp_review_name'])) : '';
+            $description = isset($_POST['gmrexp_review_description']) && is_string($_POST['gmrexp_review_description']) ? trim($this->unslash($_POST['gmrexp_review_description'])) : '';
+            if ($name !== '') { $data['name'] = $name; } else { unset($data['name']); }
+            if ($description !== '') { $data['description'] = $description; } else { unset($data['description']); }
+            $session->amend($item->reviewId(), $type, $key, $data, $note);
+            $decisions[$recordId] = ['action' => 'amend', 'type' => $type, 'key' => $key, 'data' => $data, 'note' => $note];
+        } else { throw new ReviewDecisionException('Choose a valid Keeper review action.'); }
+
+        $state['decisions'] = $decisions;
+        $this->reviewQueue->save($state);
+    }
+
+    /** @param array<string,mixed>|null $state */
+    private function reviewSessionFromState(?array $state): ?ReviewSession
+    {
+        if ($state === null || $this->reviewer === null || $this->importer === null) { return null; }
+        $json = isset($state['json']) && is_string($state['json']) ? $state['json'] : '';
+        if ($json === '') { return null; }
+        $result = $this->importer->stageJson($json);
+        if ($result->definitions() === []) { return null; }
+        $session = $this->reviewer->open($result);
+        $decisions = isset($state['decisions']) && is_array($state['decisions']) ? $state['decisions'] : [];
+        foreach ($session->items() as $item) {
+            $decision = $decisions[$item->recordId()] ?? null;
+            if (!is_array($decision)) { continue; }
+            $action = isset($decision['action']) && is_string($decision['action']) ? $decision['action'] : '';
+            $note = isset($decision['note']) && is_string($decision['note']) ? $decision['note'] : '';
+            try {
+                if ($action === 'approve') { $session->approve($item->reviewId(), $note); }
+                elseif ($action === 'reject') { $session->reject($item->reviewId(), $note); }
+                elseif ($action === 'amend') { $session->amend($item->reviewId(), (string) ($decision['type'] ?? ''), (string) ($decision['key'] ?? ''), is_array($decision['data'] ?? null) ? $decision['data'] : [], $note); }
+            } catch (ReviewDecisionException) { /* stale decisions never bypass current validation */ }
+        }
+        return $session;
+    }
+
+    private function reviewPostAttempted(): bool
+    {
+        return isset($_POST[self::REVIEW_QUEUE_SUBMIT_FIELD]) || isset($_POST[self::REVIEW_DECISION_SUBMIT_FIELD]) || isset($_POST[self::REVIEW_CLEAR_SUBMIT_FIELD]);
+    }
+
+    private function verifyReviewNonce(): bool
+    {
+        if (!function_exists('wp_verify_nonce')) { return true; }
+        $nonce = isset($_POST[self::REVIEW_NONCE_FIELD]) && is_string($_POST[self::REVIEW_NONCE_FIELD]) ? $this->unslash($_POST[self::REVIEW_NONCE_FIELD]) : '';
+        return $nonce !== '' && (bool) wp_verify_nonce($nonce, self::REVIEW_NONCE_ACTION);
+    }
+
+    private function renderReviewNonce(): string
+    {
+        if (!function_exists('wp_nonce_field')) { return ''; }
+        ob_start(); wp_nonce_field(self::REVIEW_NONCE_ACTION, self::REVIEW_NONCE_FIELD, false); return (string) ob_get_clean();
     }
 
     private function renderPlaceholder(string $section, ?string $baseUrl = null): string
