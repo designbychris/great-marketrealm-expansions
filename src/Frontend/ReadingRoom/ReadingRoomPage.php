@@ -5,6 +5,10 @@ defined('ABSPATH') || exit;
 
 use GreatMarketrealmExpansions\Catalogue\Catalogue;
 use GreatMarketrealmExpansions\Library\Library;
+use GreatMarketrealmExpansions\Import\ImportIssue;
+use GreatMarketrealmExpansions\Import\ImportResult;
+use GreatMarketrealmExpansions\Import\ImportService;
+use GreatMarketrealmExpansions\Import\StagedDefinition;
 
 final class ReadingRoomPage
 {
@@ -16,6 +20,10 @@ final class ReadingRoomPage
     public const HOST_PAGE_OPTION = 'gmrexp_reading_room_host_page_id';
     public const ACTIVATION_ACTION = 'gmrexp_reading_room_activation';
     public const ACTIVATION_NONCE_ACTION = 'gmrexp_reading_room_activation';
+    public const IMPORT_SUBMIT_FIELD = 'gmrexp_import_submit';
+    public const IMPORT_NONCE_ACTION = 'gmrexp_reading_room_import';
+    public const IMPORT_NONCE_FIELD = '_gmrexp_import_nonce';
+    public const IMPORT_JSON_FIELD = 'gmrexp_import_json';
     public const STYLE_HANDLE = 'gmrexp-reading-room';
     public const ROUTE_VERSION = '1.0.0';
 
@@ -23,7 +31,8 @@ final class ReadingRoomPage
         private Catalogue $catalogue,
         private Library $library,
         private ReadingRoomAccess $access,
-        private ReadingRoomNavigation $navigation
+        private ReadingRoomNavigation $navigation,
+        private ?ImportService $importer = null
     ) {}
 
     public function register(): void
@@ -262,6 +271,8 @@ final class ReadingRoomPage
 
             <?php if ($section === 'browse'): ?>
                 <?php echo $this->renderBrowse($baseUrl); ?>
+            <?php elseif ($section === 'import'): ?>
+                <?php echo $this->renderImportDesk($baseUrl); ?>
             <?php elseif ($section !== 'library'): ?>
                 <?php echo $this->renderPlaceholder($section, $baseUrl); ?>
             <?php else: ?>
@@ -319,7 +330,7 @@ final class ReadingRoomPage
                 <section class="gmrexp-reading-room__section gmrexp-reading-room__section--quiet" aria-labelledby="gmrexp-next-desks-heading">
                     <p class="gmrexp-reading-room__kicker">Doors prepared for later phases</p>
                     <h2 id="gmrexp-next-desks-heading">The rest of the Reading Room</h2>
-                    <p>Browse is now open. Import Desk and Review Desk retain their stable routes but remain deliberately closed until their own phases.</p>
+                    <p>Browse and the Import Desk are now open. The Review Desk retains its stable route and remains deliberately closed until V.8.</p>
                 </section>
             <?php endif; ?>
 
@@ -691,6 +702,270 @@ final class ReadingRoomPage
     private function contentTypeLabel(string $type): string
     {
         return ucwords(str_replace(['-', '_'], ' ', $type));
+    }
+
+    private function renderImportDesk(?string $baseUrl = null): string
+    {
+        $submittedJson = $this->submittedImportJson();
+        $submission = $this->importSubmission($submittedJson);
+        $actionUrl = $this->navigationUrl('import', $baseUrl);
+
+        ob_start();
+        ?>
+        <section class="gmrexp-reading-room__section gmrexp-reading-room__import" aria-labelledby="gmrexp-import-heading">
+            <div class="gmrexp-reading-room__section-heading">
+                <div>
+                    <p class="gmrexp-reading-room__kicker">The Keeper's Import Desk</p>
+                    <h2 id="gmrexp-import-heading">Stage Structured Source Material</h2>
+                    <p class="gmrexp-reading-room__section-intro">Paste a neutral Import API document here to validate and stage source material before Keeper review. Nothing staged at this desk is published, installed, activated, or written into the canonical Catalogue.</p>
+                </div>
+                <span class="gmrexp-reading-room__status">Import API <?php echo $this->escHtml($this->importer?->apiVersion() ?? 'unavailable'); ?></span>
+            </div>
+
+            <div class="gmrexp-reading-room__import-boundary">
+                <strong>Imported ≠ Canonical.</strong>
+                <span>This desk stages non-executable structured data for inspection only. Google Docs acquisition belongs to V.7; this phase does not fetch remote documents or accept executable PHP.</span>
+            </div>
+
+            <?php if ($this->importer === null): ?>
+                <div class="gmrexp-reading-room__empty">
+                    <h3>The intake ledger is unavailable.</h3>
+                    <p>The Import API has not been supplied to this Reading Room instance.</p>
+                </div>
+            <?php else: ?>
+                <form class="gmrexp-reading-room__import-form" method="post" action="<?php echo $this->escAttr($actionUrl); ?>">
+                    <?php echo $this->renderImportNonce(); ?>
+                    <input type="hidden" name="<?php echo $this->escAttr(self::IMPORT_SUBMIT_FIELD); ?>" value="1">
+                    <label for="gmrexp-import-json"><strong>Structured Import JSON</strong></label>
+                    <p class="gmrexp-reading-room__field-help">The document must contain a source map and a records list. Content type and canonical key are never guessed.</p>
+                    <textarea id="gmrexp-import-json" name="<?php echo $this->escAttr(self::IMPORT_JSON_FIELD); ?>" rows="16" spellcheck="false" placeholder="Paste a structured Import API JSON document…"><?php echo $this->escHtml($submittedJson); ?></textarea>
+                    <div class="gmrexp-reading-room__import-actions">
+                        <button class="gmrexp-reading-room__button" type="submit">Stage Source Material</button>
+                        <span>No files are written by this action.</span>
+                    </div>
+                </form>
+
+                <details class="gmrexp-reading-room__import-example">
+                    <summary>Show the neutral document shape</summary>
+                    <pre><code><?php echo $this->escHtml($this->importExampleJson()); ?></code></pre>
+                </details>
+
+                <?php if ($submission['attempted']): ?>
+                    <?php if (!$submission['nonce_valid']): ?>
+                        <div class="gmrexp-reading-room__import-security" role="alert">
+                            <h3>The intake stamp could not be verified.</h3>
+                            <p>Please reload the Import Desk and submit the source material again. Nothing was staged.</p>
+                        </div>
+                    <?php elseif ($submission['result'] instanceof ImportResult): ?>
+                        <?php echo $this->renderImportResult($submission['result']); ?>
+                    <?php endif; ?>
+                <?php endif; ?>
+            <?php endif; ?>
+        </section>
+        <?php
+        return trim((string) ob_get_clean());
+    }
+
+    /** @return array{attempted:bool,nonce_valid:bool,result:?ImportResult} */
+    private function importSubmission(string $json): array
+    {
+        $attempted = isset($_POST[self::IMPORT_SUBMIT_FIELD]) && (string) $_POST[self::IMPORT_SUBMIT_FIELD] === '1';
+        if (!$attempted || $this->importer === null) {
+            return ['attempted' => $attempted, 'nonce_valid' => true, 'result' => null];
+        }
+
+        $nonceValid = $this->verifyImportNonce();
+        if (!$nonceValid) {
+            return ['attempted' => true, 'nonce_valid' => false, 'result' => null];
+        }
+
+        return ['attempted' => true, 'nonce_valid' => true, 'result' => $this->importer->stageJson($json)];
+    }
+
+    private function submittedImportJson(): string
+    {
+        if (!isset($_POST[self::IMPORT_JSON_FIELD]) || !is_string($_POST[self::IMPORT_JSON_FIELD])) {
+            return '';
+        }
+
+        return $this->unslash($_POST[self::IMPORT_JSON_FIELD]);
+    }
+
+    private function verifyImportNonce(): bool
+    {
+        if (!function_exists('wp_verify_nonce')) {
+            return true;
+        }
+
+        $nonce = isset($_POST[self::IMPORT_NONCE_FIELD]) && is_string($_POST[self::IMPORT_NONCE_FIELD])
+            ? $this->unslash($_POST[self::IMPORT_NONCE_FIELD])
+            : '';
+
+        return $nonce !== '' && (bool) wp_verify_nonce($nonce, self::IMPORT_NONCE_ACTION);
+    }
+
+    private function renderImportNonce(): string
+    {
+        if (!function_exists('wp_nonce_field')) {
+            return '';
+        }
+
+        ob_start();
+        wp_nonce_field(self::IMPORT_NONCE_ACTION, self::IMPORT_NONCE_FIELD, false);
+        return (string) ob_get_clean();
+    }
+
+    private function renderImportResult(ImportResult $result): string
+    {
+        $definitions = $result->definitions();
+        $sourceIssues = $result->issues();
+        $recordIssues = 0;
+        $errorCount = 0;
+        $warningCount = 0;
+
+        foreach ($sourceIssues as $issue) {
+            $issue->error() ? $errorCount++ : $warningCount++;
+        }
+        foreach ($definitions as $definition) {
+            foreach ($definition->issues() as $issue) {
+                $recordIssues++;
+                $issue->error() ? $errorCount++ : $warningCount++;
+            }
+        }
+
+        $source = $result->source();
+        ob_start();
+        ?>
+        <section class="gmrexp-reading-room__staging" aria-labelledby="gmrexp-staging-heading">
+            <div class="gmrexp-reading-room__compatibility-heading">
+                <div>
+                    <p class="gmrexp-reading-room__kicker">Staging result</p>
+                    <h3 id="gmrexp-staging-heading"><?php echo $this->escHtml($source->title()); ?></h3>
+                    <p class="gmrexp-reading-room__version"><?php echo $this->escHtml($source->type()); ?> · <?php echo $this->escHtml($source->id()); ?><?php echo $source->version() !== null && $source->version() !== '' ? ' · ' . $this->escHtml($source->version()) : ''; ?></p>
+                </div>
+                <span class="gmrexp-reading-room__pill"><?php echo $this->escHtml($result->hasErrors() ? 'Needs attention' : ($result->reviewCount() > 0 ? 'Review requested' : 'Structurally valid')); ?></span>
+            </div>
+
+            <dl class="gmrexp-reading-room__import-counts">
+                <div><dt>Records</dt><dd><?php echo $this->escHtml((string) count($definitions)); ?></dd></div>
+                <div><dt>Valid</dt><dd><?php echo $this->escHtml((string) $result->validCount()); ?></dd></div>
+                <div><dt>Review</dt><dd><?php echo $this->escHtml((string) $result->reviewCount()); ?></dd></div>
+                <div><dt>Errors</dt><dd><?php echo $this->escHtml((string) $errorCount); ?></dd></div>
+                <div><dt>Warnings</dt><dd><?php echo $this->escHtml((string) $warningCount); ?></dd></div>
+            </dl>
+
+            <?php if ($sourceIssues !== []): ?>
+                <div class="gmrexp-reading-room__import-source-issues">
+                    <h4>Source document issues</h4>
+                    <?php echo $this->renderImportIssues($sourceIssues); ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($definitions === []): ?>
+                <div class="gmrexp-reading-room__empty gmrexp-reading-room__empty--compact">
+                    <h4>No records were staged.</h4>
+                    <p>Review the source-document issues above and try again.</p>
+                </div>
+            <?php else: ?>
+                <div class="gmrexp-reading-room__staged-records">
+                    <?php foreach ($definitions as $definition): ?>
+                        <?php echo $this->renderStagedDefinition($definition); ?>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
+            <p class="gmrexp-reading-room__compatibility-boundary"><strong>Staging boundary:</strong> these results exist for this request only. V.6 does not persist a review queue, mutate the Catalogue, install an Almanac, or activate content. The Review Desk opens in V.8.</p>
+        </section>
+        <?php
+        return trim((string) ob_get_clean());
+    }
+
+    private function renderStagedDefinition(StagedDefinition $staged): string
+    {
+        $definition = $staged->definition();
+        $status = !$staged->valid() ? 'Invalid' : ($staged->requiresReview() ? 'Review' : 'Valid');
+
+        ob_start();
+        ?>
+        <article class="gmrexp-reading-room__staged-record" data-valid="<?php echo $staged->valid() ? 'true' : 'false'; ?>">
+            <div class="gmrexp-reading-room__content-entry-heading">
+                <div>
+                    <p class="gmrexp-reading-room__book-label">Record <?php echo $this->escHtml($staged->recordId()); ?></p>
+                    <h4><?php echo $this->escHtml($definition?->data()['name'] ?? 'Unresolved staged record'); ?></h4>
+                    <?php if ($definition !== null): ?>
+                        <code><?php echo $this->escHtml($definition->type() . ':' . $definition->key()); ?></code>
+                    <?php endif; ?>
+                </div>
+                <span class="gmrexp-reading-room__content-type"><?php echo $this->escHtml($status); ?></span>
+            </div>
+
+            <?php if ($staged->sourceContext() !== []): ?>
+                <details class="gmrexp-reading-room__record-context">
+                    <summary>Source context</summary>
+                    <pre><code><?php echo $this->escHtml((string) json_encode($staged->sourceContext(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?></code></pre>
+                </details>
+            <?php endif; ?>
+
+            <?php if ($staged->issues() !== []): ?>
+                <?php echo $this->renderImportIssues($staged->issues()); ?>
+            <?php elseif ($staged->valid()): ?>
+                <p class="gmrexp-reading-room__record-clear">No validation issues were reported for this staged record.</p>
+            <?php endif; ?>
+        </article>
+        <?php
+        return trim((string) ob_get_clean());
+    }
+
+    /** @param list<ImportIssue> $issues */
+    private function renderImportIssues(array $issues): string
+    {
+        ob_start();
+        ?>
+        <ul class="gmrexp-reading-room__import-issues">
+            <?php foreach ($issues as $issue): ?>
+                <li data-severity="<?php echo $this->escAttr($issue->severity()); ?>">
+                    <div class="gmrexp-reading-room__compatibility-issue-topline">
+                        <strong><?php echo $this->escHtml(strtoupper($issue->severity())); ?></strong>
+                        <code><?php echo $this->escHtml($issue->code()); ?></code>
+                    </div>
+                    <p><?php echo $this->escHtml($issue->message()); ?></p>
+                    <?php if ($issue->field() !== null || $issue->recordId() !== null): ?>
+                        <p class="gmrexp-reading-room__compatibility-subject">
+                            <?php if ($issue->recordId() !== null): ?><span>Record:</span> <?php echo $this->escHtml($issue->recordId()); ?><?php endif; ?>
+                            <?php if ($issue->field() !== null): ?><?php echo $issue->recordId() !== null ? ' · ' : ''; ?><span>Field:</span> <?php echo $this->escHtml($issue->field()); ?><?php endif; ?>
+                        </p>
+                    <?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+        <?php
+        return trim((string) ob_get_clean());
+    }
+
+    private function importExampleJson(): string
+    {
+        $example = [
+            'source' => [
+                'type' => 'structured-source',
+                'id' => 'synthetic-sourcebook',
+                'title' => 'Synthetic Sourcebook',
+                'version' => 'draft-1',
+            ],
+            'records' => [
+                [
+                    'id' => 'record-1',
+                    'type' => 'feat',
+                    'key' => 'synthetic-feat',
+                    'source' => ['section' => 'Example Section'],
+                    'data' => [
+                        'name' => 'Synthetic Feat',
+                        'description' => 'Non-canonical example content used to demonstrate the Import API shape.',
+                    ],
+                ],
+            ],
+        ];
+
+        return (string) json_encode($example, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
     private function renderPlaceholder(string $section, ?string $baseUrl = null): string

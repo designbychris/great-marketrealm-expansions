@@ -30,7 +30,7 @@ Phase V.1 reserves these routes:
 
 `Your Library` opened in V.1. **Browse** opens in V.2.
 
-Import Desk and Review Desk deliberately remain non-mutating placeholders until their respective phases. Reserving the routes now means later phases can replace those placeholders without breaking links or navigation contracts.
+The Import Desk is open from V.6 as a request-local structured-source staging interface over Import API `1.0.0`. The Review Desk remains a reserved non-mutating placeholder until V.8. Reserving these routes early allows their workflows to open without breaking Reading Room links or navigation contracts.
 
 The rewrite rules are registered through WordPress and flushed once when the dedicated Reading Room route version changes. That route version is independent from the plugin release version, so ordinary releases do not cause unnecessary permalink flushes.
 
@@ -166,3 +166,8 @@ Browse cards can now open a read-only Almanac detail surface with deterministic 
 ## Phase V.5
 
 Ready / Degraded / Blocked badges now link to a human-readable compatibility section inside the open Almanac. The section is backed by the existing Living Library report and remains diagnostic-only. See `LIBRARIAN-RAISES-AN-EYEBROW.md`.
+
+
+## Phase V.6
+
+The Import Desk accepts neutral structured JSON, stages it through the existing Import API, and renders source/record diagnostics without publishing or persisting a review queue. See `KEEPERS-IMPORT-DESK.md`.

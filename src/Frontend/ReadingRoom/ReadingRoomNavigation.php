@@ -26,7 +26,7 @@ final class ReadingRoomNavigation
             'import' => [
                 'label' => 'Import Desk',
                 'path' => self::ROOT . '/import',
-                'available' => false,
+                'available' => true,
             ],
             'review' => [
                 'label' => 'Review Desk',

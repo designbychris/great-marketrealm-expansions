@@ -102,6 +102,7 @@ final class ReadingRoomPageTest extends TestCase
         self::assertStringContainsString('/marketrealm-expansions/review/', $html);
         self::assertStringContainsString('Coming later', $html);
         self::assertStringNotContainsString('Browse</span><small>Coming later', $html);
+        self::assertStringNotContainsString('Import Desk</span>\n                            <small>Coming later', $html);
     }
 
 
@@ -151,14 +152,14 @@ final class ReadingRoomPageTest extends TestCase
         self::assertStringNotContainsString('No placeholder action mutates', $html);
     }
 
-    public function test_future_route_renders_non_mutating_placeholder(): void
+    public function test_import_route_is_open_even_when_import_service_is_not_supplied_to_direct_fixture(): void
     {
         $html = $this->page()->render('import');
 
-        self::assertStringContainsString('Reserved desk', $html);
-        self::assertStringContainsString('Import Desk', $html);
-        self::assertStringContainsString('No placeholder action mutates', $html);
-        self::assertStringNotContainsString('Fixture Book', $html);
+        self::assertStringContainsString("The Keeper's Import Desk", $html);
+        self::assertStringContainsString('Stage Structured Source Material', $html);
+        self::assertStringContainsString('The intake ledger is unavailable.', $html);
+        self::assertStringNotContainsString('Reserved desk', $html);
     }
 
     public function test_unknown_section_falls_back_to_library(): void

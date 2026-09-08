@@ -6,13 +6,14 @@ It owns canonical expansion packs and structured content definitions — races, 
 
 ## Current milestone
 
-**Phase V.5 — The Librarian Raises an Eyebrow**
+**Phase V.6 — The Keeper's Import Desk**
 
-Phase V.4 is certified at **529 tests / 1284 assertions**.
+Phase V.5 is certified at **549 tests / 1,322 assertions**.
 
-The Ready / Degraded / Blocked badge now opens a read-only explanation backed directly by the Living Library compatibility report. The Reading Room exposes existing issue severity, stable code, message and subject without introducing frontend compatibility rules or changing activation state.
+The Reading Room Import Desk now stages neutral structured JSON through the existing Import API and explains source identity, record validity, review flags, and validation issues without mutating the canonical Catalogue. Imported material remains non-canonical and request-local; Google Docs acquisition, Keeper review, proposed-Almanac assembly and publication remain separate later phases.
 
-See `docs/LIBRARIAN-RAISES-AN-EYEBROW.md`.
+See `docs/KEEPERS-IMPORT-DESK.md`.
+
 
 ## Development
 

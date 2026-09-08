@@ -197,3 +197,8 @@ Successful activation changes invalidate the remembered WordPress host page thro
 ### Phase V.5 compatibility diagnostics boundary
 
 `CompatibilityInspector` and `CompatibilityReport` remain the sole compatibility semantics. `Frontend\ReadingRoom\CompatibilityDiagnostics` is a presentation adapter only: it derives labels/counts and exposes the existing issues without mutation. Ready, degraded, and blocked never implicitly change Living Library activation.
+
+
+### Phase V.6 Import Desk boundary
+
+The frontend Import Desk is an adapter over `ImportService::stageJson()`. It owns form presentation and escaped diagnostics only. ImportService continues to own source parsing, provenance stamping, identity requirements, schema validation, duplicate detection and review flags. Staging remains request-local and does not mutate Catalogue/Library state or create Almanac files.

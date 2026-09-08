@@ -91,7 +91,8 @@ final class ExpansionServiceProvider extends ServiceProvider
             $container->get(Catalogue::class),
             $container->get(Library::class),
             $container->get(ReadingRoomAccess::class),
-            $container->get(ReadingRoomNavigation::class)
+            $container->get(ReadingRoomNavigation::class),
+            $container->get(ImportService::class)
         ));
         $this->container->singleton(CatalogueAdminPage::class, static fn (Container $container): CatalogueAdminPage => new CatalogueAdminPage(
             $container->get(Catalogue::class),

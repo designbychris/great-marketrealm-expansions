@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.5.0-alpha6 — Phase V.6: The Keeper's Import Desk
+
+- Opened the Reading Room Import Desk.
+- Added Keeper-facing neutral structured JSON staging through Import API `1.0.0`.
+- Added dedicated nonce/input contracts for frontend staging submissions.
+- Added source identity and staged-record diagnostics with validity/review/error/warning counts.
+- Exposed existing Import API issue severity, code, message, record and field values.
+- Preserved explicit content type/key requirements without frontend guessing.
+- Added escaped source-context display and correction-friendly submitted JSON retention.
+- Shipped only a synthetic neutral example document; no canonical mechanics invented.
+- Kept staging request-local with no Catalogue, activation, filesystem, review-queue or publication mutation.
+- Kept remote Google Docs acquisition reserved for V.7.
+- Kept Reading Room route contract at `1.0.0`.
+- Recorded the certified Phase V.5 baseline: 549 tests / 1322 assertions.
+
 ## 0.5.0-alpha5 — Phase V.5: The Librarian Raises an Eyebrow
 
 - Turned Ready / Degraded / Blocked Reading Room badges into links to human-readable compatibility diagnostics.

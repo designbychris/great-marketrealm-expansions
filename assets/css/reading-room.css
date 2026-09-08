@@ -705,3 +705,182 @@ a.gmrexp-reading-room__compatibility:hover {
     .gmrexp-reading-room__compatibility-issue-topline { flex-direction: column; }
     .gmrexp-reading-room__compatibility-counts { grid-template-columns: 1fr; }
 }
+
+/* Phase V.6 — The Keeper's Import Desk */
+.gmrexp-reading-room__import-boundary,
+.gmrexp-reading-room__import-security {
+    margin: 1rem 0;
+    padding: .9rem 1rem;
+    border: 1px solid var(--gmrexp-line);
+    border-left-width: 5px;
+    border-radius: 10px;
+    background: rgba(245,231,201,.45);
+    line-height: 1.55;
+}
+
+.gmrexp-reading-room__import-boundary strong,
+.gmrexp-reading-room__import-boundary span {
+    display: block;
+}
+
+.gmrexp-reading-room__import-form {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--gmrexp-line);
+    border-radius: 12px;
+    background: rgba(255,250,240,.72);
+}
+
+.gmrexp-reading-room__import-form label,
+.gmrexp-reading-room__field-help,
+.gmrexp-reading-room__import-actions,
+.gmrexp-reading-room__import-counts,
+.gmrexp-reading-room__import-issues {
+    font-family: system-ui, sans-serif;
+}
+
+.gmrexp-reading-room__field-help {
+    margin: .35rem 0 .75rem;
+    color: var(--gmrexp-muted);
+    font-size: .82rem;
+    line-height: 1.5;
+}
+
+.gmrexp-reading-room__import-form textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 20rem;
+    padding: .85rem;
+    color: var(--gmrexp-ink);
+    background: #fffaf0;
+    border: 1px solid var(--gmrexp-line);
+    border-radius: 9px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .78rem;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.gmrexp-reading-room__import-actions {
+    display: flex;
+    gap: .8rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.gmrexp-reading-room__import-actions span {
+    color: var(--gmrexp-muted);
+    font-size: .76rem;
+}
+
+.gmrexp-reading-room__import-example {
+    margin-top: .8rem;
+    padding: .75rem 1rem;
+    border: 1px dashed var(--gmrexp-line);
+    border-radius: 10px;
+    background: rgba(232,220,196,.24);
+}
+
+.gmrexp-reading-room__import-example summary,
+.gmrexp-reading-room__record-context summary {
+    cursor: pointer;
+    font-family: system-ui, sans-serif;
+    font-weight: 700;
+}
+
+.gmrexp-reading-room__import-example pre,
+.gmrexp-reading-room__record-context pre {
+    overflow-x: auto;
+    margin: .75rem 0 0;
+    padding: .75rem;
+    background: #fffaf0;
+    border: 1px solid var(--gmrexp-line);
+    border-radius: 8px;
+    font-size: .72rem;
+    line-height: 1.45;
+}
+
+.gmrexp-reading-room__staging {
+    margin-top: 1.4rem;
+    padding: 1rem;
+    border: 1px solid var(--gmrexp-line);
+    border-radius: 12px;
+    background: rgba(255,250,240,.72);
+}
+
+.gmrexp-reading-room__import-counts {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: .55rem;
+    margin: 1rem 0;
+}
+
+.gmrexp-reading-room__import-counts div {
+    padding: .65rem;
+    text-align: center;
+    background: rgba(232,220,196,.35);
+    border: 1px solid var(--gmrexp-line);
+    border-radius: 9px;
+}
+
+.gmrexp-reading-room__import-counts dt {
+    color: var(--gmrexp-muted);
+    font-size: .66rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+}
+
+.gmrexp-reading-room__import-counts dd {
+    margin: .15rem 0 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+}
+
+.gmrexp-reading-room__staged-records {
+    display: grid;
+    gap: .8rem;
+    margin-top: 1rem;
+}
+
+.gmrexp-reading-room__staged-record {
+    padding: 1rem;
+    border: 1px solid var(--gmrexp-line);
+    border-radius: 10px;
+    background: #fffaf0;
+}
+
+.gmrexp-reading-room__staged-record[data-valid="false"] {
+    border-left-width: 5px;
+}
+
+.gmrexp-reading-room__record-context { margin-top: .75rem; }
+.gmrexp-reading-room__record-clear { margin: .75rem 0 0; color: var(--gmrexp-muted); }
+
+.gmrexp-reading-room__import-issues {
+    display: grid;
+    gap: .55rem;
+    padding: 0;
+    margin: .8rem 0 0;
+    list-style: none;
+}
+
+.gmrexp-reading-room__import-issues li {
+    padding: .75rem .85rem;
+    border: 1px solid var(--gmrexp-line);
+    border-radius: 8px;
+    background: rgba(255,255,255,.3);
+}
+
+.gmrexp-reading-room__import-issues li[data-severity="error"] { border-left-width: 5px; }
+.gmrexp-reading-room__import-issues li[data-severity="warning"] { border-left-width: 3px; }
+.gmrexp-reading-room__import-issues p { margin: .35rem 0 0; line-height: 1.5; }
+.gmrexp-reading-room__empty--compact { padding: 1rem; }
+
+@media (max-width: 760px) {
+    .gmrexp-reading-room__import-counts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 520px) {
+    .gmrexp-reading-room__import-counts { grid-template-columns: 1fr; }
+}

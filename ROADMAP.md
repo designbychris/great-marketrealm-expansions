@@ -359,8 +359,8 @@ Planned sequence:
 - **V.2 — Books Upon the Shelves**: browse installed Expansion packs. ✅
 - **V.3 — The Keeper Turns the Key**: front-end Expansion activation controls. ✅
 - **V.4 — What Exactly Is in This Book?**: Expansion detail and content-family views. ✅
-- **V.5 — The Librarian Raises an Eyebrow**: human-readable compatibility/dependency diagnostics.
-- **V.6 — The Keeper's Import Desk**: structured source-material staging UI.
+- **V.5 — The Librarian Raises an Eyebrow**: human-readable compatibility/dependency diagnostics. ✅
+- **V.6 — The Keeper's Import Desk**: structured source-material staging UI. ✅
 - **V.7 — Pippin Finds the Google Docs**: Google Docs source adapter into neutral Import API documents.
 - **V.8 — Red Ink and Questionable Margins**: Keeper review UI.
 - **V.9 — The Shelving Trolley**: reviewed-definition to proposed-Almanac workflow.
@@ -524,4 +524,27 @@ Planned sequence:
 - [x] Existing Library compatibility semantics remain authoritative.
 - [x] Responsive and accessible diagnostic presentation.
 - [x] Regression coverage and documentation.
+- [x] Server-side PHPUnit certification — 549 tests / 1322 assertions.
+
+
+## Phase V.6 — The Keeper's Import Desk
+
+- [x] Plugin version `0.5.0-alpha6`.
+- [x] Open the reserved Import Desk navigation item.
+- [x] Keeper-facing structured JSON staging form.
+- [x] Reuse Import API `1.0.0`; no second importer or frontend parsing semantics.
+- [x] Dedicated WordPress nonce contract for Import Desk submissions.
+- [x] Preserve submitted JSON for correction while escaping output.
+- [x] Display source type, ID, title and source version.
+- [x] Display staged-record, valid, review, error and warning counts.
+- [x] Display staged type/key identities and source context.
+- [x] Display Import API warning/error severity, stable code, message, record and field.
+- [x] Surface explicit Keeper-review flags without auto-approving them.
+- [x] Preserve explicit type/key requirement; frontend never guesses either.
+- [x] Ship a synthetic neutral document-shape example only; no invented canon.
+- [x] Staging result remains request-local; no review queue persistence in V.6.
+- [x] No Catalogue, Library activation, filesystem, review, migration or publication mutation.
+- [x] No remote Google Docs fetch; source adapter remains V.7.
+- [x] Existing Reading Room route contract remains `1.0.0`.
+- [x] Responsive/accessibility styling and regression coverage.
 - [ ] Server-side PHPUnit certification.
