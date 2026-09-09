@@ -213,11 +213,10 @@ final class ReadingRoomPageTest extends TestCase
         self::assertStringContainsString('data-section="review"', $html);
         self::assertStringContainsString('Review Desk', $html);
     }
-    public function test_library_exposes_keeper_catalogue_correction_without_overlaying_copy_on_artwork(): void
+    public function test_library_keeps_bundled_almanac_read_only_without_overlaying_copy_on_artwork(): void
     {
         $html = $this->page()->render('library');
-        self::assertStringContainsString('Correct catalogue card', $html);
-        self::assertStringContainsString('Short Library summary', $html);
+        self::assertStringNotContainsString('Correct catalogue card', $html);
         self::assertStringNotContainsString('book-identity has-artwork', $html);
     }
 
