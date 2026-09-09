@@ -4,6 +4,7 @@ namespace GreatMarketrealmExpansions\Providers;
 use GreatMarketrealmExpansions\Almanac\AlmanacProposalService;
 use GreatMarketrealmExpansions\Almanac\AlmanacPublicationService;
 use GreatMarketrealmExpansions\Almanac\AlmanacMetadataService;
+use GreatMarketrealmExpansions\Almanac\AlmanacStorage;
 
 defined('ABSPATH') || exit;
 
@@ -70,6 +71,7 @@ final class ExpansionServiceProvider extends ServiceProvider
             $container->get(ExpansionFileLoader::class)
         ));
         $this->container->singleton(AlmanacMetadataService::class, static fn (Container $container): AlmanacMetadataService => new AlmanacMetadataService());
+        $this->container->singleton(AlmanacStorage::class, static fn (Container $container): AlmanacStorage => new AlmanacStorage());
         $this->container->singleton(MigrationRegistry::class, static fn (Container $container): MigrationRegistry => new MigrationRegistry());
         $this->container->singleton(MigrationService::class, static fn (Container $container): MigrationService => new MigrationService(
             $container->get(MigrationRegistry::class),
@@ -114,7 +116,8 @@ final class ExpansionServiceProvider extends ServiceProvider
             $container->get(AlmanacProposalService::class),
             $container->get(SchemaRegistry::class),
             $container->get(AlmanacPublicationService::class),
-            $container->get(AlmanacMetadataService::class)
+            $container->get(AlmanacMetadataService::class),
+            $container->get(AlmanacStorage::class)
         ));
         $this->container->singleton(CatalogueAdminPage::class, static fn (Container $container): CatalogueAdminPage => new CatalogueAdminPage(
             $container->get(Catalogue::class),

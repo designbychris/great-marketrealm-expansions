@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Great MarketRealm Expansions
  * Description: Expansion rules, data, and content packs for The Great MarketRealm.
- * Version: 0.5.0-alpha10.1
+ * Version: 0.5.0-alpha10.1.1
  * Requires PHP: 8.1
  * Text Domain: great-marketrealm-expansions
  */
 
 defined('ABSPATH') || exit;
 
-define('GMREXP_VERSION', '0.5.0-alpha10.1');
+define('GMREXP_VERSION', '0.5.0-alpha10.1.1');
 define('GMREXP_FILE', __FILE__);
 define('GMREXP_PATH', plugin_dir_path(__FILE__));
 
@@ -20,6 +20,7 @@ if (is_readable($autoload)) {
 
 use GreatMarketrealmExpansions\Application\Kernel;
 use GreatMarketrealmExpansions\Expansions\Loading\ExpansionLoadException;
+use GreatMarketrealmExpansions\Almanac\AlmanacStorage;
 
 add_action('plugins_loaded', static function (): void {
     if (!class_exists(Kernel::class)) {
@@ -30,7 +31,12 @@ add_action('plugins_loaded', static function (): void {
     $kernel->boot();
 
     try {
-        $results = $kernel->loader()->loadAll(GMREXP_PATH . 'content/expansions');
+        $storage = $kernel->container()->get(AlmanacStorage::class);
+        $results = $kernel->loader()->loadAll($storage->bundledRoot());
+        $keeperRoot = $storage->keeperRoot();
+        if (is_dir($keeperRoot)) {
+            $results = array_merge($results, $kernel->loader()->loadAll($keeperRoot));
+        }
         if (function_exists('do_action')) {
             do_action('gmrexp/expansions_loaded', $results, $kernel);
         }

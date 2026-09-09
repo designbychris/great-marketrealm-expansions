@@ -4,6 +4,7 @@ namespace GreatMarketrealmExpansions\Frontend\ReadingRoom;
 use GreatMarketrealmExpansions\Almanac\AlmanacProposalService;
 use GreatMarketrealmExpansions\Almanac\AlmanacPublicationService;
 use GreatMarketrealmExpansions\Almanac\AlmanacMetadataService;
+use GreatMarketrealmExpansions\Almanac\AlmanacStorage;
 
 defined('ABSPATH') || exit;
 
@@ -73,7 +74,8 @@ final class ReadingRoomPage
         private ?AlmanacProposalService $proposals = null,
         private ?SchemaRegistry $schemas = null,
         private ?AlmanacPublicationService $publisher = null,
-        private ?AlmanacMetadataService $metadata = null
+        private ?AlmanacMetadataService $metadata = null,
+        private ?AlmanacStorage $almanacStorage = null
     ) {}
 
     public function register(): void
@@ -279,9 +281,10 @@ final class ReadingRoomPage
         $key = isset($_POST['expansion']) && is_string($_POST['expansion']) ? $this->normalizeExpansionKey($this->unslash($_POST['expansion'])) : '';
         $error = '';
         try {
-            if ($this->metadata === null || !defined('GMREXP_PATH')) { throw new \RuntimeException('The Catalogue correction desk is unavailable.'); }
+            if ($this->metadata === null || $this->almanacStorage === null) { throw new \RuntimeException('The Catalogue correction desk is unavailable.'); }
+            if (!$this->almanacStorage->isKeeperPublished($key)) { throw new \RuntimeException('Bundled Almanacs travel with the plugin and cannot be corrected from the Reading Room.'); }
             $upload = isset($_FILES[self::METADATA_ARTWORK_UPLOAD_FIELD]) && is_array($_FILES[self::METADATA_ARTWORK_UPLOAD_FIELD]) ? $_FILES[self::METADATA_ARTWORK_UPLOAD_FIELD] : null;
-            $this->metadata->update(GMREXP_PATH . 'content/expansions', $key, [
+            $this->metadata->update($this->almanacStorage->keeperRoot(), $key, [
                 'name' => isset($_POST['name']) && is_string($_POST['name']) ? $this->unslash($_POST['name']) : '',
                 'version' => isset($_POST['version']) && is_string($_POST['version']) ? $this->unslash($_POST['version']) : '',
                 'description' => isset($_POST['description']) && is_string($_POST['description']) ? $this->unslash($_POST['description']) : '',
@@ -404,7 +407,7 @@ final class ReadingRoomPage
                                         <p class="gmrexp-reading-room__version">Version <?php echo $this->escHtml($catalogueExpansion->version()); ?></p>
                                         <?php if ($catalogueExpansion->description() !== ''): ?><p><?php echo $this->escHtml($catalogueExpansion->description()); ?></p><?php endif; ?>
                                     </div>
-                                    <?php if ($canManageExpansions): ?>
+                                    <?php if ($canManageExpansions && $this->almanacStorage !== null && $this->almanacStorage->isKeeperPublished($catalogueExpansion->key())): ?>
                                         <details class="gmrexp-reading-room__catalogue-editor"><summary>Correct catalogue card</summary>
                                             <form method="post" enctype="multipart/form-data" action="<?php echo $this->escAttr(function_exists('admin_url') ? admin_url('admin-post.php') : ''); ?>">
                                                 <input type="hidden" name="action" value="<?php echo $this->escAttr(self::METADATA_ACTION); ?>"><input type="hidden" name="expansion" value="<?php echo $this->escAttr($catalogueExpansion->key()); ?>">
@@ -1981,14 +1984,14 @@ final class ReadingRoomPage
         if (empty($proposal['complete_review'])) {
             throw new ReviewDecisionException('Finish the Review Desk before publishing this Almanac.');
         }
-        if (!defined('GMREXP_PATH')) {
-            throw new ReviewDecisionException('The canonical Almanac publication root is unavailable.');
+        if ($this->almanacStorage === null) {
+            throw new ReviewDecisionException('The persistent Keeper Almanac library is unavailable.');
         }
 
         $upload = isset($_FILES[self::ALMANAC_ARTWORK_UPLOAD_FIELD]) && is_array($_FILES[self::ALMANAC_ARTWORK_UPLOAD_FIELD])
             ? $_FILES[self::ALMANAC_ARTWORK_UPLOAD_FIELD]
             : null;
-        $result = $this->publisher->publish($proposal, GMREXP_PATH . 'content/expansions', $upload);
+        $result = $this->publisher->publish($proposal, $this->almanacStorage->ensureKeeperRoot(), $upload);
 
         // Installation and activation are deliberately separate boundaries.
         $this->library->setActive($result->key(), false);
@@ -2137,9 +2140,8 @@ final class ReadingRoomPage
         if ($artwork === '' || str_starts_with($artwork, '/') || str_contains($artwork, '..') || preg_match('#^[a-z][a-z0-9+.-]*:#i', $artwork)) {
             return null;
         }
-        if (!function_exists('plugins_url') || !defined('GMREXP_FILE')) { return null; }
-        $segments = array_map('rawurlencode', array_values(array_filter(explode('/', $artwork), static fn (string $part): bool => $part !== '')));
-        return plugins_url('content/expansions/' . rawurlencode($expansionKey) . '/' . implode('/', $segments), GMREXP_FILE);
+        if ($this->almanacStorage === null) { return null; }
+        return $this->almanacStorage->artworkUrl($expansionKey, $artwork);
     }
 
     private function summaryCard(string $label, int $value): string
