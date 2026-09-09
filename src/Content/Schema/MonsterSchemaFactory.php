@@ -32,8 +32,12 @@ final class MonsterSchemaFactory
             new FieldDefinition('bonus_actions', FieldDefinition::ARRAY, false),
             new FieldDefinition('reactions', FieldDefinition::ARRAY, false),
             new FieldDefinition('legendary_actions', FieldDefinition::ARRAY, false),
+            new FieldDefinition('mythic_actions', FieldDefinition::ARRAY, false),
             new FieldDefinition('lair_actions', FieldDefinition::ARRAY, false),
             new FieldDefinition('spellcasting', FieldDefinition::MAP, false),
+            new FieldDefinition('player_description', FieldDefinition::STRING, false),
+            new FieldDefinition('field_guide_visible', FieldDefinition::BOOLEAN, false),
+            new FieldDefinition('notes', FieldDefinition::STRING, false),
         ], [new MonsterStructureConstraint()]);
     }
 }

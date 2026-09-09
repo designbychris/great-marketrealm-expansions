@@ -204,6 +204,8 @@
             fieldsContainer.innerHTML = '';
 
             const type = typeSelect.value;
+            const monsterContract = form.querySelector('[data-gmrexp-monster-contract]');
+            if (monsterContract) monsterContract.hidden = type !== 'monster';
             const fields = Array.isArray(schemas[type]) ? schemas[type] : [];
             count.textContent = `${fields.length} required`;
 

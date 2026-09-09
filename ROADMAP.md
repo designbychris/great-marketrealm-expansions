@@ -633,3 +633,10 @@ Planned sequence:
 - [x] Refine Background requirements into friendly proficiency/feature controls.
 - [x] Permit required-but-empty Background starting equipment when the source defines none.
 - [ ] Server-side PHPUnit certification after schema-aware refinement.
+
+### Phase V.9 — The Keeper Measures the Monsters — complete
+- [x] Align expansion monster vocabulary with the Companion shared Bestiary / Steward's Workshop.
+- [x] Add friendly Review Desk monster stat controls.
+- [x] Preserve unknown source fields as absent rather than guessed.
+- [x] Preserve GMREXP ownership of expansion definitions; Companion/Tabletop remain consumers.
+- [ ] Wire published expansion monsters into Companion and Tabletop consumer bridges in a later phase.

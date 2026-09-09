@@ -494,3 +494,9 @@
 - Added public registry helper functions.
 - Added PHPUnit 10 test foundation.
 - Added initial architecture and roadmap documentation.
+
+### Phase V.9 — The Keeper Measures the Monsters
+- Added a Keeper-friendly Monster Bestiary contract to the Review Desk, aligned with the established Companion Steward's Workshop vocabulary.
+- Added canonical monster projection fields for mythic actions, player-safe description, Field Guide visibility, and Keeper notes.
+- Preserved blank/unknown monster fields instead of inventing source mechanics.
+- Added regression coverage for Companion-ready monster review and sparse/reference monsters.

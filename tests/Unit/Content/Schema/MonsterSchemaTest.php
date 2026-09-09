@@ -97,8 +97,8 @@ final class MonsterSchemaTest extends TestCase
             'abilities', 'saving_throws', 'skills', 'damage_vulnerabilities',
             'damage_resistances', 'damage_immunities', 'condition_immunities',
             'senses', 'languages', 'challenge', 'proficiency_bonus', 'traits',
-            'actions', 'bonus_actions', 'reactions', 'legendary_actions',
-            'lair_actions', 'spellcasting',
+            'actions', 'bonus_actions', 'reactions', 'legendary_actions', 'mythic_actions',
+            'lair_actions', 'spellcasting', 'player_description', 'field_guide_visible', 'notes',
         ] as $field) {
             self::assertArrayHasKey($field, $schema->fields(), 'Expected monster schema field: ' . $field);
         }
@@ -253,4 +253,15 @@ final class MonsterSchemaTest extends TestCase
             $this->validator()->validate(new ContentDefinition('monster', 'future-oddity', $data))->valid()
         );
     }
+    public function test_monster_schema_accepts_companion_bestiary_projection_fields(): void
+    {
+        $data = $this->monsterData();
+        $data['mythic_actions'] = [['key' => 'second-course', 'name' => 'Second Course', 'description' => 'Synthetic mythic feature.']];
+        $data['player_description'] = 'Spoiler-safe field guide prose.';
+        $data['field_guide_visible'] = true;
+        $data['notes'] = 'Keeper-only lore note.';
+
+        self::assertTrue($this->validator()->validate(new ContentDefinition('monster', 'projection-fixture', $data))->valid());
+    }
+
 }

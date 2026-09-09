@@ -711,4 +711,74 @@ final class ReadingRoomReviewDeskTest extends TestCase
         self::assertSame([], $this->queue->load()['decisions']);
     }
 
+    public function test_monster_classification_exposes_companion_bestiary_contract(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'monster',
+            'gmrexp_review_key' => 'pizza-mimic',
+            'gmrexp_review_name' => 'Pizza Mimic',
+            'gmrexp_review_data' => '{"name":"Pizza Mimic"}',
+        ];
+        $html = $this->page->render('review');
+        self::assertStringContainsString('The Keeper Measures the Monster', $html);
+        self::assertStringContainsString('Companion-ready', $html);
+        self::assertStringContainsString('gmrexp_review_monster[challenge_rating]', $html);
+        self::assertStringContainsString('gmrexp_review_monster[legendary_actions]', $html);
+        self::assertStringContainsString('gmrexp_review_monster[mythic_actions]', $html);
+    }
+
+    public function test_keeper_can_accept_monster_using_friendly_bestiary_fields(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
+            'gmrexp_review_type' => 'monster',
+            'gmrexp_review_key' => 'pizza-mimic',
+            'gmrexp_review_name' => 'Pizza Mimic',
+            'gmrexp_review_description' => 'Synthetic monster.',
+            'gmrexp_review_data' => '{"name":"Pizza Mimic"}',
+            'gmrexp_review_monster' => [
+                'size' => 'Medium', 'creature_type' => 'Monstrosity (Shapechanger)', 'alignment' => 'Unaligned',
+                'ac' => '13', 'hp' => '76', 'hp_formula' => '9d8 + 36', 'walk' => '20',
+                'ability_strength' => '17', 'ability_dexterity' => '12', 'ability_constitution' => '18',
+                'ability_intelligence' => '5', 'ability_wisdom' => '13', 'ability_charisma' => '8',
+                'skills' => 'stealth | 5', 'damage_immunities' => 'acid', 'condition_immunities' => 'Prone',
+                'challenge_rating' => '3', 'traits' => 'false-appearance | False Appearance | Indistinguishable from pizza.',
+                'actions' => 'cheese-slam | Cheese Slam | Synthetic attack.',
+            ],
+        ];
+        $this->page->render('review');
+        $data = $this->queue->load()['decisions']['google-heading-1']['data'];
+        self::assertSame(['value' => 13], $data['armour_class']);
+        self::assertSame(['average' => 76, 'formula' => '9d8 + 36'], $data['hit_points']);
+        self::assertSame(['walk' => 20], $data['speed']);
+        self::assertSame(17, $data['abilities']['strength']);
+        self::assertSame(['stealth' => 5], $data['skills']);
+        self::assertSame('false-appearance', $data['traits'][0]['key']);
+        self::assertSame('cheese-slam', $data['actions'][0]['key']);
+    }
+
+    public function test_monster_review_does_not_invent_blank_source_fields(): void
+    {
+        $this->queueSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_DECISION_SUBMIT_FIELD => '1', ReadingRoomPage::REVIEW_RECORD_FIELD => 'google-heading-1',
+            ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend', 'gmrexp_review_type' => 'monster',
+            'gmrexp_review_key' => 'reference-monster', 'gmrexp_review_name' => 'Reference Monster',
+            'gmrexp_review_data' => '{"name":"Reference Monster"}', 'gmrexp_review_monster' => ['size' => 'Medium'],
+        ];
+        $this->page->render('review');
+        $data = $this->queue->load()['decisions']['google-heading-1']['data'];
+        self::assertSame('Medium', $data['size']);
+        self::assertArrayNotHasKey('armour_class', $data);
+        self::assertArrayNotHasKey('abilities', $data);
+        self::assertArrayNotHasKey('challenge', $data);
+    }
+
 }

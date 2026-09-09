@@ -1241,6 +1241,7 @@ final class ReadingRoomPage
                             <?php echo $this->renderReviewRequiredFields($type, $data); ?>
                         </div>
                     </section>
+                    <?php echo $this->renderMonsterReviewContract($type, $data); ?>
 
                     <details class="gmrexp-reading-room__review-advanced"><summary>Advanced content data</summary><p class="gmrexp-reading-room__field-help">The existing Review API validates this complete data map. Name, description, and the schema-aware required fields above overwrite matching values when accepted. Optional schema fields can still be added here.</p><textarea name="gmrexp_review_data" rows="10" spellcheck="false"><?php echo $this->escHtml($dataJson); ?></textarea></details>
                     <label><span>Keeper note (optional)</span><input type="text" name="gmrexp_review_note" value="<?php echo $this->escAttr($draft['note']); ?>" placeholder="Why was this classified, amended, or ignored?"></label>
@@ -1537,9 +1538,61 @@ final class ReadingRoomPage
         return is_scalar($value) ? (string) $value : '';
     }
 
+    /** @param array<string,mixed> $data */
+    private function renderMonsterReviewContract(string $type, array $data): string
+    {
+        $m = static fn (string $key, mixed $fallback = ''): mixed => $data[$key] ?? $fallback;
+        $ac = is_array($m('armour_class', [])) ? $m('armour_class', []) : [];
+        $hp = is_array($m('hit_points', [])) ? $m('hit_points', []) : [];
+        $speed = is_array($m('speed', [])) ? $m('speed', []) : [];
+        $abilities = is_array($m('abilities', [])) ? $m('abilities', []) : [];
+        $challenge = is_array($m('challenge', [])) ? $m('challenge', []) : [];
+        $list = static fn (mixed $value): string => is_array($value) ? implode(', ', array_values(array_filter($value, 'is_string'))) : '';
+        $mapLines = static function (mixed $value): string {
+            if (!is_array($value) || array_is_list($value)) { return ''; }
+            $lines = [];
+            foreach ($value as $key => $number) { if (is_int($number) || is_float($number)) { $lines[] = $key . ' | ' . $number; } }
+            return implode("\n", $lines);
+        };
+        ob_start(); ?>
+        <section class="gmrexp-reading-room__schema-requirements gmrexp-reading-room__monster-contract" data-gmrexp-monster-contract<?php echo $type === 'monster' ? '' : ' hidden'; ?>>
+            <div class="gmrexp-reading-room__schema-heading"><div><p class="gmrexp-reading-room__book-label">Bestiary contract</p><h4>The Keeper Measures the Monster</h4></div><span class="gmrexp-reading-room__pill">Companion-ready</span></div>
+            <p class="gmrexp-reading-room__field-help">These fields mirror the shared Bestiary information already used by the Companion Steward's Workshop. Nothing is guessed: leave a field blank when the source does not establish it. Expansion publication remains separate from Companion publication.</p>
+            <div class="gmrexp-reading-room__review-grid">
+                <label><span>Size</span><input name="gmrexp_review_monster[size]" value="<?php echo $this->escAttr(is_string($m('size')) ? $m('size') : ''); ?>" placeholder="Medium"></label>
+                <label><span>Creature type</span><input name="gmrexp_review_monster[creature_type]" value="<?php echo $this->escAttr(is_string($m('creature_type')) ? $m('creature_type') : ''); ?>" placeholder="Monstrosity"></label>
+                <label><span>Alignment</span><input name="gmrexp_review_monster[alignment]" value="<?php echo $this->escAttr(is_string($m('alignment')) ? $m('alignment') : ''); ?>" placeholder="Unaligned"></label>
+                <label><span>Challenge Rating</span><input name="gmrexp_review_monster[challenge_rating]" value="<?php echo $this->escAttr(isset($challenge['rating']) && is_scalar($challenge['rating']) ? (string)$challenge['rating'] : ''); ?>" placeholder="3"></label>
+                <label><span>Armor Class</span><input type="number" min="0" name="gmrexp_review_monster[ac]" value="<?php echo $this->escAttr(isset($ac['value']) && is_int($ac['value']) ? (string)$ac['value'] : ''); ?>" placeholder="13"></label>
+                <label><span>Armor description</span><input name="gmrexp_review_monster[armor_type]" value="<?php echo $this->escAttr(isset($ac['type']) && is_string($ac['type']) ? $ac['type'] : ''); ?>" placeholder="natural armour"></label>
+                <label><span>Hit Points</span><input type="number" min="1" name="gmrexp_review_monster[hp]" value="<?php echo $this->escAttr(isset($hp['average']) && is_int($hp['average']) ? (string)$hp['average'] : ''); ?>" placeholder="76"></label>
+                <label><span>HP formula</span><input name="gmrexp_review_monster[hp_formula]" value="<?php echo $this->escAttr(isset($hp['formula']) && is_string($hp['formula']) ? $hp['formula'] : ''); ?>" placeholder="9d8 + 36"></label>
+                <label><span>Walking Speed</span><input type="number" min="0" name="gmrexp_review_monster[walk]" value="<?php echo $this->escAttr(isset($speed['walk']) && is_int($speed['walk']) ? (string)$speed['walk'] : ''); ?>" placeholder="30"></label>
+                <label><span>Climb Speed</span><input type="number" min="0" name="gmrexp_review_monster[climb]" value="<?php echo $this->escAttr(isset($speed['climb']) && is_int($speed['climb']) ? (string)$speed['climb'] : ''); ?>"></label>
+                <label><span>Fly Speed</span><input type="number" min="0" name="gmrexp_review_monster[fly]" value="<?php echo $this->escAttr(isset($speed['fly']) && is_int($speed['fly']) ? (string)$speed['fly'] : ''); ?>"></label>
+                <label><span>Swim Speed</span><input type="number" min="0" name="gmrexp_review_monster[swim]" value="<?php echo $this->escAttr(isset($speed['swim']) && is_int($speed['swim']) ? (string)$speed['swim'] : ''); ?>"></label>
+                <label><span>Burrow Speed</span><input type="number" min="0" name="gmrexp_review_monster[burrow]" value="<?php echo $this->escAttr(isset($speed['burrow']) && is_int($speed['burrow']) ? (string)$speed['burrow'] : ''); ?>"></label>
+                <label><span>Proficiency Bonus</span><input type="number" min="0" name="gmrexp_review_monster[proficiency_bonus]" value="<?php echo $this->escAttr(is_int($m('proficiency_bonus')) ? (string)$m('proficiency_bonus') : ''); ?>"></label>
+            </div>
+            <fieldset class="gmrexp-reading-room__schema-requirements"><legend><strong>Ability Scores</strong></legend><div class="gmrexp-reading-room__review-grid"><?php foreach (['strength'=>'STR','dexterity'=>'DEX','constitution'=>'CON','intelligence'=>'INT','wisdom'=>'WIS','charisma'=>'CHA'] as $ability=>$label): ?><label><span><?php echo $label; ?></span><input type="number" min="0" max="30" name="gmrexp_review_monster[ability_<?php echo $ability; ?>]" value="<?php echo $this->escAttr(isset($abilities[$ability]) && is_int($abilities[$ability]) ? (string)$abilities[$ability] : ''); ?>"></label><?php endforeach; ?></div></fieldset>
+            <div class="gmrexp-reading-room__review-grid">
+                <label><span>Saving Throws</span><textarea name="gmrexp_review_monster[saving_throws]" rows="3" placeholder="wisdom | 5"><?php echo $this->escHtml($mapLines($m('saving_throws', []))); ?></textarea></label>
+                <label><span>Skills</span><textarea name="gmrexp_review_monster[skills]" rows="3" placeholder="stealth | 5"><?php echo $this->escHtml($mapLines($m('skills', []))); ?></textarea></label>
+                <?php foreach (['damage_vulnerabilities'=>'Damage Vulnerabilities','damage_resistances'=>'Damage Resistances','damage_immunities'=>'Damage Immunities','condition_immunities'=>'Condition Immunities','languages'=>'Languages'] as $field=>$label): ?><label><span><?php echo $this->escHtml($label); ?></span><input name="gmrexp_review_monster[<?php echo $field; ?>]" value="<?php echo $this->escAttr($list($m($field, []))); ?>" placeholder="comma-separated"></label><?php endforeach; ?>
+                <label><span>Senses</span><textarea name="gmrexp_review_monster[senses]" rows="3" placeholder="darkvision | 60&#10;passive_perception | 11"><?php echo $this->escHtml($mapLines($m('senses', []))); ?></textarea></label>
+                <label><span>Challenge XP</span><input type="number" min="0" name="gmrexp_review_monster[challenge_xp]" value="<?php echo $this->escAttr(isset($challenge['xp']) && is_int($challenge['xp']) ? (string)$challenge['xp'] : ''); ?>"></label>
+            </div>
+            <?php foreach (['traits'=>'Special Traits','actions'=>'Actions','bonus_actions'=>'Bonus Actions','reactions'=>'Reactions','legendary_actions'=>'Legendary Actions','mythic_actions'=>'Mythic Features / Actions','lair_actions'=>'Lair Actions'] as $field=>$label): ?><label><span><?php echo $this->escHtml($label); ?></span><textarea name="gmrexp_review_monster[<?php echo $field; ?>]" rows="5" spellcheck="false"><?php echo $this->escHtml($this->schemaFriendlyValue('feature-lines', $m($field, []))); ?></textarea><small class="gmrexp-reading-room__field-help">One entry per line: <code>canonical-key | Name | Description</code>.</small></label><?php endforeach; ?>
+            <label><span>Player-safe description</span><textarea name="gmrexp_review_monster[player_description]" rows="3"><?php echo $this->escHtml(is_string($m('player_description')) ? $m('player_description') : ''); ?></textarea></label>
+            <label><span>Steward / lore notes</span><textarea name="gmrexp_review_monster[notes]" rows="4"><?php echo $this->escHtml(is_string($m('notes')) ? $m('notes') : ''); ?></textarea></label>
+        </section>
+        <?php return trim((string) ob_get_clean());
+    }
+
     /** @param array<string,mixed> $data @return array<string,mixed> */
     private function mergePostedReviewSchemaData(string $type, array $data): array
     {
+        if ($type === 'monster') { $data = $this->mergePostedMonsterReviewData($data); }
         $fields = $this->reviewRequiredFields($type);
         if ($fields === []) { return $data; }
 
@@ -1590,6 +1643,31 @@ final class ReadingRoomPage
             };
         }
         return $data;
+    }
+
+    /** @param array<string,mixed> $data @return array<string,mixed> */
+    private function mergePostedMonsterReviewData(array $data): array
+    {
+        $posted = $_POST['gmrexp_review_monster'] ?? null;
+        if (!is_array($posted)) { return $data; }
+        $get = fn (string $key): string => isset($posted[$key]) && is_string($posted[$key]) ? trim($this->unslash($posted[$key])) : '';
+        foreach (['size','creature_type','alignment','player_description','notes'] as $field) { $v=$get($field); if ($v !== '') { $data[$field]=$v; } else { unset($data[$field]); } }
+        $ac=$get('ac'); $acType=$get('armor_type'); if ($ac !== '') { $data['armour_class']=['value'=>$this->parseReviewInteger('armour_class', $ac)]; if ($acType !== '') { $data['armour_class']['type']=$acType; } } else { unset($data['armour_class']); }
+        $hp=$get('hp'); $formula=$get('hp_formula'); if ($hp !== '') { $data['hit_points']=['average'=>$this->parseReviewInteger('hit_points', $hp)]; if ($formula !== '') { $data['hit_points']['formula']=$formula; } } else { unset($data['hit_points']); }
+        $speed=[]; foreach (['walk','climb','fly','swim','burrow'] as $mode) { $v=$get($mode); if ($v !== '') { $speed[$mode]=$this->parseReviewInteger('speed_'.$mode,$v); } } if ($speed !== []) { $data['speed']=$speed; } else { unset($data['speed']); }
+        $abilities=[]; foreach (['strength','dexterity','constitution','intelligence','wisdom','charisma'] as $ability) { $v=$get('ability_'.$ability); if ($v !== '') { $abilities[$ability]=$this->parseReviewInteger($ability,$v); } } if ($abilities !== []) { $data['abilities']=$abilities; } else { unset($data['abilities']); }
+        foreach (['saving_throws','skills','senses'] as $field) { $v=$get($field); if ($v !== '') { $data[$field]=$this->parseReviewNumericLines($field,$v); } else { unset($data[$field]); } }
+        foreach (['damage_vulnerabilities','damage_resistances','damage_immunities','condition_immunities','languages'] as $field) { $v=$get($field); if ($v !== '') { $data[$field]=$this->parseReviewStringList($field,$v); } else { unset($data[$field]); } }
+        $rating=$get('challenge_rating'); $xp=$get('challenge_xp'); if ($rating !== '') { $data['challenge']=['rating'=>is_numeric($rating) ? (float)$rating : $rating]; if ($xp !== '') { $data['challenge']['xp']=$this->parseReviewInteger('challenge_xp',$xp); } } else { unset($data['challenge']); }
+        $pb=$get('proficiency_bonus'); if ($pb !== '') { $data['proficiency_bonus']=$this->parseReviewInteger('proficiency_bonus',$pb); } else { unset($data['proficiency_bonus']); }
+        foreach (['traits','actions','bonus_actions','reactions','legendary_actions','mythic_actions','lair_actions'] as $field) { $v=$get($field); if ($v !== '') { $data[$field]=$this->parseReviewFeatureLines($v,'Monster '.str_replace('_',' ',$field)); } else { unset($data[$field]); } }
+        return $data;
+    }
+
+    /** @return array<string,int|float> */
+    private function parseReviewNumericLines(string $field, string $raw): array
+    {
+        $out=[]; foreach (preg_split('/\\R+/', $raw) ?: [] as $line) { $line=trim($line); if ($line==='') continue; $parts=array_map('trim', explode('|',$line,2)); if (count($parts)!==2 || $parts[0]==='' || !is_numeric($parts[1])) { throw new ReviewDecisionException(sprintf('%s lines must use key | numeric bonus/distance.', $this->schemaFieldLabel($field))); } $out[$parts[0]]=str_contains($parts[1],'.') ? (float)$parts[1] : (int)$parts[1]; } return $out;
     }
 
     /** @return list<string> */

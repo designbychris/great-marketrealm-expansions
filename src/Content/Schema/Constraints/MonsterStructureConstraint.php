@@ -30,7 +30,7 @@ final class MonsterStructureConstraint implements ContentConstraint
             }
         }
 
-        foreach (['traits', 'actions', 'bonus_actions', 'reactions', 'legendary_actions', 'lair_actions'] as $field) {
+        foreach (['traits', 'actions', 'bonus_actions', 'reactions', 'legendary_actions', 'mythic_actions', 'lair_actions'] as $field) {
             if (isset($data[$field]) && is_array($data[$field])) {
                 $errors = array_merge($errors, $this->validateNamedEntries($field, $data[$field]));
             }
