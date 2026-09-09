@@ -720,8 +720,11 @@ final class ReadingRoomReviewDeskTest extends TestCase
             ReadingRoomPage::REVIEW_ACTION_FIELD => 'amend',
             'gmrexp_review_type' => 'monster',
             'gmrexp_review_key' => 'pizza-mimic',
-            'gmrexp_review_name' => 'Pizza Mimic',
-            'gmrexp_review_data' => '{"name":"Pizza Mimic"}',
+            // Deliberately leave the canonical name unresolved so the amendment
+            // is refused and the selected Monster contract remains on-screen.
+            // A successful amendment resolves the card and correctly hides the editor.
+            'gmrexp_review_name' => '',
+            'gmrexp_review_data' => '{}',
         ];
         $html = $this->page->render('review');
         self::assertStringContainsString('The Keeper Measures the Monster', $html);
