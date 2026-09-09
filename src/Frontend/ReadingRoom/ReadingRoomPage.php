@@ -3,6 +3,7 @@ namespace GreatMarketrealmExpansions\Frontend\ReadingRoom;
 
 use GreatMarketrealmExpansions\Almanac\AlmanacProposalService;
 use GreatMarketrealmExpansions\Almanac\AlmanacPublicationService;
+use GreatMarketrealmExpansions\Almanac\AlmanacMetadataService;
 
 defined('ABSPATH') || exit;
 
@@ -53,6 +54,9 @@ final class ReadingRoomPage
     public const ALMANAC_PROPOSAL_SUBMIT_FIELD = 'gmrexp_almanac_proposal_submit';
     public const ALMANAC_PUBLICATION_SUBMIT_FIELD = 'gmrexp_almanac_publication_submit';
     public const ALMANAC_ARTWORK_UPLOAD_FIELD = 'gmrexp_almanac_artwork_upload';
+    public const METADATA_ACTION = 'gmrexp_correct_almanac_metadata';
+    public const METADATA_NONCE_ACTION = 'gmrexp_correct_almanac_metadata';
+    public const METADATA_ARTWORK_UPLOAD_FIELD = 'gmrexp_metadata_artwork_upload';
     public const STYLE_HANDLE = 'gmrexp-reading-room';
     public const SCRIPT_HANDLE = 'gmrexp-reading-room-review';
     public const ROUTE_VERSION = '1.0.0';
@@ -68,7 +72,8 @@ final class ReadingRoomPage
         private ?ReviewQueueStore $reviewQueue = null,
         private ?AlmanacProposalService $proposals = null,
         private ?SchemaRegistry $schemas = null,
-        private ?AlmanacPublicationService $publisher = null
+        private ?AlmanacPublicationService $publisher = null,
+        private ?AlmanacMetadataService $metadata = null
     ) {}
 
     public function register(): void
@@ -88,6 +93,7 @@ final class ReadingRoomPage
             add_action('template_redirect', [$this, 'maybeRenderRoute']);
             add_action('wp_enqueue_scripts', [$this, 'registerAssets']);
             add_action('admin_post_' . self::ACTIVATION_ACTION, [$this, 'handleActivation']);
+            add_action('admin_post_' . self::METADATA_ACTION, [$this, 'handleMetadataCorrection']);
         }
     }
 
@@ -266,6 +272,29 @@ final class ReadingRoomPage
         }
     }
 
+    public function handleMetadataCorrection(): void
+    {
+        if (function_exists('current_user_can') && !current_user_can('manage_options')) { if (function_exists('wp_die')) { wp_die('You do not have permission to correct published Almanac metadata.'); } return; }
+        if (function_exists('check_admin_referer')) { check_admin_referer(self::METADATA_NONCE_ACTION); }
+        $key = isset($_POST['expansion']) && is_string($_POST['expansion']) ? $this->normalizeExpansionKey($this->unslash($_POST['expansion'])) : '';
+        $error = '';
+        try {
+            if ($this->metadata === null || !defined('GMREXP_PATH')) { throw new \RuntimeException('The Catalogue correction desk is unavailable.'); }
+            $upload = isset($_FILES[self::METADATA_ARTWORK_UPLOAD_FIELD]) && is_array($_FILES[self::METADATA_ARTWORK_UPLOAD_FIELD]) ? $_FILES[self::METADATA_ARTWORK_UPLOAD_FIELD] : null;
+            $this->metadata->update(GMREXP_PATH . 'content/expansions', $key, [
+                'name' => isset($_POST['name']) && is_string($_POST['name']) ? $this->unslash($_POST['name']) : '',
+                'version' => isset($_POST['version']) && is_string($_POST['version']) ? $this->unslash($_POST['version']) : '',
+                'description' => isset($_POST['description']) && is_string($_POST['description']) ? $this->unslash($_POST['description']) : '',
+                'artwork' => isset($_POST['artwork']) && is_string($_POST['artwork']) ? $this->unslash($_POST['artwork']) : '',
+            ], $upload);
+            $this->invalidateRememberedHostPageCache($key, $this->library->isActive($key));
+        } catch (\Throwable $exception) { $error = $exception->getMessage(); }
+        $hostUrl = $this->rememberedHostUrl() ?? $this->currentHostUrl() ?? $this->urlFor('library');
+        $target = $this->sectionUrl($hostUrl, 'library');
+        if (function_exists('add_query_arg')) { $target = (string) add_query_arg($error === '' ? 'gmrexp_metadata_updated' : 'gmrexp_metadata_error', $error === '' ? $key : $error, $target); }
+        if (function_exists('wp_safe_redirect')) { wp_safe_redirect($target, 303); exit; }
+    }
+
     /** @param array<string,mixed>|string $attributes */
     public function shortcode(array|string $attributes = []): string
     {
@@ -331,6 +360,8 @@ final class ReadingRoomPage
                 <?php echo $this->renderPlaceholder($section, $baseUrl); ?>
             <?php else: ?>
                 <section class="gmrexp-reading-room__section" aria-labelledby="gmrexp-library-heading">
+                    <?php if (isset($_GET['gmrexp_metadata_updated'])): ?><div class="gmrexp-reading-room__notice" role="status">The Keeper corrected the published Almanac catalogue card.</div><?php endif; ?>
+                    <?php if (isset($_GET['gmrexp_metadata_error']) && is_string($_GET['gmrexp_metadata_error'])): ?><div class="gmrexp-reading-room__import-security" role="alert"><strong>Catalogue correction not saved.</strong><p><?php echo $this->escHtml($this->unslash($_GET['gmrexp_metadata_error'])); ?></p></div><?php endif; ?>
                     <div class="gmrexp-reading-room__section-heading">
                         <div>
                             <p class="gmrexp-reading-room__kicker">Current shelf</p>
@@ -367,16 +398,27 @@ final class ReadingRoomPage
                                         </a>
                                     </div>
                                     <?php $artworkUrl = $this->libraryArtworkUrl($catalogueExpansion); ?>
-                                    <div class="gmrexp-reading-room__book-identity <?php echo $artworkUrl !== null ? 'has-artwork' : ''; ?>">
-                                        <?php if ($artworkUrl !== null): ?><img class="gmrexp-reading-room__book-artwork" src="<?php echo $this->escAttr($artworkUrl); ?>" alt="" loading="lazy"><?php endif; ?>
-                                        <div class="gmrexp-reading-room__book-identity-copy">
-                                            <h3><?php echo $this->escHtml($catalogueExpansion->name()); ?></h3>
-                                            <p class="gmrexp-reading-room__version">Version <?php echo $this->escHtml($catalogueExpansion->version()); ?></p>
-                                            <?php if ($catalogueExpansion->description() !== ''): ?>
-                                                <p><?php echo $this->escHtml($catalogueExpansion->description()); ?></p>
-                                            <?php endif; ?>
-                                        </div>
+                                    <?php if ($artworkUrl !== null): ?><div class="gmrexp-reading-room__book-artwork-frame"><img class="gmrexp-reading-room__book-artwork" src="<?php echo $this->escAttr($artworkUrl); ?>" alt="" loading="lazy"></div><?php endif; ?>
+                                    <div class="gmrexp-reading-room__book-identity-copy">
+                                        <h3><?php echo $this->escHtml($catalogueExpansion->name()); ?></h3>
+                                        <p class="gmrexp-reading-room__version">Version <?php echo $this->escHtml($catalogueExpansion->version()); ?></p>
+                                        <?php if ($catalogueExpansion->description() !== ''): ?><p><?php echo $this->escHtml($catalogueExpansion->description()); ?></p><?php endif; ?>
                                     </div>
+                                    <?php if ($canManageExpansions): ?>
+                                        <details class="gmrexp-reading-room__catalogue-editor"><summary>Correct catalogue card</summary>
+                                            <form method="post" enctype="multipart/form-data" action="<?php echo $this->escAttr(function_exists('admin_url') ? admin_url('admin-post.php') : ''); ?>">
+                                                <input type="hidden" name="action" value="<?php echo $this->escAttr(self::METADATA_ACTION); ?>"><input type="hidden" name="expansion" value="<?php echo $this->escAttr($catalogueExpansion->key()); ?>">
+                                                <?php if (function_exists('wp_nonce_field')) { wp_nonce_field(self::METADATA_NONCE_ACTION); } ?>
+                                                <div class="gmrexp-reading-room__catalogue-fields"><label><span>Name</span><input name="name" value="<?php echo $this->escAttr($catalogueExpansion->name()); ?>" required></label><label><span>Version</span><input name="version" value="<?php echo $this->escAttr($catalogueExpansion->version()); ?>" required></label></div>
+                                                <label><span>Short Library summary</span><textarea name="description" maxlength="2000" rows="4"><?php echo $this->escHtml($catalogueExpansion->description()); ?></textarea></label>
+                                                <p class="gmrexp-reading-room__field-help">Keep this concise: it appears beneath the artwork on Library and Browse cards.</p>
+                                                <label><span>Library artwork path</span><input name="artwork" value="<?php echo $this->escAttr((string) $catalogueExpansion->meta('artwork')); ?>" placeholder="assets/library-cover.png"></label>
+                                                <label><span>Replacement artwork (optional)</span><input type="file" name="<?php echo $this->escAttr(self::METADATA_ARTWORK_UPLOAD_FIELD); ?>" accept="image/jpeg,image/png,image/webp,image/gif"></label>
+                                                <p class="gmrexp-reading-room__field-help">Changing the path moves the existing pack artwork when possible. Attach a replacement image to replace it. Canonical definitions are never edited here.</p>
+                                                <button class="gmrexp-reading-room__button" type="submit">Save catalogue correction →</button>
+                                            </form>
+                                        </details>
+                                    <?php endif; ?>
                                     <dl class="gmrexp-reading-room__book-facts">
                                         <div><dt>Canonical key</dt><dd><code><?php echo $this->escHtml($catalogueExpansion->key()); ?></code></dd></div>
                                         <div><dt>Entries</dt><dd><?php echo $this->escHtml((string) $entryCount); ?></dd></div>
@@ -480,9 +522,8 @@ final class ReadingRoomPage
                             </div>
 
                             <?php $artworkUrl = $this->browseArtworkUrl($entry); ?>
-                            <div class="gmrexp-reading-room__browse-identity <?php echo $artworkUrl !== null ? 'has-artwork' : ''; ?>">
-                                <?php if ($artworkUrl !== null): ?><img class="gmrexp-reading-room__browse-artwork" src="<?php echo $this->escAttr($artworkUrl); ?>" alt="" loading="lazy"><?php endif; ?>
-                                <div class="gmrexp-reading-room__browse-identity-copy">
+                            <?php if ($artworkUrl !== null): ?><div class="gmrexp-reading-room__browse-artwork-frame"><img class="gmrexp-reading-room__browse-artwork" src="<?php echo $this->escAttr($artworkUrl); ?>" alt="" loading="lazy"></div><?php endif; ?>
+                            <div class="gmrexp-reading-room__browse-identity-copy">
                                     <div class="gmrexp-reading-room__browse-book-heading">
                                         <div>
                                             <p class="gmrexp-reading-room__book-label">Installed Almanac</p>
@@ -499,7 +540,6 @@ final class ReadingRoomPage
                                         <p class="gmrexp-reading-room__browse-description"><?php echo $this->escHtml($entry->description()); ?></p>
                                     <?php endif; ?>
                                 </div>
-                            </div>
 
                             <dl class="gmrexp-reading-room__book-facts">
                                 <div><dt>Canonical key</dt><dd><code><?php echo $this->escHtml($entry->key()); ?></code></dd></div>

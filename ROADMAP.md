@@ -38,6 +38,14 @@ Expansion catalogue management, entitlement/availability rules if ever required,
 - **IV.4 — The Keeper Reads Before Shelving**: review/approval workflow for transformed Almanac content. ✅
 - **IV.5 — Moving Shelves Without Losing the Books**: content/schema migrations and version-transition tooling. ✅
 
+## Phase V.10A — The Keeper Corrects the Catalogue ✅
+
+- [x] Administrator-only published Almanac presentation-metadata corrections.
+- [x] Immutable canonical expansion key and untouched canonical definition files.
+- [x] Safe short-summary, version, name and pack-relative artwork correction.
+- [x] Artwork-first 16:9 Library and Browse cards with copy beneath the image.
+- [x] Atomic manifest replacement and regression coverage.
+
 ### Architectural rule
 
 GMREXP owns expansion content and its meaning. Companion owns character/user workflows. Tabletop owns live play/VTT state. Consumers should reference canonical expansion IDs rather than duplicate expansion mechanics.

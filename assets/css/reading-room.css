@@ -1141,3 +1141,26 @@ a.gmrexp-reading-room__compatibility:hover {
     .gmrexp-reading-room__schema-fields { grid-template-columns: 1fr; }
     .gmrexp-reading-room__schema-heading { flex-direction: column; }
 }
+
+
+/* Phase V.10A — The Keeper Corrects the Catalogue. */
+.gmrexp-reading-room__book-artwork-frame,
+.gmrexp-reading-room__browse-artwork-frame {
+    position:relative; overflow:hidden; border-radius:10px; margin:.75rem 0 1rem; aspect-ratio:16/9;
+    background:rgba(111,77,38,.08);
+}
+.gmrexp-reading-room__book-artwork,
+.gmrexp-reading-room__browse-artwork {
+    position:static; display:block; width:100%; height:100%; object-fit:cover;
+    transform:scale(1.001); transition:transform .45s ease;
+}
+.gmrexp-reading-room__book-identity-copy,
+.gmrexp-reading-room__browse-identity-copy { position:static; width:100%; color:inherit; text-shadow:none; }
+.gmrexp-reading-room__catalogue-editor { margin-top:1rem; padding-top:.8rem; border-top:1px dashed rgba(111,77,38,.35); }
+.gmrexp-reading-room__catalogue-editor summary { cursor:pointer; font-weight:700; }
+.gmrexp-reading-room__catalogue-editor form { display:grid; gap:.75rem; margin-top:.8rem; }
+.gmrexp-reading-room__catalogue-editor label { display:grid; gap:.3rem; }
+.gmrexp-reading-room__catalogue-editor input,
+.gmrexp-reading-room__catalogue-editor textarea { width:100%; box-sizing:border-box; border:1px solid rgba(111,77,38,.35); border-radius:8px; padding:.65rem; background:#fffdf7; font:inherit; }
+.gmrexp-reading-room__catalogue-fields { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
+@media (max-width:760px) { .gmrexp-reading-room__catalogue-fields { grid-template-columns:1fr; } }

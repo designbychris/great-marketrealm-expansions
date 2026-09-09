@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0-alpha10.1 — Phase V.10A: The Keeper Corrects the Catalogue
+
+- Added Metadata Correction API `1.0.0` for published Almanac presentation metadata.
+- Added Administrator-only catalogue-card correction controls for name, version, short Library summary and pack-relative artwork.
+- Preserved canonical expansion keys and all published content definitions: Correction ≠ Content Revision.
+- Added safe artwork replacement/move behaviour and atomic manifest replacement.
+- Refined Your Library and Browse cards so artwork is a clean 16:9 hero with metadata and summary beneath it rather than overlaid.
+- Added regression coverage for metadata correction boundaries and the revised card structure.
+- Recorded certified V.10 baseline: 659 tests / 1622 assertions.
+
 ## 0.5.0-alpha10 — Phase V.10: The Keeper Rings the Bell
 
 - Added Publication API `1.0.0` as the explicit Proposed → Published boundary.

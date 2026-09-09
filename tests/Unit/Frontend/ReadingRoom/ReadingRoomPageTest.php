@@ -213,4 +213,19 @@ final class ReadingRoomPageTest extends TestCase
         self::assertStringContainsString('data-section="review"', $html);
         self::assertStringContainsString('Review Desk', $html);
     }
+    public function test_library_exposes_keeper_catalogue_correction_without_overlaying_copy_on_artwork(): void
+    {
+        $html = $this->page()->render('library');
+        self::assertStringContainsString('Correct catalogue card', $html);
+        self::assertStringContainsString('Short Library summary', $html);
+        self::assertStringNotContainsString('book-identity has-artwork', $html);
+    }
+
+    public function test_browse_copy_uses_separate_identity_container_from_artwork(): void
+    {
+        $html = $this->page()->render('browse');
+        self::assertStringContainsString('gmrexp-reading-room__browse-identity-copy', $html);
+        self::assertStringNotContainsString('gmrexp-reading-room__browse-identity has-artwork', $html);
+    }
+
 }
