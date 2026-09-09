@@ -80,7 +80,7 @@ final class ReadingRoomPageTest extends TestCase
         self::assertStringContainsString('The Reading Room', $html);
         self::assertStringContainsString('Your Library', $html);
         self::assertStringContainsString('Available in Browse', $html);
-        self::assertStringContainsString('Catalogue Entries', $html);
+        self::assertStringContainsString('Active Entries', $html);
     }
 
     public function test_library_render_reads_real_catalogue_pack_identity(): void
