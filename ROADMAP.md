@@ -1,7 +1,8 @@
+# Great MarketRealm Expansions Roadmap
 
 ### V.10A.1 — The Librarian Stops Shelving Books in the Delivery Van
 Keeper-published Almanacs now live in persistent WordPress uploads storage, while bundled Almanacs remain plugin-owned. Catalogue startup loads both stores; publication, artwork URLs, and metadata corrections respect the persistent boundary.
-# Great MarketRealm Expansions Roadmap
+
 
 ## Phase I — Foundations ✅
 
@@ -665,3 +666,12 @@ Planned sequence:
 - [x] Published ≠ Active; newly published pack is left inactive for explicit Keeper activation.
 - [x] Reading Room publication state and regression coverage.
 - [ ] Server-side PHPUnit certification.
+
+
+### Phase V.10B — The Keeper Discovers the Clipboard Has Checkboxes ✅
+
+- Your Library is the active shelf; Browse is the full available shelf.
+- Bulk Review Desk selection with Select all/none, Accept selected, and Reject selected.
+- Invalid/unsafe selections remain pending for individual attention.
+- Almanac cover artwork standard: 3:2 landscape, reusable across consumers.
+- Boundary preserved: Bulk Review ≠ Publication ≠ Activation.

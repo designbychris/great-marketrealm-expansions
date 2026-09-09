@@ -1146,7 +1146,7 @@ a.gmrexp-reading-room__compatibility:hover {
 /* Phase V.10A — The Keeper Corrects the Catalogue. */
 .gmrexp-reading-room__book-artwork-frame,
 .gmrexp-reading-room__browse-artwork-frame {
-    position:relative; overflow:hidden; border-radius:10px; margin:.75rem 0 1rem; aspect-ratio:16/9;
+    position:relative; overflow:hidden; border-radius:10px; margin:.75rem 0 1rem; aspect-ratio:3/2;
     background:rgba(111,77,38,.08);
 }
 .gmrexp-reading-room__book-artwork,
@@ -1164,3 +1164,20 @@ a.gmrexp-reading-room__compatibility:hover {
 .gmrexp-reading-room__catalogue-editor textarea { width:100%; box-sizing:border-box; border:1px solid rgba(111,77,38,.35); border-radius:8px; padding:.65rem; background:#fffdf7; font:inherit; }
 .gmrexp-reading-room__catalogue-fields { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
 @media (max-width:760px) { .gmrexp-reading-room__catalogue-fields { grid-template-columns:1fr; } }
+
+
+/* Phase V.10B — The Keeper Discovers the Clipboard Has Checkboxes. */
+.gmrexp-reading-room__bulk-review {
+    display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+    margin:1rem 0; padding:1rem; border:1px solid rgba(111,77,38,.28); border-radius:12px;
+    background:rgba(255,253,247,.72);
+}
+.gmrexp-reading-room__bulk-review > div:first-child { display:grid; gap:.15rem; min-width:min(100%, 22rem); }
+.gmrexp-reading-room__bulk-review-controls { display:flex; align-items:center; gap:.55rem; flex-wrap:wrap; }
+.gmrexp-reading-room__review-card-heading { display:flex; align-items:flex-start; gap:.75rem; min-width:0; }
+.gmrexp-reading-room__review-select { display:flex; align-items:center; gap:.35rem; padding:.35rem .5rem; border:1px solid rgba(111,77,38,.28); border-radius:999px; cursor:pointer; font-size:.78rem; font-weight:700; }
+.gmrexp-reading-room__review-select input { width:1rem; height:1rem; margin:0; }
+@media (max-width:760px) {
+    .gmrexp-reading-room__bulk-review { align-items:stretch; flex-direction:column; }
+    .gmrexp-reading-room__bulk-review-controls { align-items:stretch; flex-direction:column; }
+}

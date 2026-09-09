@@ -1,7 +1,16 @@
+# Changelog
+
+## 0.5.0-alpha10.2 — Phase V.10B — The Keeper Discovers the Clipboard Has Checkboxes
+
+- Your Library now shows active Almanacs only; Browse remains the complete shelf of available installed expansions.
+- Added Review Desk checkboxes, selection count, Select all/none, Bulk Accept, and Bulk Reject.
+- Bulk acceptance uses the existing validated staged definition and leaves unsafe records pending instead of bypassing validation.
+- Bulk decisions invalidate stale Shelving Trolley proposals but do not publish or activate content.
+- Standardised Almanac cover presentation to a 3:2 landscape frame and documented the reusable cover-art contract.
 
 ### V.10A.1 — The Librarian Stops Shelving Books in the Delivery Van
 Keeper-published Almanacs now live in persistent WordPress uploads storage, while bundled Almanacs remain plugin-owned. Catalogue startup loads both stores; publication, artwork URLs, and metadata corrections respect the persistent boundary.
-# Changelog
+
 
 ## 0.5.0-alpha10.1 — Phase V.10A: The Keeper Corrects the Catalogue
 

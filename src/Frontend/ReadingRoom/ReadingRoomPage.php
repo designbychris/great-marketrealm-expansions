@@ -52,6 +52,9 @@ final class ReadingRoomPage
     public const REVIEW_JSON_FIELD = 'gmrexp_review_json';
     public const REVIEW_RECORD_FIELD = 'gmrexp_review_record';
     public const REVIEW_ACTION_FIELD = 'gmrexp_review_action';
+    public const REVIEW_BULK_SUBMIT_FIELD = 'gmrexp_review_bulk_submit';
+    public const REVIEW_BULK_RECORDS_FIELD = 'gmrexp_review_bulk_records';
+    public const REVIEW_BULK_ACTION_FIELD = 'gmrexp_review_bulk_action';
     public const ALMANAC_PROPOSAL_SUBMIT_FIELD = 'gmrexp_almanac_proposal_submit';
     public const ALMANAC_PUBLICATION_SUBMIT_FIELD = 'gmrexp_almanac_publication_submit';
     public const ALMANAC_ARTWORK_UPLOAD_FIELD = 'gmrexp_almanac_artwork_upload';
@@ -341,6 +344,17 @@ final class ReadingRoomPage
         }
 
         $summary = (new ReadingRoomSummary($this->catalogue, $this->library))->toArray();
+        $activeLibraryEntries = array_values(array_filter(
+            $this->library->expansions(),
+            static fn ($entry): bool => $entry->active()
+        ));
+        $activeEntryCount = 0;
+        $activeReadyCount = 0;
+        foreach ($activeLibraryEntries as $activeEntry) {
+            $key = $activeEntry->expansion()->key();
+            $activeEntryCount += count($this->catalogue->contentByExpansion($key));
+            if ($this->library->compatibility($key)->status() === 'ready') { $activeReadyCount++; }
+        }
 
         ob_start();
         ?>
@@ -367,27 +381,28 @@ final class ReadingRoomPage
                     <?php if (isset($_GET['gmrexp_metadata_error']) && is_string($_GET['gmrexp_metadata_error'])): ?><div class="gmrexp-reading-room__import-security" role="alert"><strong>Catalogue correction not saved.</strong><p><?php echo $this->escHtml($this->unslash($_GET['gmrexp_metadata_error'])); ?></p></div><?php endif; ?>
                     <div class="gmrexp-reading-room__section-heading">
                         <div>
-                            <p class="gmrexp-reading-room__kicker">Current shelf</p>
+                            <p class="gmrexp-reading-room__kicker">Active shelf</p>
                             <h2 id="gmrexp-library-heading">Your Library</h2>
                         </div>
-                        <span class="gmrexp-reading-room__status">Library overview</span>
+                        <span class="gmrexp-reading-room__status">Active Almanacs only</span>
                     </div>
 
                     <div class="gmrexp-reading-room__summary-grid" aria-label="Living Library summary">
-                        <?php echo $this->summaryCard('Installed Almanacs', $summary['installed']); ?>
                         <?php echo $this->summaryCard('Active Almanacs', $summary['active']); ?>
-                        <?php echo $this->summaryCard('Catalogue Entries', $summary['content']); ?>
-                        <?php echo $this->summaryCard('Ready', $summary['compatibility']['ready']); ?>
+                        <?php echo $this->summaryCard('Available in Browse', $summary['installed']); ?>
+                        <?php echo $this->summaryCard('Active Entries', $activeEntryCount); ?>
+                        <?php echo $this->summaryCard('Ready', $activeReadyCount); ?>
                     </div>
 
-                    <?php if ($summary['installed'] === 0): ?>
+                    <?php if ($activeLibraryEntries === []): ?>
                         <div class="gmrexp-reading-room__empty">
-                            <h3>The shelves are waiting.</h3>
-                            <p>No expansion packs are currently loaded into the canonical Catalogue. The Reading Room is ready when the first Almanac arrives.</p>
+                            <h3>Your active shelf is waiting.</h3>
+                            <p>No Almanacs are active yet. Browse the available expansions and activate the ones you want this account to use.</p>
+                            <a class="gmrexp-reading-room__back" href="<?php echo $this->escAttr($this->navigationUrl('browse', $baseUrl)); ?>">Browse available expansions →</a>
                         </div>
                     <?php else: ?>
                         <div class="gmrexp-reading-room__shelf">
-                            <?php foreach ($this->library->expansions() as $expansion): ?>
+                            <?php foreach ($activeLibraryEntries as $expansion): ?>
                                 <?php
                                 $catalogueExpansion = $expansion->expansion();
                                 $report = $this->library->compatibility($catalogueExpansion->key());
@@ -407,21 +422,7 @@ final class ReadingRoomPage
                                         <p class="gmrexp-reading-room__version">Version <?php echo $this->escHtml($catalogueExpansion->version()); ?></p>
                                         <?php if ($catalogueExpansion->description() !== ''): ?><p><?php echo $this->escHtml($catalogueExpansion->description()); ?></p><?php endif; ?>
                                     </div>
-                                    <?php if ($canManageExpansions && $this->almanacStorage !== null && $this->almanacStorage->isKeeperPublished($catalogueExpansion->key())): ?>
-                                        <details class="gmrexp-reading-room__catalogue-editor"><summary>Correct catalogue card</summary>
-                                            <form method="post" enctype="multipart/form-data" action="<?php echo $this->escAttr(function_exists('admin_url') ? admin_url('admin-post.php') : ''); ?>">
-                                                <input type="hidden" name="action" value="<?php echo $this->escAttr(self::METADATA_ACTION); ?>"><input type="hidden" name="expansion" value="<?php echo $this->escAttr($catalogueExpansion->key()); ?>">
-                                                <?php if (function_exists('wp_nonce_field')) { wp_nonce_field(self::METADATA_NONCE_ACTION); } ?>
-                                                <div class="gmrexp-reading-room__catalogue-fields"><label><span>Name</span><input name="name" value="<?php echo $this->escAttr($catalogueExpansion->name()); ?>" required></label><label><span>Version</span><input name="version" value="<?php echo $this->escAttr($catalogueExpansion->version()); ?>" required></label></div>
-                                                <label><span>Short Library summary</span><textarea name="description" maxlength="2000" rows="4"><?php echo $this->escHtml($catalogueExpansion->description()); ?></textarea></label>
-                                                <p class="gmrexp-reading-room__field-help">Keep this concise: it appears beneath the artwork on Library and Browse cards.</p>
-                                                <label><span>Library artwork path</span><input name="artwork" value="<?php echo $this->escAttr((string) $catalogueExpansion->meta('artwork')); ?>" placeholder="assets/library-cover.png"></label>
-                                                <label><span>Replacement artwork (optional)</span><input type="file" name="<?php echo $this->escAttr(self::METADATA_ARTWORK_UPLOAD_FIELD); ?>" accept="image/jpeg,image/png,image/webp,image/gif"></label>
-                                                <p class="gmrexp-reading-room__field-help">Changing the path moves the existing pack artwork when possible. Attach a replacement image to replace it. Canonical definitions are never edited here.</p>
-                                                <button class="gmrexp-reading-room__button" type="submit">Save catalogue correction →</button>
-                                            </form>
-                                        </details>
-                                    <?php endif; ?>
+                                    <?php echo $this->renderCatalogueEditor($catalogueExpansion); ?>
                                     <dl class="gmrexp-reading-room__book-facts">
                                         <div><dt>Canonical key</dt><dd><code><?php echo $this->escHtml($catalogueExpansion->key()); ?></code></dd></div>
                                         <div><dt>Entries</dt><dd><?php echo $this->escHtml((string) $entryCount); ?></dd></div>
@@ -496,10 +497,10 @@ final class ReadingRoomPage
             <div class="gmrexp-reading-room__section-heading">
                 <div>
                     <p class="gmrexp-reading-room__kicker">Books upon the shelves</p>
-                    <h2 id="gmrexp-browse-heading">Browse Installed Expansions</h2>
-                    <p class="gmrexp-reading-room__section-intro">A read-only view of every Almanac currently installed in the canonical Catalogue. Activation controls live here, and each compatibility badge now opens the Librarian's read-only explanation inside the Almanac.</p>
+                    <h2 id="gmrexp-browse-heading">Browse Available Expansions</h2>
+                    <p class="gmrexp-reading-room__section-intro">Every Almanac currently available to this installation appears here, whether active or inactive. Activate the expansions you want on Your Library shelf; compatibility badges open the Librarian's read-only explanation inside each Almanac.</p>
                 </div>
-                <span class="gmrexp-reading-room__status"><?php echo $this->escHtml((string) count($entries)); ?> installed</span>
+                <span class="gmrexp-reading-room__status"><?php echo $this->escHtml((string) count($entries)); ?> available</span>
             </div>
 
             <?php if ($entries === []): ?>
@@ -509,7 +510,7 @@ final class ReadingRoomPage
                 </div>
             <?php else: ?>
                 <div class="gmrexp-reading-room__browse-summary" aria-label="Browse shelf summary">
-                    <?php echo $this->summaryCard('Installed Almanacs', $shelf->count()); ?>
+                    <?php echo $this->summaryCard('Available Almanacs', $shelf->count()); ?>
                     <?php echo $this->summaryCard('Active Almanacs', $shelf->activeCount()); ?>
                     <?php echo $this->summaryCard('Catalogue Entries', $shelf->contentCount()); ?>
                 </div>
@@ -543,6 +544,9 @@ final class ReadingRoomPage
                                         <p class="gmrexp-reading-room__browse-description"><?php echo $this->escHtml($entry->description()); ?></p>
                                     <?php endif; ?>
                                 </div>
+
+                            <?php $browseCatalogueExpansion = $this->catalogue->expansion($entry->key()); ?>
+                            <?php if ($browseCatalogueExpansion instanceof CatalogueExpansion): ?><?php echo $this->renderCatalogueEditor($browseCatalogueExpansion); ?><?php endif; ?>
 
                             <dl class="gmrexp-reading-room__book-facts">
                                 <div><dt>Canonical key</dt><dd><code><?php echo $this->escHtml($entry->key()); ?></code></dd></div>
@@ -1206,6 +1210,18 @@ final class ReadingRoomPage
             } catch (\Throwable $exception) {
                 $error = $exception->getMessage();
             }
+        } elseif (isset($_POST[self::REVIEW_BULK_SUBMIT_FIELD])) {
+            try {
+                $summary = $this->applyBulkReviewDecision();
+                $notice = sprintf(
+                    'Bulk review complete: %d accepted · %d rejected · %d requires attention.',
+                    $summary['accepted'],
+                    $summary['rejected'],
+                    $summary['attention']
+                );
+            } catch (\Throwable $exception) {
+                $error = $exception->getMessage();
+            }
         } elseif (isset($_POST[self::REVIEW_DECISION_SUBMIT_FIELD])) {
             try {
                 $this->applyReviewDecision();
@@ -1222,7 +1238,7 @@ final class ReadingRoomPage
                 <div><p class="gmrexp-reading-room__kicker">Red ink and questionable margins</p><h2 id="gmrexp-review-heading">The Keeper's Review Desk</h2><p class="gmrexp-reading-room__section-intro">Classify, amend, approve, or reject staged source records. Pippin may preserve and suggest; the Keeper decides what a record means.</p></div>
                 <span class="gmrexp-reading-room__status">Review API <?php echo $this->escHtml($this->reviewer->apiVersion()); ?></span>
             </div>
-            <div class="gmrexp-reading-room__review-boundary"><strong>Reviewed ≠ Published.</strong><span>Decisions remain in the Administrator's private Review Desk queue. V.9 will prepare approved definitions for an Almanac; this desk does not publish, install, activate, or mutate the Catalogue.</span></div>
+            <div class="gmrexp-reading-room__review-boundary"><strong>Reviewed ≠ Published.</strong><span>Decisions remain in the Administrator's private Review Desk queue. The Shelving Trolley can assemble approved definitions later; review itself does not publish, install, activate, or mutate the Catalogue.</span></div>
             <?php if ($notice !== ''): ?><div class="gmrexp-reading-room__notice" role="status"><?php echo $this->escHtml($notice); ?></div><?php endif; ?>
             <?php if ($error !== ''): ?><div class="gmrexp-reading-room__import-security" role="alert"><strong>Review decision not recorded.</strong><p><?php echo $this->escHtml($error); ?></p></div><?php endif; ?>
 
@@ -1241,6 +1257,23 @@ final class ReadingRoomPage
                     <p><strong><?php echo $session->resolvedCount(); ?></strong> of <strong><?php echo count($session->items()); ?></strong> records resolved.</p>
                     <form method="post" action="<?php echo $this->escAttr($this->navigationUrl('review', $baseUrl)); ?>"><?php echo $this->renderReviewNonce(); ?><input type="hidden" name="<?php echo $this->escAttr(self::REVIEW_CLEAR_SUBMIT_FIELD); ?>" value="1"><button class="gmrexp-reading-room__button gmrexp-reading-room__button--compact" type="submit">Clear Review Desk</button></form>
                 </div>
+                <?php if ($session->pendingCount() > 0): ?>
+                    <form id="gmrexp-review-bulk-form" class="gmrexp-reading-room__bulk-review" data-gmrexp-bulk-review method="post" action="<?php echo $this->escAttr($this->navigationUrl('review', $baseUrl)); ?>">
+                        <?php echo $this->renderReviewNonce(); ?>
+                        <input type="hidden" name="<?php echo $this->escAttr(self::REVIEW_BULK_SUBMIT_FIELD); ?>" value="1">
+                        <div>
+                            <p class="gmrexp-reading-room__book-label">Bulk review</p>
+                            <strong><span data-gmrexp-bulk-count>0</span> selected</strong>
+                            <span class="gmrexp-reading-room__field-help">Only checked pending records are affected. Records that cannot be accepted safely remain pending for individual attention.</span>
+                        </div>
+                        <div class="gmrexp-reading-room__bulk-review-controls">
+                            <button class="gmrexp-reading-room__back" type="button" data-gmrexp-select-all>Select all pending</button>
+                            <button class="gmrexp-reading-room__back" type="button" data-gmrexp-select-none>Select none</button>
+                            <button class="gmrexp-reading-room__button gmrexp-reading-room__button--compact" type="submit" name="<?php echo $this->escAttr(self::REVIEW_BULK_ACTION_FIELD); ?>" value="accept">Accept selected</button>
+                            <button class="gmrexp-reading-room__back" type="submit" name="<?php echo $this->escAttr(self::REVIEW_BULK_ACTION_FIELD); ?>" value="reject" data-gmrexp-confirm="Reject the selected staged records? This records a Review Desk decision only; nothing is published.">Reject selected</button>
+                        </div>
+                    </form>
+                <?php endif; ?>
                 <?php echo $this->renderShelvingTrolley($session, $baseUrl); ?>
 
                 <div class="gmrexp-reading-room__review-stack"><?php foreach ($session->items() as $item) { echo $this->renderReviewItem($item, $baseUrl); } ?></div>
@@ -1263,7 +1296,13 @@ final class ReadingRoomPage
         $dataJson = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?: '{}';
         ob_start(); ?>
         <article class="gmrexp-reading-room__review-card" data-status="<?php echo $this->escAttr($item->status()); ?>" id="<?php echo $this->escAttr($item->reviewId()); ?>">
-            <div class="gmrexp-reading-room__review-card-topline"><div><p class="gmrexp-reading-room__book-label"><?php echo $this->escHtml($item->recordId()); ?></p><h3><?php echo $this->escHtml($heading !== '' ? $heading : 'Unresolved staged record'); ?></h3></div><span class="gmrexp-reading-room__pill"><?php echo $this->escHtml(ucfirst($item->status())); ?></span></div>
+            <div class="gmrexp-reading-room__review-card-topline">
+                <div class="gmrexp-reading-room__review-card-heading">
+                    <?php if ($item->pending()): ?><label class="gmrexp-reading-room__review-select"><input type="checkbox" name="<?php echo $this->escAttr(self::REVIEW_BULK_RECORDS_FIELD); ?>[]" value="<?php echo $this->escAttr($item->recordId()); ?>" form="gmrexp-review-bulk-form" data-gmrexp-review-select aria-label="Select <?php echo $this->escAttr($heading !== '' ? $heading : $item->recordId()); ?> for bulk review"><span aria-hidden="true">Select</span></label><?php endif; ?>
+                    <div><p class="gmrexp-reading-room__book-label"><?php echo $this->escHtml($item->recordId()); ?></p><h3><?php echo $this->escHtml($heading !== '' ? $heading : 'Unresolved staged record'); ?></h3></div>
+                </div>
+                <span class="gmrexp-reading-room__pill"><?php echo $this->escHtml(ucfirst($item->status())); ?></span>
+            </div>
             <?php if ($context !== []): ?><details class="gmrexp-reading-room__review-source"><summary>Source context</summary><pre><code><?php echo $this->escHtml((string) json_encode($context, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)); ?></code></pre></details><?php endif; ?>
             <?php if ($staged->issues() !== []): ?><div class="gmrexp-reading-room__review-questions"><?php foreach ($staged->issues() as $issue): ?><p><strong><?php echo $this->escHtml($issue->code()); ?></strong> — <?php echo $this->escHtml($issue->message()); ?></p><?php endforeach; ?></div><?php endif; ?>
 
@@ -1934,7 +1973,7 @@ final class ReadingRoomPage
                     <label><span>Library artwork path (optional)</span><input type="text" name="gmrexp_almanac_artwork" value="<?php echo $this->escAttr((string) ($proposal['manifest']['artwork'] ?? '')); ?>" placeholder="assets/library-cover.jpg"></label>
                 </div>
                 <label><span>Expansion description</span><textarea name="gmrexp_almanac_description" rows="3"><?php echo $this->escHtml((string) ($proposal['manifest']['description'] ?? '')); ?></textarea></label>
-                <p class="gmrexp-reading-room__field-help">Artwork is a safe relative path inside the future expansion pack. V.9 records it in the proposed manifest; it does not upload or publish the image yet.</p>
+                <p class="gmrexp-reading-room__field-help">Artwork is a safe relative path inside the future expansion pack. Use a 3:2 landscape cover where possible; the Reading Room crops safely with object-fit: cover. The proposal records the path but does not upload or publish the image yet.</p>
                 <button class="gmrexp-reading-room__button" type="submit" <?php echo $accepted === 0 ? 'disabled' : ''; ?>><?php echo $proposal === null ? 'Load the Shelving Trolley' : 'Rebuild Proposed Almanac'; ?> →</button>
                 <?php if ($accepted === 0): ?><span class="gmrexp-reading-room__field-help">Accept at least one canonical definition before assembling a proposal.</span><?php endif; ?>
             </form>
@@ -2005,6 +2044,72 @@ final class ReadingRoomPage
         return $result->key();
     }
 
+    /** @return array{accepted:int,rejected:int,attention:int} */
+    private function applyBulkReviewDecision(): array
+    {
+        if ($this->reviewQueue === null || $this->reviewer === null || $this->importer === null) {
+            throw new ReviewDecisionException('The Review Desk is unavailable.');
+        }
+
+        $state = $this->reviewQueue->load();
+        $session = $this->reviewSessionFromState($state);
+        if (!$session instanceof ReviewSession || !is_array($state)) {
+            throw new ReviewDecisionException('There is no staged source on the Review Desk.');
+        }
+
+        $posted = $_POST[self::REVIEW_BULK_RECORDS_FIELD] ?? [];
+        if (!is_array($posted)) { $posted = []; }
+        $selected = [];
+        foreach ($posted as $recordId) {
+            if (!is_string($recordId)) { continue; }
+            $recordId = trim($this->unslash($recordId));
+            if ($recordId !== '') { $selected[$recordId] = true; }
+        }
+        if ($selected === []) {
+            throw new ReviewDecisionException('Select at least one pending record for bulk review.');
+        }
+
+        $action = isset($_POST[self::REVIEW_BULK_ACTION_FIELD]) && is_string($_POST[self::REVIEW_BULK_ACTION_FIELD])
+            ? strtolower(trim($this->unslash($_POST[self::REVIEW_BULK_ACTION_FIELD])))
+            : '';
+        if (!in_array($action, ['accept', 'reject'], true)) {
+            throw new ReviewDecisionException('Choose a valid bulk review action.');
+        }
+
+        $decisions = isset($state['decisions']) && is_array($state['decisions']) ? $state['decisions'] : [];
+        $accepted = 0; $rejected = 0; $attention = 0; $changed = false;
+
+        foreach ($session->items() as $item) {
+            if (!isset($selected[$item->recordId()]) || !$item->pending()) { continue; }
+
+            if ($action === 'reject') {
+                $decisions[$item->recordId()] = ['action' => 'reject', 'note' => 'Bulk rejected by the Keeper.'];
+                $rejected++; $changed = true;
+                continue;
+            }
+
+            if (!$item->canApproveOriginal()) {
+                $attention++;
+                continue;
+            }
+
+            $decisions[$item->recordId()] = ['action' => 'approve', 'note' => 'Bulk accepted by the Keeper.'];
+            $accepted++; $changed = true;
+        }
+
+        if ($accepted + $rejected + $attention === 0) {
+            throw new ReviewDecisionException('None of the selected records are pending review.');
+        }
+
+        if ($changed) {
+            $state['decisions'] = $decisions;
+            unset($state['proposal']);
+            $this->reviewQueue->save($state);
+        }
+
+        return ['accepted' => $accepted, 'rejected' => $rejected, 'attention' => $attention];
+    }
+
     private function applyReviewDecision(): void
     {
         if ($this->reviewQueue === null || $this->reviewer === null || $this->importer === null) { throw new ReviewDecisionException('The Review Desk is unavailable.'); }
@@ -2073,7 +2178,7 @@ final class ReadingRoomPage
 
     private function reviewPostAttempted(): bool
     {
-        return isset($_POST[self::REVIEW_QUEUE_SUBMIT_FIELD]) || isset($_POST[self::REVIEW_DECISION_SUBMIT_FIELD]) || isset($_POST[self::REVIEW_CLEAR_SUBMIT_FIELD]) || isset($_POST[self::ALMANAC_PROPOSAL_SUBMIT_FIELD]) || isset($_POST[self::ALMANAC_PUBLICATION_SUBMIT_FIELD]);
+        return isset($_POST[self::REVIEW_QUEUE_SUBMIT_FIELD]) || isset($_POST[self::REVIEW_BULK_SUBMIT_FIELD]) || isset($_POST[self::REVIEW_DECISION_SUBMIT_FIELD]) || isset($_POST[self::REVIEW_CLEAR_SUBMIT_FIELD]) || isset($_POST[self::ALMANAC_PROPOSAL_SUBMIT_FIELD]) || isset($_POST[self::ALMANAC_PUBLICATION_SUBMIT_FIELD]);
     }
 
     private function verifyReviewNonce(): bool
@@ -2122,6 +2227,30 @@ final class ReadingRoomPage
         return '<main class="gmrexp-reading-room gmrexp-reading-room--gate"><section class="gmrexp-reading-room__gate"><p class="gmrexp-reading-room__eyebrow">Great MarketRealm Expansions</p><h1>Administrator access required.</h1><p>The Import Desk and Review Desk are restricted to administrators. Source material cannot be staged or reviewed from this account.</p></section></main>';
     }
 
+
+    private function renderCatalogueEditor(CatalogueExpansion $expansion): string
+    {
+        $canManageExpansions = function_exists('current_user_can') ? current_user_can('manage_options') : true;
+        if (!$canManageExpansions || $this->almanacStorage === null || !$this->almanacStorage->isKeeperPublished($expansion->key())) {
+            return '';
+        }
+
+        ob_start(); ?>
+        <details class="gmrexp-reading-room__catalogue-editor"><summary>Correct catalogue card</summary>
+            <form method="post" enctype="multipart/form-data" action="<?php echo $this->escAttr(function_exists('admin_url') ? admin_url('admin-post.php') : ''); ?>">
+                <input type="hidden" name="action" value="<?php echo $this->escAttr(self::METADATA_ACTION); ?>"><input type="hidden" name="expansion" value="<?php echo $this->escAttr($expansion->key()); ?>">
+                <?php if (function_exists('wp_nonce_field')) { wp_nonce_field(self::METADATA_NONCE_ACTION); } ?>
+                <div class="gmrexp-reading-room__catalogue-fields"><label><span>Name</span><input name="name" value="<?php echo $this->escAttr($expansion->name()); ?>" required></label><label><span>Version</span><input name="version" value="<?php echo $this->escAttr($expansion->version()); ?>" required></label></div>
+                <label><span>Short Library summary</span><textarea name="description" maxlength="2000" rows="4"><?php echo $this->escHtml($expansion->description()); ?></textarea></label>
+                <p class="gmrexp-reading-room__field-help">Keep this concise: it appears beneath the artwork on Library and Browse cards. Cover artwork is standardised to a 3:2 landscape frame.</p>
+                <label><span>Library artwork path</span><input name="artwork" value="<?php echo $this->escAttr((string) $expansion->meta('artwork')); ?>" placeholder="assets/library-cover.png"></label>
+                <label><span>Replacement artwork (optional)</span><input type="file" name="<?php echo $this->escAttr(self::METADATA_ARTWORK_UPLOAD_FIELD); ?>" accept="image/jpeg,image/png,image/webp,image/gif"></label>
+                <p class="gmrexp-reading-room__field-help">Changing the path moves the existing pack artwork when possible. Attach a replacement image to replace it. Canonical definitions are never edited here.</p>
+                <button class="gmrexp-reading-room__button" type="submit">Save catalogue correction →</button>
+            </form>
+        </details>
+        <?php return trim((string) ob_get_clean());
+    }
 
     private function libraryArtworkUrl(CatalogueExpansion $expansion): ?string
     {

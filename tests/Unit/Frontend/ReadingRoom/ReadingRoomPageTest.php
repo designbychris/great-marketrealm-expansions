@@ -79,7 +79,7 @@ final class ReadingRoomPageTest extends TestCase
 
         self::assertStringContainsString('The Reading Room', $html);
         self::assertStringContainsString('Your Library', $html);
-        self::assertStringContainsString('Installed Almanacs', $html);
+        self::assertStringContainsString('Available in Browse', $html);
         self::assertStringContainsString('Catalogue Entries', $html);
     }
 
@@ -111,7 +111,7 @@ final class ReadingRoomPageTest extends TestCase
         $html = $this->page()->render('browse');
 
         self::assertStringContainsString('data-section="browse"', $html);
-        self::assertStringContainsString('Browse Installed Expansions', $html);
+        self::assertStringContainsString('Browse Available Expansions', $html);
         self::assertStringContainsString('Fixture Book', $html);
         self::assertStringContainsString('fixture-book', $html);
     }
@@ -174,11 +174,11 @@ final class ReadingRoomPageTest extends TestCase
     {
         $html = $this->page(false)->render('library');
 
-        self::assertStringContainsString('The shelves are waiting.', $html);
-        self::assertStringContainsString('No expansion packs are currently loaded', $html);
+        self::assertStringContainsString('Your active shelf is waiting.', $html);
+        self::assertStringContainsString('No Almanacs are active yet.', $html);
     }
 
-    public function test_render_is_read_only_for_library_activation_state(): void
+    public function test_your_library_hides_inactive_almanacs_without_mutating_activation_state(): void
     {
         $expansions = new ExpansionRegistry();
         $content = new ContentRegistry();
@@ -194,9 +194,13 @@ final class ReadingRoomPageTest extends TestCase
             new ReadingRoomNavigation()
         );
 
-        $page->render('library');
+        $libraryHtml = $page->render('library');
+        $browseHtml = $page->render('browse');
 
         self::assertFalse($library->isActive('inactive-book'));
+        self::assertStringNotContainsString('Inactive Book', $libraryHtml);
+        self::assertStringContainsString('Inactive Book', $browseHtml);
+        self::assertStringContainsString('Browse Available Expansions', $browseHtml);
     }
 
     public function test_shortcode_defaults_to_library(): void

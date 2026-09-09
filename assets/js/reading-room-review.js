@@ -227,8 +227,28 @@
         render();
     };
 
+    const initialiseBulkReview = (form) => {
+        const checkboxes = Array.from(document.querySelectorAll('[data-gmrexp-review-select]'));
+        const count = form.querySelector('[data-gmrexp-bulk-count]');
+        const all = form.querySelector('[data-gmrexp-select-all]');
+        const none = form.querySelector('[data-gmrexp-select-none]');
+        const update = () => {
+            if (count) count.textContent = String(checkboxes.filter((checkbox) => checkbox.checked).length);
+        };
+        checkboxes.forEach((checkbox) => checkbox.addEventListener('change', update));
+        if (all) all.addEventListener('click', () => { checkboxes.forEach((checkbox) => { checkbox.checked = true; }); update(); });
+        if (none) none.addEventListener('click', () => { checkboxes.forEach((checkbox) => { checkbox.checked = false; }); update(); });
+        form.addEventListener('submit', (event) => {
+            const submitter = event.submitter;
+            const message = submitter && submitter.getAttribute('data-gmrexp-confirm');
+            if (message && !window.confirm(message)) event.preventDefault();
+        });
+        update();
+    };
+
     const boot = () => {
         document.querySelectorAll('[data-gmrexp-review-form]').forEach(initialise);
+        document.querySelectorAll('[data-gmrexp-bulk-review]').forEach(initialiseBulkReview);
     };
 
     if (document.readyState === 'loading') {

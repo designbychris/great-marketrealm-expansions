@@ -788,4 +788,108 @@ final class ReadingRoomReviewDeskTest extends TestCase
         self::assertArrayNotHasKey('challenge', $data);
     }
 
+    private function bulkReviewJson(): string
+    {
+        return (string) json_encode([
+            'source' => ['type' => 'synthetic', 'id' => 'bulk-review', 'title' => 'Bulk Review Fixture'],
+            'records' => [
+                [
+                    'id' => 'valid-one',
+                    'type' => 'language',
+                    'key' => 'night-market-cant',
+                    'data' => ['name' => 'Night Market Cant'],
+                    'review_required' => true,
+                ],
+                [
+                    'id' => 'valid-two',
+                    'type' => 'language',
+                    'key' => 'delivery-hand-signs',
+                    'data' => ['name' => 'Delivery Hand Signs'],
+                    'review_required' => true,
+                ],
+                [
+                    'id' => 'needs-attention',
+                    'source' => ['heading' => 'Mystery Heading'],
+                    'data' => ['name' => 'Mystery Heading'],
+                    'review_required' => true,
+                ],
+            ],
+        ], JSON_UNESCAPED_SLASHES);
+    }
+
+    private function queueBulkReviewSource(): string
+    {
+        $_POST = [
+            ReadingRoomPage::REVIEW_QUEUE_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_JSON_FIELD => $this->bulkReviewJson(),
+        ];
+        return $this->page->render('review', 'https://example.test/expansions/');
+    }
+
+    public function test_review_desk_exposes_bulk_selection_controls_for_pending_records(): void
+    {
+        $html = $this->queueBulkReviewSource();
+
+        self::assertStringContainsString('Bulk review', $html);
+        self::assertStringContainsString('Select all pending', $html);
+        self::assertStringContainsString('Accept selected', $html);
+        self::assertStringContainsString('Reject selected', $html);
+        self::assertStringContainsString('gmrexp_review_bulk_records[]', $html);
+        self::assertStringContainsString('form="gmrexp-review-bulk-form"', $html);
+    }
+
+    public function test_bulk_accept_resolves_valid_selected_records_and_leaves_invalid_one_pending(): void
+    {
+        $this->queueBulkReviewSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_BULK_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_BULK_ACTION_FIELD => 'accept',
+            ReadingRoomPage::REVIEW_BULK_RECORDS_FIELD => ['valid-one', 'valid-two', 'needs-attention'],
+        ];
+
+        $html = $this->page->render('review');
+        $decisions = $this->queue->load()['decisions'];
+
+        self::assertSame('approve', $decisions['valid-one']['action']);
+        self::assertSame('approve', $decisions['valid-two']['action']);
+        self::assertArrayNotHasKey('needs-attention', $decisions);
+        self::assertStringContainsString('Bulk review complete: 2 accepted · 0 rejected · 1 requires attention.', $html);
+        self::assertStringContainsString('<span>Pending</span><strong>1</strong>', $html);
+    }
+
+    public function test_bulk_reject_only_rejects_checked_pending_records(): void
+    {
+        $this->queueBulkReviewSource();
+        $_POST = [
+            ReadingRoomPage::REVIEW_BULK_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_BULK_ACTION_FIELD => 'reject',
+            ReadingRoomPage::REVIEW_BULK_RECORDS_FIELD => ['valid-two'],
+        ];
+
+        $html = $this->page->render('review');
+        $decisions = $this->queue->load()['decisions'];
+
+        self::assertArrayNotHasKey('valid-one', $decisions);
+        self::assertSame('reject', $decisions['valid-two']['action']);
+        self::assertArrayNotHasKey('needs-attention', $decisions);
+        self::assertStringContainsString('Bulk review complete: 0 accepted · 1 rejected · 0 requires attention.', $html);
+    }
+
+    public function test_bulk_review_invalidates_stale_shelving_trolley_proposal(): void
+    {
+        $this->queueBulkReviewSource();
+        $state = $this->queue->load();
+        $state['proposal'] = ['definition_count' => 99, 'complete_review' => true];
+        $this->queue->save($state);
+
+        $_POST = [
+            ReadingRoomPage::REVIEW_BULK_SUBMIT_FIELD => '1',
+            ReadingRoomPage::REVIEW_BULK_ACTION_FIELD => 'accept',
+            ReadingRoomPage::REVIEW_BULK_RECORDS_FIELD => ['valid-one'],
+        ];
+        $this->page->render('review');
+
+        self::assertArrayNotHasKey('proposal', $this->queue->load());
+    }
+
 }

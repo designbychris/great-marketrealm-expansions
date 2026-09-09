@@ -143,7 +143,7 @@ final class ReadingRoomHostRoutingTest extends TestCase
         $html = $this->page()->shortcode([]);
 
         self::assertStringContainsString('data-section="browse"', $html);
-        self::assertStringContainsString('Browse Installed Expansions', $html);
+        self::assertStringContainsString('Browse Available Expansions', $html);
     }
 
     public function test_explicit_shortcode_section_overrides_request_query(): void
