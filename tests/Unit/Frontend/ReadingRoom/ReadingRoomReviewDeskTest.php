@@ -251,6 +251,10 @@ final class ReadingRoomReviewDeskTest extends TestCase
         self::assertStringContainsString('The Shelving Trolley has assembled a proposed Almanac.', $html);
         self::assertStringContainsString('midnight-menu', $html);
         self::assertStringContainsString('assets/library-cover.jpg', $html);
+        self::assertStringContainsString('Phase V.10 — The Keeper Rings the Bell', $html);
+        self::assertStringContainsString('Ring the Bell — Publish Almanac', $html);
+        self::assertStringContainsString('Published ≠ Active.', $html);
+        self::assertStringContainsString('type="file"', $html);
         self::assertSame(1, $this->queue->load()['proposal']['definition_count']);
     }
 

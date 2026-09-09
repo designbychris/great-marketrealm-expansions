@@ -2,6 +2,7 @@
 namespace GreatMarketrealmExpansions\Frontend\ReadingRoom;
 
 use GreatMarketrealmExpansions\Almanac\AlmanacProposalService;
+use GreatMarketrealmExpansions\Almanac\AlmanacPublicationService;
 
 defined('ABSPATH') || exit;
 
@@ -50,6 +51,8 @@ final class ReadingRoomPage
     public const REVIEW_RECORD_FIELD = 'gmrexp_review_record';
     public const REVIEW_ACTION_FIELD = 'gmrexp_review_action';
     public const ALMANAC_PROPOSAL_SUBMIT_FIELD = 'gmrexp_almanac_proposal_submit';
+    public const ALMANAC_PUBLICATION_SUBMIT_FIELD = 'gmrexp_almanac_publication_submit';
+    public const ALMANAC_ARTWORK_UPLOAD_FIELD = 'gmrexp_almanac_artwork_upload';
     public const STYLE_HANDLE = 'gmrexp-reading-room';
     public const SCRIPT_HANDLE = 'gmrexp-reading-room-review';
     public const ROUTE_VERSION = '1.0.0';
@@ -64,7 +67,8 @@ final class ReadingRoomPage
         private ?ReviewService $reviewer = null,
         private ?ReviewQueueStore $reviewQueue = null,
         private ?AlmanacProposalService $proposals = null,
-        private ?SchemaRegistry $schemas = null
+        private ?SchemaRegistry $schemas = null,
+        private ?AlmanacPublicationService $publisher = null
     ) {}
 
     public function register(): void
@@ -1145,6 +1149,13 @@ final class ReadingRoomPage
         } elseif (isset($_POST[self::REVIEW_CLEAR_SUBMIT_FIELD])) {
             $this->reviewQueue->clear();
             $notice = 'The Review Desk has been cleared. No canonical content was changed.';
+        } elseif (isset($_POST[self::ALMANAC_PUBLICATION_SUBMIT_FIELD])) {
+            try {
+                $publishedKey = $this->publishAlmanac();
+                $notice = sprintf('The Keeper rang the bell. Almanac "%s" is published and installed in the Library.', $publishedKey);
+            } catch (\Throwable $exception) {
+                $error = $exception->getMessage();
+            }
         } elseif (isset($_POST[self::ALMANAC_PROPOSAL_SUBMIT_FIELD])) {
             try {
                 $this->buildAlmanacProposal();
@@ -1843,6 +1854,31 @@ final class ReadingRoomPage
                 </div>
             <?php endif; ?>
 
+            <?php if ($proposal !== null && !empty($proposal['complete_review'])): ?>
+                <?php $publishedKey = isset($proposal['manifest']['key']) && is_string($proposal['manifest']['key']) ? $proposal['manifest']['key'] : ''; ?>
+                <?php if ($publishedKey !== '' && !$this->library->isInstalled($publishedKey)): ?>
+                    <section class="gmrexp-reading-room__proposal gmrexp-reading-room__publication" aria-labelledby="gmrexp-publication-heading">
+                        <div class="gmrexp-reading-room__proposal-topline">
+                            <div><p class="gmrexp-reading-room__kicker">Phase V.10 — The Keeper Rings the Bell</p><h4 id="gmrexp-publication-heading">Publish this Almanac</h4></div>
+                            <span class="gmrexp-reading-room__status">Publication API <?php echo $this->escHtml(AlmanacPublicationService::API_VERSION); ?></span>
+                        </div>
+                        <p>This is the canonical publication boundary. The complete proposal will be written atomically, passed through the existing Almanac Loader, installed into the Catalogue, and left <strong>inactive</strong> until the Keeper explicitly activates it.</p>
+                        <p class="gmrexp-reading-room__field-help"><strong>Published ≠ Active.</strong> If any file, definition, artwork, or loader check fails, the publication is rolled back.</p>
+                        <form method="post" enctype="multipart/form-data" action="<?php echo $this->escAttr($this->navigationUrl('review', $baseUrl) . '#gmrexp-publication-heading'); ?>">
+                            <?php echo $this->renderReviewNonce(); ?>
+                            <input type="hidden" name="<?php echo $this->escAttr(self::ALMANAC_PUBLICATION_SUBMIT_FIELD); ?>" value="1">
+                            <?php if (isset($proposal['manifest']['artwork']) && is_string($proposal['manifest']['artwork']) && $proposal['manifest']['artwork'] !== ''): ?>
+                                <label><span>Attach Library artwork</span><input type="file" name="<?php echo $this->escAttr(self::ALMANAC_ARTWORK_UPLOAD_FIELD); ?>" accept="image/jpeg,image/png,image/webp,image/gif" required></label>
+                                <p class="gmrexp-reading-room__field-help">This image will be copied to <code><?php echo $this->escHtml($proposal['manifest']['artwork']); ?></code> inside the published pack. Maximum 10 MB.</p>
+                            <?php endif; ?>
+                            <button class="gmrexp-reading-room__button" type="submit">Ring the Bell — Publish Almanac →</button>
+                        </form>
+                    </section>
+                <?php elseif ($publishedKey !== ''): ?>
+                    <div class="gmrexp-reading-room__proposal"><strong>The bell has been rung.</strong> <span>This canonical key is already installed in the Library. Publication will not overwrite it.</span></div>
+                <?php endif; ?>
+            <?php endif; ?>
+
             <form class="gmrexp-reading-room__trolley-form" method="post" action="<?php echo $this->escAttr($this->navigationUrl('review', $baseUrl) . '#gmrexp-trolley-heading'); ?>">
                 <?php echo $this->renderReviewNonce(); ?>
                 <input type="hidden" name="<?php echo $this->escAttr(self::ALMANAC_PROPOSAL_SUBMIT_FIELD); ?>" value="1">
@@ -1890,6 +1926,40 @@ final class ReadingRoomPage
         $proposal = $this->proposals->propose($session, $key, $name, $version, $description, $metadata);
         $state['proposal'] = $proposal->toArray();
         $this->reviewQueue->save($state);
+    }
+
+    private function publishAlmanac(): string
+    {
+        if ($this->reviewQueue === null || $this->publisher === null) {
+            throw new ReviewDecisionException("The Keeper's publication bell is unavailable.");
+        }
+        $state = $this->reviewQueue->load();
+        $proposal = is_array($state) && isset($state['proposal']) && is_array($state['proposal']) ? $state['proposal'] : null;
+        if ($proposal === null) {
+            throw new ReviewDecisionException('Load the Shelving Trolley before ringing the publication bell.');
+        }
+        if (empty($proposal['complete_review'])) {
+            throw new ReviewDecisionException('Finish the Review Desk before publishing this Almanac.');
+        }
+        if (!defined('GMREXP_PATH')) {
+            throw new ReviewDecisionException('The canonical Almanac publication root is unavailable.');
+        }
+
+        $upload = isset($_FILES[self::ALMANAC_ARTWORK_UPLOAD_FIELD]) && is_array($_FILES[self::ALMANAC_ARTWORK_UPLOAD_FIELD])
+            ? $_FILES[self::ALMANAC_ARTWORK_UPLOAD_FIELD]
+            : null;
+        $result = $this->publisher->publish($proposal, GMREXP_PATH . 'content/expansions', $upload);
+
+        // Installation and activation are deliberately separate boundaries.
+        $this->library->setActive($result->key(), false);
+        $state['published'] = [
+            'key' => $result->key(),
+            'definition_count' => $result->definitionCount(),
+            'published_at' => gmdate('c'),
+        ];
+        $this->reviewQueue->save($state);
+        $this->invalidateRememberedHostPageCache($result->key(), false);
+        return $result->key();
     }
 
     private function applyReviewDecision(): void
@@ -1960,7 +2030,7 @@ final class ReadingRoomPage
 
     private function reviewPostAttempted(): bool
     {
-        return isset($_POST[self::REVIEW_QUEUE_SUBMIT_FIELD]) || isset($_POST[self::REVIEW_DECISION_SUBMIT_FIELD]) || isset($_POST[self::REVIEW_CLEAR_SUBMIT_FIELD]) || isset($_POST[self::ALMANAC_PROPOSAL_SUBMIT_FIELD]);
+        return isset($_POST[self::REVIEW_QUEUE_SUBMIT_FIELD]) || isset($_POST[self::REVIEW_DECISION_SUBMIT_FIELD]) || isset($_POST[self::REVIEW_CLEAR_SUBMIT_FIELD]) || isset($_POST[self::ALMANAC_PROPOSAL_SUBMIT_FIELD]) || isset($_POST[self::ALMANAC_PUBLICATION_SUBMIT_FIELD]);
     }
 
     private function verifyReviewNonce(): bool

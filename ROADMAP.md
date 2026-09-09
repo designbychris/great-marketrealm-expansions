@@ -640,3 +640,17 @@ Planned sequence:
 - [x] Preserve unknown source fields as absent rather than guessed.
 - [x] Preserve GMREXP ownership of expansion definitions; Companion/Tabletop remain consumers.
 - [ ] Wire published expansion monsters into Companion and Tabletop consumer bridges in a later phase.
+
+## Phase V.10 — The Keeper Rings the Bell
+
+- [x] Explicit Proposed → Published Keeper action.
+- [x] Complete-review and non-empty-proposal publication gates.
+- [x] Atomic sibling staging and canonical pack installation.
+- [x] Existing canonical key overwrite protection.
+- [x] Canonical schema validation before filesystem commit.
+- [x] Existing Almanac Loader as final publication authority.
+- [x] Rollback on write, artwork, rename, or loader failure.
+- [x] Safe pack-local artwork attachment at publication time.
+- [x] Published ≠ Active; newly published pack is left inactive for explicit Keeper activation.
+- [x] Reading Room publication state and regression coverage.
+- [ ] Server-side PHPUnit certification.

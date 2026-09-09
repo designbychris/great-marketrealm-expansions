@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.0-alpha10 — Phase V.10: The Keeper Rings the Bell
+
+- Added Publication API `1.0.0` as the explicit Proposed → Published boundary.
+- Added Administrator-only Reading Room publication controls for complete proposed Almanacs.
+- Publication writes to a sibling staging directory and atomically renames the complete pack into `content/expansions/<canonical-key>/`.
+- Reuses the canonical `ContentValidator` and existing `ExpansionFileLoader`; loader failure rolls filesystem publication back.
+- Refuses incomplete review, empty proposals, malformed identities, and overwrite of an already-published canonical key.
+- Added safe publication-time Library artwork attachment for proposal-relative JPG/PNG/WEBP/GIF paths, bounded to 10 MB.
+- Newly published Almanacs are installed into the current Catalogue but explicitly left inactive: Published ≠ Active.
+- Preserved the V.9 Review Desk and proposal as the source of publication input; publication does not clear Keeper review decisions.
+- Added publication architecture and rollback documentation.
+- Recorded certified V.9 baseline: 654 tests / 1600 assertions.
+
 ## 0.5.0-alpha9 — Phase V.9: The Shelving Trolley
 
 - Refined Class and Subclass review with friendly saving-throw lists, proficiency groups, feature lines, and level/progression lines while preserving the existing canonical schemas.
