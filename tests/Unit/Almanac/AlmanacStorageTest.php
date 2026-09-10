@@ -35,10 +35,30 @@ final class AlmanacStorageTest extends TestCase
     {
         $storage = new AlmanacStorage(['basedir' => $this->uploads, 'baseurl' => 'https://example.test/uploads']);
         mkdir($storage->ensureKeeperRoot() . '/midnight-menu/assets', 0775, true);
+        file_put_contents($storage->keeperRoot() . '/midnight-menu/assets/cover.png', 'fixture');
+        touch($storage->keeperRoot() . '/midnight-menu/assets/cover.png', 1_700_000_000);
         self::assertSame(
-            'https://example.test/uploads/great-marketrealm-expansions/almanacs/midnight-menu/assets/cover.png',
+            'https://example.test/uploads/great-marketrealm-expansions/almanacs/midnight-menu/assets/cover.png?v=1700000000',
             $storage->artworkUrl('midnight-menu', 'assets/cover.png')
         );
+    }
+
+    public function test_keeper_artwork_url_changes_when_replacement_file_changes(): void
+    {
+        $storage = new AlmanacStorage(['basedir' => $this->uploads, 'baseurl' => 'https://example.test/uploads']);
+        $asset = $storage->ensureKeeperRoot() . '/midnight-menu/assets/cover.png';
+        mkdir(dirname($asset), 0775, true);
+        file_put_contents($asset, 'first');
+        touch($asset, 1_700_000_000);
+        $first = $storage->artworkUrl('midnight-menu', 'assets/cover.png');
+
+        file_put_contents($asset, 'replacement');
+        touch($asset, 1_700_000_123);
+        clearstatcache(true, $asset);
+        $second = $storage->artworkUrl('midnight-menu', 'assets/cover.png');
+
+        self::assertNotSame($first, $second);
+        self::assertStringEndsWith('?v=1700000123', (string) $second);
     }
 
     public function test_keeper_pack_survives_removal_of_an_unrelated_plugin_tree(): void

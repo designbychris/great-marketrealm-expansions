@@ -74,7 +74,13 @@ final class AlmanacStorage
         $segments = array_map('rawurlencode', array_values(array_filter(explode('/', $relative), static fn (string $part): bool => $part !== '')));
         if ($this->keeperPackExists($key)) {
             $uploads = $this->uploads();
-            return rtrim($uploads['baseurl'], '/') . '/' . self::DIRECTORY . '/' . rawurlencode($key) . '/' . implode('/', $segments);
+            $url = rtrim($uploads['baseurl'], '/') . '/' . self::DIRECTORY . '/' . rawurlencode($key) . '/' . implode('/', $segments);
+            $path = $this->keeperRoot() . DIRECTORY_SEPARATOR . $key . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relative);
+            if (is_file($path)) {
+                $modified = @filemtime($path);
+                if (is_int($modified) && $modified > 0) { $url .= '?v=' . $modified; }
+            }
+            return $url;
         }
         if ($this->bundledPackExists($key) && function_exists('plugins_url') && defined('GMREXP_FILE')) {
             return plugins_url('content/expansions/' . rawurlencode($key) . '/' . implode('/', $segments), GMREXP_FILE);

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.0-alpha10.2.1 — V.10B.1 The Cover Stops Pretending It Hasn't Changed
+
+- Cache-busts Keeper-published Almanac artwork URLs with the actual artwork file modification time.
+- Replacing a catalogue-card image at the same pack-relative path now produces a new browser URL immediately, so stale cached cover art cannot survive a successful replacement upload.
+- Adds a regression test proving the artwork URL changes when the underlying Keeper artwork file is replaced.
+
+
 ## 0.5.0-alpha10.2 — Phase V.10B — The Keeper Discovers the Clipboard Has Checkboxes
 
 - Your Library now shows active Almanacs only; Browse remains the complete shelf of available installed expansions.
