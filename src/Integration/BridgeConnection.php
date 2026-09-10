@@ -26,7 +26,8 @@ final class BridgeConnection
         private array $issues,
         private ?Catalogue $catalogue,
         private ?RuleEngine $rules = null,
-        private ?Library $library = null
+        private ?Library $library = null,
+        private ?ActiveContentCatalogue $activeContent = null
     ) {}
 
     public function connected(): bool { return $this->catalogue !== null && $this->issues === []; }
@@ -46,6 +47,7 @@ final class BridgeConnection
     public function catalogue(): ?Catalogue { return $this->catalogue; }
     public function rules(): ?RuleEngine { return $this->rules; }
     public function library(): ?Library { return $this->library; }
+    public function activeContent(): ?ActiveContentCatalogue { return $this->activeContent; }
 
     public function supports(string $capability): bool
     {
@@ -62,6 +64,7 @@ final class BridgeConnection
             'catalogue_api_version' => $this->catalogueApiVersion,
             'rules_api_version' => $this->rules?->apiVersion(),
             'library_api_version' => $this->library?->apiVersion(),
+            'active_content_api_version' => $this->activeContent?->apiVersion(),
             'available_capabilities' => $this->availableCapabilities,
             'negotiated_capabilities' => $this->negotiatedCapabilities,
             'missing_required_capabilities' => $this->missingRequiredCapabilities,

@@ -24,7 +24,7 @@ final class BridgeTest extends TestCase
     public function test_bridge_exposes_its_api_and_catalogue_capabilities(): void
     {
         $bridge = $this->bridge();
-        self::assertSame('1.0.0', $bridge->apiVersion());
+        self::assertSame('1.1.0', $bridge->apiVersion());
         self::assertTrue($bridge->supports('bridge.connect'));
         self::assertTrue($bridge->supports('catalogue.query.tag'));
         self::assertFalse($bridge->supports('catalogue.write'));
@@ -106,7 +106,7 @@ final class BridgeTest extends TestCase
         ));
         $data = $connection->toArray();
         self::assertTrue($data['connected']);
-        self::assertSame('1.0.0', $data['bridge_api_version']);
+        self::assertSame('1.1.0', $data['bridge_api_version']);
         self::assertContains('catalogue.query.tag', $data['negotiated_capabilities']);
         self::assertSame(['missing.optional'], $data['missing_optional_capabilities']);
     }

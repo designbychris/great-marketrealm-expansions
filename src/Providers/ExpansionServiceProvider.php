@@ -21,6 +21,7 @@ use GreatMarketrealmExpansions\Content\Types\CoreContentTypes;
 use GreatMarketrealmExpansions\Expansions\ExpansionRegistry;
 use GreatMarketrealmExpansions\Expansions\Loading\ExpansionFileLoader;
 use GreatMarketrealmExpansions\Integration\Bridge;
+use GreatMarketrealmExpansions\Integration\ActiveContentCatalogue;
 use GreatMarketrealmExpansions\Integration\ConsumerRegistry;
 use GreatMarketrealmExpansions\Import\ImportService;
 use GreatMarketrealmExpansions\Import\GoogleDocsSourceAdapter;
@@ -91,11 +92,15 @@ final class ExpansionServiceProvider extends ServiceProvider
             $container->get(Catalogue::class),
             $container->get(ActivationStore::class)
         ));
+        $this->container->singleton(ActiveContentCatalogue::class, static fn (Container $container): ActiveContentCatalogue => new ActiveContentCatalogue(
+            $container->get(Library::class)
+        ));
         $this->container->singleton(Bridge::class, static fn (Container $container): Bridge => new Bridge(
             $container->get(Catalogue::class),
             $container->get(ConsumerRegistry::class),
             $container->get(RuleEngine::class),
-            $container->get(Library::class)
+            $container->get(Library::class),
+            $container->get(ActiveContentCatalogue::class)
         ));
         $this->container->singleton(ExpansionFileLoader::class, static fn (Container $container): ExpansionFileLoader => new ExpansionFileLoader(
             $container->get(ExpansionRegistry::class),

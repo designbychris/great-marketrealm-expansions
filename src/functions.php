@@ -10,6 +10,7 @@ use GreatMarketrealmExpansions\Content\Types\ContentTypeCatalogue;
 use GreatMarketrealmExpansions\Expansions\ExpansionRegistry;
 use GreatMarketrealmExpansions\Expansions\Loading\ExpansionFileLoader;
 use GreatMarketrealmExpansions\Integration\Bridge;
+use GreatMarketrealmExpansions\Integration\ActiveContentCatalogue;
 use GreatMarketrealmExpansions\Import\ImportService;
 use GreatMarketrealmExpansions\Library\Library;
 use GreatMarketrealmExpansions\Migration\MigrationService;
@@ -64,6 +65,13 @@ function bridge(): Bridge
     $kernel = Kernel::instance();
     $kernel->boot();
     return $kernel->bridge();
+}
+
+function active_content(): ActiveContentCatalogue
+{
+    $kernel = Kernel::instance();
+    $kernel->boot();
+    return $kernel->activeContent();
 }
 
 function rules(): RuleEngine

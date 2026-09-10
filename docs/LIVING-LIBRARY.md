@@ -89,7 +89,7 @@ The activation form uses the normal WordPress `manage_options` capability, nonce
 
 ## Bridge
 
-Library capabilities are additive to Bridge API `1.0.0`.
+Library capabilities remain available through Bridge API `1.1.0`; consumers requiring the original Bridge `1.0.0` contract remain compatible.
 
 Existing code that constructs `Bridge` without a Library remains valid. Such a Bridge simply does not advertise Library capabilities.
 

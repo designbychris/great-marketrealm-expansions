@@ -675,3 +675,19 @@ Planned sequence:
 - Invalid/unsafe selections remain pending for individual attention.
 - Almanac cover artwork standard: 3:2 landscape, reusable across consumers.
 - Boundary preserved: Bulk Review ≠ Publication ≠ Activation.
+
+## Phase V.11 — The Bridges Open to Adventurers
+
+- [x] Build a consumer-safe active-content catalogue over the Living Library.
+- [x] Expose only definitions belonging to active Almanacs.
+- [x] Preserve fully-qualified `expansion:type:key` canonical identity and provenance.
+- [x] Support active reads by type, expansion, expansion+type, and exact identity.
+- [x] Make activation/deactivation visible immediately without copying definitions.
+- [x] Negotiate `consumer-content.*` capabilities through the existing Integration Bridge.
+- [x] Expose the active-content service through Bridge connections, Kernel, and public helper.
+- [x] Keep Companion character workflow and Tabletop live-play state outside GMREXP.
+- [x] Preserve optional-plugin and legacy Bridge constructor compatibility.
+- [x] Add regression coverage and consumer documentation.
+- [ ] Wire Companion UI to active expansion races/backgrounds/classes/subclasses/monsters in its own phase.
+- [ ] Wire Tabletop Bestiary/encounter tooling to active expansion monsters in its own phase.
+- [ ] Server-side PHPUnit certification.

@@ -10,7 +10,7 @@ use InvalidArgumentException;
 
 final class Bridge
 {
-    public const API_VERSION = '1.0.0';
+    public const API_VERSION = '1.1.0';
 
     /** @var list<string> */
     private const CAPABILITIES = [
@@ -23,15 +23,18 @@ final class Bridge
 
     private RuleEngine $rules;
     private ?Library $library;
+    private ?ActiveContentCatalogue $activeContent;
 
     public function __construct(
         private Catalogue $catalogue,
         private ConsumerRegistry $consumers,
         ?RuleEngine $rules = null,
-        ?Library $library = null
+        ?Library $library = null,
+        ?ActiveContentCatalogue $activeContent = null
     ) {
         $this->rules = $rules ?? new RuleEngine();
         $this->library = $library;
+        $this->activeContent = $activeContent ?? ($library !== null ? new ActiveContentCatalogue($library) : null);
     }
 
     public function apiVersion(): string { return self::API_VERSION; }
@@ -39,11 +42,17 @@ final class Bridge
     /** @return list<string> */
     public function capabilities(): array
     {
+        $bridgeCapabilities = self::CAPABILITIES;
+        if ($this->activeContent !== null) {
+            $bridgeCapabilities[] = 'bridge.active-content.read';
+        }
+
         $capabilities = array_values(array_unique(array_merge(
-            self::CAPABILITIES,
+            $bridgeCapabilities,
             $this->catalogue->capabilities(),
             $this->rules->capabilities(),
-            $this->library?->capabilities() ?? []
+            $this->library?->capabilities() ?? [],
+            $this->activeContent?->capabilities() ?? []
         )));
         sort($capabilities);
         return $capabilities;
@@ -103,7 +112,8 @@ final class Bridge
             $issues,
             $issues === [] ? $this->catalogue : null,
             $issues === [] ? $this->rules : null,
-            $issues === [] ? $this->library : null
+            $issues === [] ? $this->library : null,
+            $issues === [] ? $this->activeContent : null
         );
     }
 

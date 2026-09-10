@@ -69,7 +69,7 @@ $connection->missingOptionalCapabilities();
 $connection->supports('catalogue.query.tag');
 ```
 
-Current Bridge API version: `1.0.0`.
+Current Bridge API version: `1.1.0`.
 
 Bridge-level capabilities begin with:
 
@@ -103,7 +103,7 @@ The registry is runtime integration state, not user data and not persistent Word
 The WordPress plugin version, Bridge API version and Catalogue API version are separate contracts:
 
 - plugin release: `0.1.0-alpha5`
-- Bridge API: `1.0.0`
+- Bridge API: `1.1.0`
 - Catalogue API: `1.0.0`
 
 Consumers should negotiate against API versions/capabilities rather than comparing the GMREXP plugin release number.
@@ -111,3 +111,7 @@ Consumers should negotiate against API versions/capabilities rather than compari
 ## Phase I.5 boundary
 
 This phase changes GMREXP only. Companion and Tabletop adapters will be added deliberately in their own repositories later. Until then, this document is the contract those adapters should implement.
+
+## V.11 active-content bridge
+
+Bridge API `1.1.0` adds the optional active-content service and `consumer-content.*` capability family. Consumers requiring only the original `1.0.0` contract remain compatible.

@@ -542,3 +542,13 @@ Keeper-published Almanacs now live in persistent WordPress uploads storage, whil
 - Added canonical monster projection fields for mythic actions, player-safe description, Field Guide visibility, and Keeper notes.
 - Preserved blank/unknown monster fields instead of inventing source mechanics.
 - Added regression coverage for Companion-ready monster review and sparse/reference monsters.
+
+## 0.5.0-alpha11 — Phase V.11 — The Bridges Open to Adventurers
+
+- Added `ActiveContentCatalogue` API 1.0.0 as the stable consumer view of active Almanac content.
+- Added active reads by content type, expansion, expansion+type, and fully-qualified canonical identity.
+- Kept inactive Almanacs installed and browsable while excluding them from Companion/Tabletop-facing content.
+- Preserved canonical `CatalogueEntry` identity and provenance rather than copying expansion records into consumers.
+- Added `consumer-content.*` Bridge capabilities and `BridgeConnection::activeContent()`; Bridge API advances additively to `1.1.0`.
+- Added Kernel and `active_content()` helper access while preserving legacy Bridge construction.
+- Documented the one-definition/multiple-consumers boundary and added regression coverage.
