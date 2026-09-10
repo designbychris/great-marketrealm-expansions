@@ -1,5 +1,8 @@
 # Great MarketRealm Expansions Roadmap
 
+### V.12 — The Reading Room Gets Its Grand Reopening ✅
+The Reading Room now visually belongs to the Great MarketRealm family: parchment archive surfaces, leather navigation, brass/gold detailing, guild-purple controls, book-like Almanac cards, and accessibility/responsive polish — without changing Catalogue, Library, review, publication or consumer semantics.
+
 ### V.10A.1 — The Librarian Stops Shelving Books in the Delivery Van
 Keeper-published Almanacs now live in persistent WordPress uploads storage, while bundled Almanacs remain plugin-owned. Catalogue startup loads both stores; publication, artwork URLs, and metadata corrections respect the persistent boundary.
 

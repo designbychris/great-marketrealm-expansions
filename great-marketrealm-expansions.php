@@ -9,7 +9,7 @@
 
 defined('ABSPATH') || exit;
 
-define('GMREXP_VERSION', '0.5.0-alpha11');
+define('GMREXP_VERSION', '0.5.0-alpha12');
 define('GMREXP_FILE', __FILE__);
 define('GMREXP_PATH', plugin_dir_path(__FILE__));
 

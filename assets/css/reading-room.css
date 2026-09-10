@@ -1181,3 +1181,80 @@ a.gmrexp-reading-room__compatibility:hover {
     .gmrexp-reading-room__bulk-review { align-items:stretch; flex-direction:column; }
     .gmrexp-reading-room__bulk-review-controls { align-items:stretch; flex-direction:column; }
 }
+
+/* Phase V.12 — The Reading Room Gets Its Grand Reopening
+ * Great MarketRealm family treatment: parchment, leather, brass and ink.
+ */
+.gmrexp-reading-room {
+    --gmrexp-ink: #4a3022;
+    --gmrexp-ink-strong: #321f17;
+    --gmrexp-muted: #876b55;
+    --gmrexp-paper: #fffaf0;
+    --gmrexp-paper-deep: #f2dfb2;
+    --gmrexp-line: rgba(74,48,34,.28);
+    --gmrexp-gold: #b88a37;
+    --gmrexp-gold-dark: #79551f;
+    --gmrexp-purple: #603773;
+    --gmrexp-leather: #68412d;
+    --gmrexp-leather-dark: #3d271d;
+    --gmrexp-wax: #843638;
+    --gmrexp-success: #536f45;
+    position: relative;
+    overflow: hidden;
+    max-width: 1180px;
+    margin: clamp(1rem,3vw,2.5rem) auto;
+    padding: clamp(1rem,3vw,2.25rem);
+    border: 1px solid rgba(74,48,34,.3);
+    border-radius: 5px;
+    color: var(--gmrexp-ink);
+    background:
+        radial-gradient(circle at 8% 8%,rgba(112,66,25,.08),transparent 20%),
+        radial-gradient(circle at 94% 92%,rgba(112,66,25,.09),transparent 24%),
+        repeating-linear-gradient(0deg,rgba(89,55,25,.018) 0,rgba(89,55,25,.018) 1px,transparent 1px,transparent 4px),
+        linear-gradient(135deg,#fffaf0,#f2dfb2);
+    box-shadow: 0 22px 42px rgba(45,25,15,.26), inset 0 0 32px rgba(92,55,24,.1);
+    font-family:"Cormorant Garamond",Georgia,serif;
+}
+.gmrexp-reading-room::before { content:""; position:absolute; inset:10px; pointer-events:none; border:1px solid rgba(184,138,55,.34); box-shadow:inset 0 0 0 3px rgba(255,250,240,.28); }
+.gmrexp-reading-room::after { content:"✦"; position:absolute; top:8px; left:50%; z-index:1; padding:0 .65rem; transform:translateX(-50%); color:var(--gmrexp-gold-dark); background:#f7e9c8; font-size:1rem; }
+.gmrexp-reading-room__masthead { position:relative; padding:clamp(2rem,5vw,4rem) clamp(1rem,4vw,3rem) clamp(1.7rem,4vw,3rem); border:0; border-bottom:4px double rgba(121,85,31,.62); }
+.gmrexp-reading-room__masthead::before,.gmrexp-reading-room__masthead::after { content:"◆"; position:absolute; bottom:-.65rem; color:var(--gmrexp-gold-dark); background:#f4e4c2; padding:0 .45rem; font-size:.8rem; }
+.gmrexp-reading-room__masthead::before { left:12%; }.gmrexp-reading-room__masthead::after { right:12%; }
+.gmrexp-reading-room__masthead h1,.gmrexp-reading-room__gate h1 { color:var(--gmrexp-ink-strong); font-family:"Cinzel Decorative","Cinzel",Georgia,serif; text-shadow:0 1px 0 #fff6df; letter-spacing:.025em; }
+.gmrexp-reading-room__eyebrow,.gmrexp-reading-room__kicker,.gmrexp-reading-room__book-label { color:var(--gmrexp-purple); font-family:"Cinzel",Georgia,serif; letter-spacing:.14em; }
+.gmrexp-reading-room__lede { color:#6b4c37; font-size:1.12rem; }
+.gmrexp-reading-room__nav { position:relative; z-index:2; margin:1.4rem 0 1.7rem; padding:.65rem; background:linear-gradient(#754b34,#4b3024); border:1px solid #3d271d; box-shadow:0 8px 18px rgba(54,31,18,.18),inset 0 1px rgba(255,255,255,.12); }
+.gmrexp-reading-room__nav ul { gap:.5rem; }
+.gmrexp-reading-room__nav a { min-height:70px; border:1px solid rgba(232,207,132,.32); border-radius:2px; color:#fff3d2; background:rgba(50,31,23,.2); font-family:"Cinzel",Georgia,serif; transition:transform 180ms ease,background 180ms ease,border-color 180ms ease; }
+.gmrexp-reading-room__nav a:hover { transform:translateY(-2px); background:rgba(255,250,240,.09); border-color:rgba(232,207,132,.7); }
+.gmrexp-reading-room__nav a[aria-current="page"] { color:#321f17; background:linear-gradient(#fffaf0,#f2dfb2); border-color:#b88a37; box-shadow:inset 0 -4px 0 #603773,0 3px 8px rgba(0,0,0,.16); }
+.gmrexp-reading-room__section { position:relative; z-index:1; margin-top:1.25rem; padding:clamp(1.2rem,3vw,2rem); border:1px solid rgba(74,48,34,.28); border-radius:2px; background:rgba(255,250,240,.66); box-shadow:0 8px 18px rgba(54,31,18,.10),inset 0 0 28px rgba(92,55,24,.06); }
+.gmrexp-reading-room__section::before { content:""; position:absolute; inset:5px; pointer-events:none; border:1px solid rgba(184,138,55,.18); }
+.gmrexp-reading-room__section h2,.gmrexp-reading-room__section h3,.gmrexp-reading-room__detail h2 { color:var(--gmrexp-ink-strong); font-family:"Cinzel",Georgia,serif; }
+.gmrexp-reading-room__summary-card { position:relative; min-height:118px; border-radius:2px; border:1px solid rgba(121,85,31,.42); background:linear-gradient(145deg,#fffaf0,#f5e5c2); box-shadow:0 5px 12px rgba(54,31,18,.09); }
+.gmrexp-reading-room__summary-card::after { content:""; position:absolute; left:18%; right:18%; bottom:10px; height:2px; background:linear-gradient(90deg,transparent,#b88a37,transparent); }
+.gmrexp-reading-room__summary-card strong { color:#603773; font-family:"Cinzel Decorative","Cinzel",Georgia,serif; }
+.gmrexp-reading-room__summary-card span { color:#6b4c37; font-family:system-ui,sans-serif; }
+.gmrexp-reading-room__book,.gmrexp-reading-room__browse-book { position:relative; overflow:hidden; padding:1rem; border:1px solid rgba(74,48,34,.32); border-radius:3px; background:linear-gradient(145deg,#fffaf0,#f9edcf); box-shadow:0 10px 20px rgba(54,31,18,.13); transition:transform 200ms ease,box-shadow 200ms ease; }
+.gmrexp-reading-room__book::before,.gmrexp-reading-room__browse-book::before { content:""; position:absolute; top:0; bottom:0; left:0; width:5px; background:linear-gradient(#936040,#68412d 55%,#3d271d); }
+.gmrexp-reading-room__book:hover,.gmrexp-reading-room__browse-book:hover { transform:translateY(-3px); box-shadow:0 16px 28px rgba(54,31,18,.18); }
+.gmrexp-reading-room__book-artwork-frame { overflow:hidden; margin:.9rem 0 0; aspect-ratio:3/2; border:1px solid #79551f; border-radius:2px; background:#321f17; box-shadow:0 5px 12px rgba(54,31,18,.18); }
+.gmrexp-reading-room__book-artwork { width:100%; height:100%; object-fit:cover; transition:transform 320ms ease; }
+.gmrexp-reading-room__book:hover .gmrexp-reading-room__book-artwork,.gmrexp-reading-room__browse-book:hover .gmrexp-reading-room__book-artwork { transform:scale(1.025); }
+.gmrexp-reading-room__pill,.gmrexp-reading-room__status,.gmrexp-reading-room__compatibility { border-radius:999px; border-color:rgba(121,85,31,.45); color:#4a3022; background:#f2dfb2; }
+.gmrexp-reading-room__pill { box-shadow:inset 0 0 0 1px rgba(255,250,240,.45); }
+.gmrexp-reading-room__compatibility[data-status="ready"] { color:#31452a; background:#e1ead9; border-color:#6c855d; }
+.gmrexp-reading-room__button,.gmrexp-reading-room__back { border:1px solid #79551f; border-radius:2px; color:#fff8e8; background:linear-gradient(#7c4d91,#603773); box-shadow:0 3px 0 #35203f; font-family:"Cinzel",Georgia,serif; font-size:.8rem; letter-spacing:.035em; transition:transform 140ms ease,filter 140ms ease; }
+.gmrexp-reading-room__button:hover,.gmrexp-reading-room__back:hover { transform:translateY(-1px); filter:brightness(1.08); }
+.gmrexp-reading-room__button:active,.gmrexp-reading-room__back:active { transform:translateY(2px); box-shadow:0 1px 0 #35203f; }
+.gmrexp-reading-room__notice { border-radius:2px; border-left-color:#536f45; background:#f3f5e8; }
+.gmrexp-reading-room__activation { border-radius:2px; background:rgba(242,223,178,.38); }
+.gmrexp-reading-room__empty,.gmrexp-reading-room__placeholder { border:1px dashed rgba(121,85,31,.5); background:rgba(255,250,240,.45); }
+.gmrexp-reading-room__section--quiet { background:rgba(242,223,178,.28); }
+.gmrexp-reading-room__footer { position:relative; z-index:1; padding:1.6rem 1rem .35rem; color:#6b4c37; font-family:"Cormorant Garamond",Georgia,serif; }
+.gmrexp-reading-room input,.gmrexp-reading-room select,.gmrexp-reading-room textarea { border:1px solid rgba(74,48,34,.4); border-radius:2px; color:#321f17; background:#fffaf0; box-shadow:inset 0 1px 3px rgba(54,31,18,.08); }
+.gmrexp-reading-room input:focus,.gmrexp-reading-room select:focus,.gmrexp-reading-room textarea:focus { border-color:#603773; outline:2px solid rgba(96,55,115,.24); outline-offset:1px; }
+.gmrexp-reading-room a:focus-visible,.gmrexp-reading-room button:focus-visible,.gmrexp-reading-room input:focus-visible,.gmrexp-reading-room select:focus-visible,.gmrexp-reading-room textarea:focus-visible { outline:3px solid #603773; outline-offset:3px; }
+@media (max-width:760px) { .gmrexp-reading-room { margin:0; border-left:0; border-right:0; } .gmrexp-reading-room__nav a { min-height:60px; } }
+@media (prefers-reduced-motion:reduce) { .gmrexp-reading-room__book:hover,.gmrexp-reading-room__browse-book:hover,.gmrexp-reading-room__nav a:hover { transform:none; } .gmrexp-reading-room__book:hover .gmrexp-reading-room__book-artwork,.gmrexp-reading-room__browse-book:hover .gmrexp-reading-room__book-artwork { transform:none; } }
+@media (forced-colors:active) { .gmrexp-reading-room,.gmrexp-reading-room__nav,.gmrexp-reading-room__section,.gmrexp-reading-room__book,.gmrexp-reading-room__browse-book,.gmrexp-reading-room__button,.gmrexp-reading-room__back { border:1px solid CanvasText; background:Canvas; color:CanvasText; box-shadow:none; } .gmrexp-reading-room__nav a[aria-current="page"] { outline:3px solid Highlight; } }

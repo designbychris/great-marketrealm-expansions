@@ -1,3 +1,12 @@
+## 0.5.0-alpha12 — Phase V.12 — The Reading Room Gets Its Grand Reopening
+
+- Reworked `/expansions/` into a Great MarketRealm family surface using the Companion parchment, ink, guild-purple, brass/gold and leather visual vocabulary.
+- Restyled the masthead, leather navigation rail, catalogue summaries, Almanac shelves, forms, notices and controls without changing their underlying APIs or workflows.
+- Preserved the reusable 3:2 Almanac cover contract while giving cards a book/spine treatment.
+- Replaced stale future-door copy with a clear explanation of Your Library, Browse and Keeper-only desks.
+- Strengthened keyboard focus, reduced-motion, forced-colours and responsive presentation.
+- Preserved the distinction between site/library activation and Companion Campaign sharing.
+
 # Changelog
 
 ## 0.5.0-alpha10.2.1 — V.10B.1 The Cover Stops Pretending It Hasn't Changed

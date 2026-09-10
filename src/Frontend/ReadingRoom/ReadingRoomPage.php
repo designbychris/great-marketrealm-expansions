@@ -362,7 +362,7 @@ final class ReadingRoomPage
             <header class="gmrexp-reading-room__masthead">
                 <p class="gmrexp-reading-room__eyebrow">Great MarketRealm Expansions</p>
                 <h1>The Reading Room</h1>
-                <p class="gmrexp-reading-room__lede">The Keeper's front desk for the Living Library. Installed Almanacs remain canonical; this room reads their state through the Catalogue and Library APIs.</p>
+                <p class="gmrexp-reading-room__lede">Welcome to the Guild's Living Library: discover Almanacs, keep your active shelf, and — when entrusted with the keys — prepare new books for the Great MarketRealm.</p>
             </header>
 
             <?php echo $this->renderNavigation($section, $baseUrl, $canManageExpansions); ?>
@@ -434,9 +434,9 @@ final class ReadingRoomPage
                 </section>
 
                 <section class="gmrexp-reading-room__section gmrexp-reading-room__section--quiet" aria-labelledby="gmrexp-next-desks-heading">
-                    <p class="gmrexp-reading-room__kicker">Doors prepared for later phases</p>
-                    <h2 id="gmrexp-next-desks-heading">The rest of the Reading Room</h2>
-                    <p>Browse, Import Desk, and the Administrator-only Review Desk are now open. Staged material moves into Review only when the Keeper explicitly sends it there.</p>
+                    <p class="gmrexp-reading-room__kicker">A note from the Librarian</p>
+                    <h2 id="gmrexp-next-desks-heading">One library, several desks</h2>
+                    <p><strong>Your Library</strong> is your active shelf. <strong>Browse</strong> shows every installed Almanac available to activate. Keeper-only Import and Review desks prepare source material without changing canon until publication.</p>
                 </section>
             <?php endif; ?>
 
