@@ -175,7 +175,7 @@ final class ReadingRoomPageTest extends TestCase
         $html = $this->page(false)->render('library');
 
         self::assertStringContainsString('Your next adventure is waiting.', $html);
-        self::assertStringContainsString('No Almanacs are active yet.', $html);
+        self::assertStringContainsString('You have no active Almanacs yet.', $html);
     }
 
     public function test_your_library_hides_inactive_almanacs_without_mutating_activation_state(): void
