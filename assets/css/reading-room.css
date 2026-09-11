@@ -1258,3 +1258,289 @@ a.gmrexp-reading-room__compatibility:hover {
 @media (max-width:760px) { .gmrexp-reading-room { margin:0; border-left:0; border-right:0; } .gmrexp-reading-room__nav a { min-height:60px; } }
 @media (prefers-reduced-motion:reduce) { .gmrexp-reading-room__book:hover,.gmrexp-reading-room__browse-book:hover,.gmrexp-reading-room__nav a:hover { transform:none; } .gmrexp-reading-room__book:hover .gmrexp-reading-room__book-artwork,.gmrexp-reading-room__browse-book:hover .gmrexp-reading-room__book-artwork { transform:none; } }
 @media (forced-colors:active) { .gmrexp-reading-room,.gmrexp-reading-room__nav,.gmrexp-reading-room__section,.gmrexp-reading-room__book,.gmrexp-reading-room__browse-book,.gmrexp-reading-room__button,.gmrexp-reading-room__back { border:1px solid CanvasText; background:Canvas; color:CanvasText; box-shadow:none; } .gmrexp-reading-room__nav a[aria-current="page"] { outline:3px solid Highlight; } }
+
+/* Phase V.12A — The Librarian Discovers Books */
+.gmrexp-reading-room__summary-grid,
+.gmrexp-reading-room__browse-summary {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 1rem 0 1.65rem;
+    padding: .5rem .7rem;
+    border: 1px solid rgba(121,85,31,.38);
+    border-radius: 2px;
+    background: linear-gradient(180deg,rgba(255,250,240,.9),rgba(242,223,178,.45));
+    box-shadow: inset 0 1px rgba(255,255,255,.65), 0 4px 10px rgba(54,31,18,.07);
+}
+.gmrexp-reading-room__summary-grid::before,
+.gmrexp-reading-room__browse-summary::before {
+    content: "LIBRARIAN'S CATALOGUE";
+    flex: 0 0 100%;
+    padding: .1rem .35rem .45rem;
+    color: var(--gmrexp-purple);
+    font-family: "Cinzel",Georgia,serif;
+    font-size: .66rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+}
+.gmrexp-reading-room__summary-card {
+    flex: 1 1 145px;
+    min-height: 0;
+    padding: .48rem .75rem;
+    border: 0;
+    border-right: 1px solid rgba(121,85,31,.25);
+    background: transparent;
+    box-shadow: none;
+    text-align: left;
+}
+.gmrexp-reading-room__summary-card:last-child { border-right: 0; }
+.gmrexp-reading-room__summary-card::after { display:none; }
+.gmrexp-reading-room__summary-card strong {
+    display:inline;
+    margin-right:.28rem;
+    font-size:1.15rem;
+    line-height:1;
+}
+.gmrexp-reading-room__summary-card span { display:inline; font-size:.72rem; }
+
+.gmrexp-reading-room__shelf,
+.gmrexp-reading-room__browse-shelf {
+    position:relative;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(250px,300px));
+    justify-content:center;
+    align-items:start;
+    gap:2.1rem 1.45rem;
+    padding:1.55rem 1rem 2.2rem;
+    border:1px solid rgba(58,34,22,.34);
+    border-radius:2px;
+    background:
+        linear-gradient(180deg,rgba(76,45,29,.06),transparent 17%),
+        repeating-linear-gradient(90deg,rgba(82,46,27,.025) 0 1px,transparent 1px 5px),
+        #ead4a4;
+    box-shadow:inset 0 8px 20px rgba(77,45,27,.08);
+}
+.gmrexp-reading-room__shelf::before,
+.gmrexp-reading-room__browse-shelf::before {
+    content:"";
+    position:absolute;
+    left:-1px; right:-1px; bottom:-8px;
+    height:16px;
+    border:1px solid #3e281d;
+    background:linear-gradient(#80533a,#503225 60%,#342118);
+    box-shadow:0 6px 9px rgba(45,27,18,.24),inset 0 1px rgba(255,255,255,.14);
+}
+.gmrexp-reading-room__shelf::after,
+.gmrexp-reading-room__browse-shelf::after {
+    content:"ACTIVE ALMANACS";
+    position:absolute;
+    left:50%; bottom:-20px;
+    transform:translateX(-50%);
+    padding:.25rem .8rem;
+    color:#3d271d;
+    border:1px solid #8f681f;
+    background:linear-gradient(#f5dfa4,#c99d43);
+    box-shadow:0 2px 4px rgba(45,27,18,.2);
+    font-family:"Cinzel",Georgia,serif;
+    font-size:.62rem;
+    font-weight:800;
+    letter-spacing:.12em;
+    white-space:nowrap;
+}
+.gmrexp-reading-room__browse-shelf::after { content:"THE CATALOGUE SHELVES"; }
+
+.gmrexp-reading-room__book,
+.gmrexp-reading-room__browse-book {
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+    padding:.68rem .68rem .85rem;
+    overflow:visible;
+    border:1px solid rgba(65,39,25,.42);
+    border-radius:3px;
+    background:linear-gradient(90deg,#f4dfb8 0,#fff8e7 6%,#fff8e7 94%,#e4c893 100%);
+    box-shadow:0 13px 18px rgba(54,31,18,.18),inset 0 0 0 1px rgba(255,255,255,.58);
+    transition:transform 180ms ease,box-shadow 180ms ease;
+}
+.gmrexp-reading-room__book::before,
+.gmrexp-reading-room__browse-book::before {
+    top:.68rem;
+    bottom:.68rem;
+    left:-5px;
+    width:7px;
+    border-radius:2px 0 0 2px;
+    background:linear-gradient(90deg,#3f271c,#87583d 45%,#533326);
+    box-shadow:-2px 2px 3px rgba(54,31,18,.16);
+}
+.gmrexp-reading-room__book:hover,
+.gmrexp-reading-room__book:focus-within,
+.gmrexp-reading-room__browse-book:hover,
+.gmrexp-reading-room__browse-book:focus-within {
+    transform:translateY(-7px) rotate(-.15deg);
+    box-shadow:0 20px 27px rgba(54,31,18,.24),inset 0 0 0 1px rgba(255,255,255,.58);
+}
+.gmrexp-reading-room__book-topline {
+    order:-3;
+    position:relative;
+    z-index:4;
+    margin:0 0 .5rem;
+}
+.gmrexp-reading-room__cover-link {
+    order:-2;
+    display:block;
+    color:inherit;
+    text-decoration:none;
+}
+.gmrexp-reading-room__book-artwork-frame,
+.gmrexp-reading-room__browse-artwork-frame {
+    position:relative;
+    overflow:hidden;
+    margin:0;
+    aspect-ratio:3/2;
+    border:3px solid #38231a;
+    border-radius:2px;
+    background:linear-gradient(145deg,#5f3c2b,#2d1c16);
+    box-shadow:
+        4px 4px 0 #ead7aa,
+        7px 7px 0 #79513a,
+        10px 11px 15px rgba(45,27,18,.28),
+        inset 0 0 0 1px rgba(255,255,255,.14);
+    transform:perspective(800px) rotateY(-1.25deg);
+    transform-origin:left center;
+}
+.gmrexp-reading-room__book-artwork-frame::before,
+.gmrexp-reading-room__browse-artwork-frame::before {
+    content:"";
+    position:absolute;
+    z-index:2;
+    inset:0 auto 0 0;
+    width:9px;
+    pointer-events:none;
+    background:linear-gradient(90deg,rgba(0,0,0,.5),rgba(255,255,255,.12),rgba(0,0,0,.08));
+}
+.gmrexp-reading-room__book-artwork,
+.gmrexp-reading-room__browse-artwork { width:100%; height:100%; object-fit:cover; }
+.gmrexp-reading-room__cover-cue {
+    position:absolute;
+    z-index:3;
+    right:.45rem;
+    bottom:.42rem;
+    padding:.26rem .46rem;
+    opacity:0;
+    color:#fff8e8;
+    background:rgba(43,27,20,.88);
+    border:1px solid rgba(232,207,132,.55);
+    font-family:"Cinzel",Georgia,serif;
+    font-size:.58rem;
+    font-weight:800;
+    letter-spacing:.055em;
+    transform:translateY(5px);
+    transition:opacity 160ms ease,transform 160ms ease;
+}
+.gmrexp-reading-room__cover-link:hover .gmrexp-reading-room__cover-cue,
+.gmrexp-reading-room__cover-link:focus-visible .gmrexp-reading-room__cover-cue { opacity:1; transform:none; }
+.gmrexp-reading-room__cover-link:focus-visible { outline:3px solid var(--gmrexp-purple); outline-offset:6px; }
+.gmrexp-reading-room__book-artwork-frame.is-placeholder,
+.gmrexp-reading-room__browse-artwork-frame.is-placeholder {
+    display:grid;
+    place-items:center;
+    min-height:150px;
+    background:
+        radial-gradient(circle at 50% 35%,rgba(232,207,132,.14),transparent 32%),
+        linear-gradient(145deg,#68412d,#39251c);
+}
+.gmrexp-reading-room__cover-placeholder {
+    display:flex;
+    flex-direction:column;
+    gap:.5rem;
+    max-width:78%;
+    color:#fff1cc;
+    text-align:center;
+    font-family:"Cinzel",Georgia,serif;
+    text-shadow:0 1px 2px #21140f;
+}
+.gmrexp-reading-room__cover-placeholder strong { font-size:1.05rem; }
+.gmrexp-reading-room__cover-placeholder small { color:#e8cf84; font-size:.62rem; letter-spacing:.11em; text-transform:uppercase; }
+
+.gmrexp-reading-room__catalogue-plate {
+    position:relative;
+    margin:1.05rem .18rem .25rem;
+    padding:.72rem .75rem .68rem;
+    border:1px solid rgba(121,85,31,.42);
+    background:linear-gradient(180deg,#fff4d7,#efdbad);
+    box-shadow:inset 0 0 0 2px rgba(255,250,240,.65),0 2px 4px rgba(54,31,18,.08);
+    text-align:center;
+}
+.gmrexp-reading-room__catalogue-plate::before,
+.gmrexp-reading-room__catalogue-plate::after {
+    content:"•";
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    color:#926d25;
+}
+.gmrexp-reading-room__catalogue-plate::before { left:.34rem; }
+.gmrexp-reading-room__catalogue-plate::after { right:.34rem; }
+.gmrexp-reading-room__catalogue-plate h3,
+.gmrexp-reading-room__browse-book-heading h3 {
+    margin:.18rem 0 .1rem;
+    font-family:"Cinzel",Georgia,serif;
+    font-size:1.05rem;
+    line-height:1.15;
+}
+.gmrexp-reading-room__catalogue-plate .gmrexp-reading-room__book-label { font-size:.58rem; }
+.gmrexp-reading-room__book-blurb,
+.gmrexp-reading-room__browse-description {
+    display:-webkit-box;
+    overflow:hidden;
+    margin:.55rem 0 0;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:3;
+    font-size:.8rem;
+    line-height:1.35;
+}
+.gmrexp-reading-room__browse-book-heading { margin-top:0; align-items:center; }
+.gmrexp-reading-room__entry-total { min-width:58px; padding:.45rem; border-radius:2px; }
+.gmrexp-reading-room__entry-total span { font-size:1.15rem; }
+.gmrexp-reading-room__book-facts,
+.gmrexp-reading-room__activation,
+.gmrexp-reading-room__contents,
+.gmrexp-reading-room__future-note,
+.gmrexp-reading-room__catalogue-editor { font-size:.72rem; }
+.gmrexp-reading-room__book-facts { margin:.55rem .2rem 0; }
+.gmrexp-reading-room__activation { margin-top:.65rem; padding:.7rem; }
+.gmrexp-reading-room__contents { margin-top:.7rem; padding-top:.65rem; }
+.gmrexp-reading-room__future-note { margin-top:.55rem; padding-top:.35rem; text-align:center; }
+
+@media (max-width:980px) {
+    .gmrexp-reading-room__shelf,
+    .gmrexp-reading-room__browse-shelf { grid-template-columns:repeat(2,minmax(230px,300px)); }
+}
+@media (max-width:620px) {
+    .gmrexp-reading-room__summary-grid,
+    .gmrexp-reading-room__browse-summary { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .gmrexp-reading-room__summary-grid::before,
+    .gmrexp-reading-room__browse-summary::before { grid-column:1/-1; }
+    .gmrexp-reading-room__summary-card { border-right:0; border-bottom:1px solid rgba(121,85,31,.2); }
+    .gmrexp-reading-room__shelf,
+    .gmrexp-reading-room__browse-shelf { grid-template-columns:minmax(0,320px); padding-inline:.75rem; }
+}
+@media (prefers-reduced-motion:reduce) {
+    .gmrexp-reading-room__book:hover,
+    .gmrexp-reading-room__book:focus-within,
+    .gmrexp-reading-room__browse-book:hover,
+    .gmrexp-reading-room__browse-book:focus-within { transform:none; }
+    .gmrexp-reading-room__cover-cue { transition:none; transform:none; }
+}
+@media (forced-colors:active) {
+    .gmrexp-reading-room__shelf,
+    .gmrexp-reading-room__browse-shelf,
+    .gmrexp-reading-room__catalogue-plate,
+    .gmrexp-reading-room__book-artwork-frame,
+    .gmrexp-reading-room__browse-artwork-frame { border:1px solid CanvasText; background:Canvas; box-shadow:none; }
+    .gmrexp-reading-room__shelf::before,
+    .gmrexp-reading-room__shelf::after,
+    .gmrexp-reading-room__browse-shelf::before,
+    .gmrexp-reading-room__browse-shelf::after { display:none; }
+}

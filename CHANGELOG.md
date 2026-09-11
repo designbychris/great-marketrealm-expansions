@@ -1,3 +1,11 @@
+## 0.5.0-alpha12.1 — Phase V.12A — The Librarian Discovers Books
+
+- Recasts Your Library and Browse as face-out sourcebook shelves while preserving the 3:2 Almanac Cover Standard.
+- Makes cover art the primary open-Almanac discovery surface with an intentional fallback cover when artwork is absent.
+- Compresses dashboard-like metrics into a Librarian's Catalogue strip.
+- Adds timber shelf depth, page-edge/book-spine treatment, brass shelf labels, catalogue plates, restrained hover lift, and accessibility fallbacks.
+- Keeps activation, compatibility, correction and canonical Catalogue semantics unchanged.
+
 ## 0.5.0-alpha12 — Phase V.12 — The Reading Room Gets Its Grand Reopening
 
 - Reworked `/expansions/` into a Great MarketRealm family surface using the Companion parchment, ink, guild-purple, brass/gold and leather visual vocabulary.

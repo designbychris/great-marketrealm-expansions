@@ -1,5 +1,8 @@
 # Great MarketRealm Expansions Roadmap
 
+## Phase V.12A — The Librarian Discovers Books ✅
+Face-out 3:2 sourcebook shelves, catalogue-strip metrics, physical folio treatment, fallback covers and preserved Library/Browse semantics.
+
 ### V.12 — The Reading Room Gets Its Grand Reopening ✅
 The Reading Room now visually belongs to the Great MarketRealm family: parchment archive surfaces, leather navigation, brass/gold detailing, guild-purple controls, book-like Almanac cards, and accessibility/responsive polish — without changing Catalogue, Library, review, publication or consumer semantics.
 

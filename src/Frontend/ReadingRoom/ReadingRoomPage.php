@@ -416,11 +416,21 @@ final class ReadingRoomPage
                                         </a>
                                     </div>
                                     <?php $artworkUrl = $this->libraryArtworkUrl($catalogueExpansion); ?>
-                                    <?php if ($artworkUrl !== null): ?><div class="gmrexp-reading-room__book-artwork-frame"><img class="gmrexp-reading-room__book-artwork" src="<?php echo $this->escAttr($artworkUrl); ?>" alt="" loading="lazy"></div><?php endif; ?>
-                                    <div class="gmrexp-reading-room__book-identity-copy">
+                                    <a class="gmrexp-reading-room__cover-link" href="<?php echo $this->escAttr($this->expansionUrl($baseUrl, $catalogueExpansion->key())); ?>" aria-label="<?php echo $this->escAttr('Open Almanac: ' . $catalogueExpansion->name()); ?>">
+                                        <div class="gmrexp-reading-room__book-artwork-frame<?php echo $artworkUrl === null ? ' is-placeholder' : ''; ?>">
+                                            <?php if ($artworkUrl !== null): ?>
+                                                <img class="gmrexp-reading-room__book-artwork" src="<?php echo $this->escAttr($artworkUrl); ?>" alt="" loading="lazy">
+                                            <?php else: ?>
+                                                <span class="gmrexp-reading-room__cover-placeholder" aria-hidden="true"><strong><?php echo $this->escHtml($catalogueExpansion->name()); ?></strong><small>Great MarketRealm Almanac</small></span>
+                                            <?php endif; ?>
+                                            <span class="gmrexp-reading-room__cover-cue" aria-hidden="true">Open Almanac →</span>
+                                        </div>
+                                    </a>
+                                    <div class="gmrexp-reading-room__book-identity-copy gmrexp-reading-room__catalogue-plate">
+                                        <p class="gmrexp-reading-room__book-label">Active Almanac</p>
                                         <h3><?php echo $this->escHtml($catalogueExpansion->name()); ?></h3>
                                         <p class="gmrexp-reading-room__version">Version <?php echo $this->escHtml($catalogueExpansion->version()); ?></p>
-                                        <?php if ($catalogueExpansion->description() !== ''): ?><p><?php echo $this->escHtml($catalogueExpansion->description()); ?></p><?php endif; ?>
+                                        <?php if ($catalogueExpansion->description() !== ''): ?><p class="gmrexp-reading-room__book-blurb"><?php echo $this->escHtml($catalogueExpansion->description()); ?></p><?php endif; ?>
                                     </div>
                                     <?php echo $this->renderCatalogueEditor($catalogueExpansion); ?>
                                     <dl class="gmrexp-reading-room__book-facts">
@@ -526,8 +536,17 @@ final class ReadingRoomPage
                             </div>
 
                             <?php $artworkUrl = $this->browseArtworkUrl($entry); ?>
-                            <?php if ($artworkUrl !== null): ?><div class="gmrexp-reading-room__browse-artwork-frame"><img class="gmrexp-reading-room__browse-artwork" src="<?php echo $this->escAttr($artworkUrl); ?>" alt="" loading="lazy"></div><?php endif; ?>
-                            <div class="gmrexp-reading-room__browse-identity-copy">
+                            <a class="gmrexp-reading-room__cover-link" href="<?php echo $this->escAttr($this->expansionUrl($baseUrl, $entry->key())); ?>" aria-label="<?php echo $this->escAttr('Open Almanac: ' . $entry->name()); ?>">
+                                <div class="gmrexp-reading-room__browse-artwork-frame<?php echo $artworkUrl === null ? ' is-placeholder' : ''; ?>">
+                                    <?php if ($artworkUrl !== null): ?>
+                                        <img class="gmrexp-reading-room__browse-artwork" src="<?php echo $this->escAttr($artworkUrl); ?>" alt="" loading="lazy">
+                                    <?php else: ?>
+                                        <span class="gmrexp-reading-room__cover-placeholder" aria-hidden="true"><strong><?php echo $this->escHtml($entry->name()); ?></strong><small>Great MarketRealm Almanac</small></span>
+                                    <?php endif; ?>
+                                    <span class="gmrexp-reading-room__cover-cue" aria-hidden="true">Open Almanac →</span>
+                                </div>
+                            </a>
+                            <div class="gmrexp-reading-room__browse-identity-copy gmrexp-reading-room__catalogue-plate">
                                     <div class="gmrexp-reading-room__browse-book-heading">
                                         <div>
                                             <p class="gmrexp-reading-room__book-label">Installed Almanac</p>
