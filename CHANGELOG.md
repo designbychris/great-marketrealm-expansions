@@ -1,3 +1,13 @@
+## 0.5.0-alpha12.4 — Phase V.12B.2 — The Featured Expansion Finds Its Frame
+
+- Rebalances the featured expansion into a shorter cinematic banner so the 3:2 Almanac artwork no longer overwhelms the page.
+- Uses a wider artwork crop beside a compact deep-indigo sourcebook panel with gold framing and clearer hierarchy.
+- Gives Midnight Menu its proper `A Takeawayton Expansion` subtitle while preserving generic Almanac copy for other books.
+- Turns featured content-family chips into small medallion-style discovery markers without changing their underlying counts.
+- Replaces the bright purple featured CTA with a quieter parchment/cream-and-gold action while leaving the rest of the button system untouched.
+- Removes the Pizza Rat cameo from the rendered featured panel while its visual direction is reconsidered.
+- Preserves activation, Browse, metadata, Catalogue, consumer bridge and accessibility semantics.
+
 ## 0.5.0-alpha12.3 — Phase V.12B.1 — The Reading Room Finds Its Front Door
 
 - Removes the plugin-owned Reading Room page background so Elementor/site artwork can provide the environment behind the shortcode.
@@ -5,7 +15,6 @@
 - Removes the decorative masthead side boxes, keeps The Reading Room title on one line where space allows, and switches it to white for stronger contrast.
 - Rebuilds navigation into friendly My Expansions / Discover destinations plus a quieter Keeper Tools group with helper copy.
 - Adds more breathing room between the masthead, navigation, and expansion experience.
-- Adds a pixel-art Pizza Rat cameo to The Midnight Menu featured panel.
 
 ## 0.5.0-alpha12.2 — Phase V.12B — Beyond the Reading Room
 

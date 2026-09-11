@@ -31,13 +31,16 @@ final class ReadingRoomFrontDoorRegressionTest extends TestCase
         self::assertStringContainsString('Explore every available expansion', $page);
     }
 
-    public function test_v12b1_midnight_menu_has_pixel_pizza_rat_asset(): void
+    public function test_v12b2_featured_expansion_uses_a_quieter_sourcebook_action_without_a_mascot_cameo(): void
     {
         $root = dirname(__DIR__, 4);
         $page = file_get_contents($root . '/src/Frontend/ReadingRoom/ReadingRoomPage.php');
+        $css = file_get_contents($root . '/assets/css/reading-room.css');
         self::assertIsString($page);
-        self::assertFileExists($root . '/assets/images/pizza-rat-pixel.png');
-        self::assertStringContainsString('pizza-rat-pixel.png', $page);
-        self::assertStringContainsString('gmrexp-reading-room__pizza-rat', $page);
+        self::assertIsString($css);
+        self::assertStringContainsString('gmrexp-reading-room__button--feature', $page);
+        self::assertStringNotContainsString('gmrexp-reading-room__pizza-rat', $page);
+        self::assertStringNotContainsString('pizza-rat-pixel.png', $page);
+        self::assertStringContainsString('Phase V.12B.2 — The Featured Expansion Finds Its Frame', $css);
     }
 }

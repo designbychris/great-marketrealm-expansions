@@ -403,19 +403,13 @@ final class ReadingRoomPage
                             <div class="gmrexp-reading-room__feature-copy">
                                 <p class="gmrexp-reading-room__kicker">Featured expansion</p>
                                 <h2 id="gmrexp-featured-heading"><?php echo $this->escHtml($featuredExpansion->name()); ?></h2>
-                                <p class="gmrexp-reading-room__feature-subtitle">A Great MarketRealm Almanac</p>
+                                <p class="gmrexp-reading-room__feature-subtitle"><?php echo $featuredExpansion->key() === 'midnight-menu' ? 'A Takeawayton Expansion' : 'A Great MarketRealm Almanac'; ?></p>
                                 <?php if ($featuredExpansion->description() !== ''): ?><p class="gmrexp-reading-room__feature-description"><?php echo $this->escHtml($featuredExpansion->description()); ?></p><?php endif; ?>
                                 <?php echo $this->renderContentTypeChips($featuredCounts, 5); ?>
                                 <div class="gmrexp-reading-room__feature-actions">
-                                    <a class="gmrexp-reading-room__button gmrexp-reading-room__button--primary" href="<?php echo $this->escAttr($this->expansionUrl($baseUrl, $featuredExpansion->key())); ?>">Explore <?php echo $this->escHtml($featuredExpansion->name()); ?> <span aria-hidden="true">→</span></a>
+                                    <a class="gmrexp-reading-room__button gmrexp-reading-room__button--feature" href="<?php echo $this->escAttr($this->expansionUrl($baseUrl, $featuredExpansion->key())); ?>">Explore <?php echo $this->escHtml($featuredExpansion->name()); ?> <span aria-hidden="true">→</span></a>
                                     <span class="gmrexp-reading-room__feature-meta"><?php echo $this->escHtml((string) $featuredEntryCount); ?> additions · <?php echo $featuredEntry->active() ? 'Active' : 'Available'; ?></span>
                                 </div>
-                                <?php if ($featuredExpansion->key() === 'midnight-menu'): ?>
-                                    <div class="gmrexp-reading-room__pizza-rat">
-                                        <img src="<?php echo $this->escAttr(function_exists('plugins_url') ? plugins_url('assets/images/pizza-rat-pixel.png', GMREXP_FILE) : 'assets/images/pizza-rat-pixel.png'); ?>" alt="Pixel-art Pizza Rat carrying a slice of pizza" loading="lazy">
-                                        <p class="gmrexp-reading-room__feature-whisper">Includes Pizza Rat. Obviously.</p>
-                                    </div>
-                                <?php endif; ?>
                             </div>
                         </section>
                     <?php endif; ?>
@@ -540,7 +534,7 @@ final class ReadingRoomPage
         ?>
         <ul class="gmrexp-reading-room__content-chips" aria-label="Expansion contents">
             <?php foreach ($visible as $type => $count): ?>
-                <li><span><?php echo $this->escHtml($this->contentTypeLabel($type)); ?></span><strong><?php echo $this->escHtml((string) $count); ?></strong></li>
+                <li data-content-type="<?php echo $this->escAttr($type); ?>"><span><?php echo $this->escHtml($this->contentTypeLabel($type)); ?></span><strong><?php echo $this->escHtml((string) $count); ?></strong></li>
             <?php endforeach; ?>
             <?php if ($remaining > 0): ?><li class="is-more"><span>More</span><strong>+<?php echo $this->escHtml((string) $remaining); ?></strong></li><?php endif; ?>
         </ul>

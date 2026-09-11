@@ -27,7 +27,8 @@ final class ReadingRoomBeyondReadingRoomRegressionTest extends TestCase
         self::assertIsString($page);
         self::assertIsString($css);
         self::assertStringContainsString('renderContentTypeChips', $page);
-        self::assertStringContainsString('Includes Pizza Rat. Obviously.', $page);
+        self::assertStringContainsString('A Takeawayton Expansion', $page);
+        self::assertStringContainsString('data-content-type=', $page);
         self::assertStringContainsString('gmrexp-reading-room__feature--midnight-menu', $css);
     }
 

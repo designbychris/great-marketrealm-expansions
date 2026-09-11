@@ -1,5 +1,8 @@
+## Phase V.12B.2 — The Featured Expansion Finds Its Frame ✅
+Rebalances the cinematic featured-expansion panel into a compact wide banner: controlled artwork crop, darker sourcebook information panel, content-family medallions, a cream/gold primary action, and no mascot cameo while character art direction remains unsettled.
+
 ## Phase V.12B.1 — The Reading Room Finds Its Front Door ✅
-Transparent host-page integration, wider presentation canvas, simplified white-title masthead, friendlier navigation hierarchy, extra breathing room and a pixel Pizza Rat cameo.
+Transparent host-page integration, wider presentation canvas, simplified white-title masthead, friendlier navigation hierarchy, and extra breathing room around the main discovery surfaces.
 
 # Great MarketRealm Expansions Roadmap
 
