@@ -376,81 +376,88 @@ final class ReadingRoomPage
             <?php elseif ($section !== 'library'): ?>
                 <?php echo $this->renderPlaceholder($section, $baseUrl); ?>
             <?php else: ?>
-                <section class="gmrexp-reading-room__section" aria-labelledby="gmrexp-library-heading">
+                <?php
+                $browseShelf = new BrowseShelf($this->catalogue, $this->library);
+                $browseEntries = $browseShelf->entries();
+                $featuredEntry = $activeLibraryEntries[0] ?? ($this->library->expansions()[0] ?? null);
+                ?>
+                <section class="gmrexp-reading-room__experience" aria-labelledby="gmrexp-library-heading">
                     <?php if (isset($_GET['gmrexp_metadata_updated'])): ?><div class="gmrexp-reading-room__notice" role="status">The Keeper corrected the published Almanac catalogue card.</div><?php endif; ?>
                     <?php if (isset($_GET['gmrexp_metadata_error']) && is_string($_GET['gmrexp_metadata_error'])): ?><div class="gmrexp-reading-room__import-security" role="alert"><strong>Catalogue correction not saved.</strong><p><?php echo $this->escHtml($this->unslash($_GET['gmrexp_metadata_error'])); ?></p></div><?php endif; ?>
-                    <div class="gmrexp-reading-room__section-heading">
-                        <div>
-                            <p class="gmrexp-reading-room__kicker">Active shelf</p>
-                            <h2 id="gmrexp-library-heading">Your Library</h2>
-                        </div>
-                        <span class="gmrexp-reading-room__status">Active Almanacs only</span>
-                    </div>
 
-                    <div class="gmrexp-reading-room__summary-grid" aria-label="Living Library summary">
-                        <?php echo $this->summaryCard('Active Almanacs', $summary['active']); ?>
-                        <?php echo $this->summaryCard('Available in Browse', $summary['installed']); ?>
-                        <?php echo $this->summaryCard('Active Entries', $activeEntryCount); ?>
-                        <?php echo $this->summaryCard('Ready', $activeReadyCount); ?>
-                    </div>
+                    <?php if ($featuredEntry !== null): ?>
+                        <?php
+                        $featuredExpansion = $featuredEntry->expansion();
+                        $featuredArtwork = $this->libraryArtworkUrl($featuredExpansion);
+                        $featuredCounts = $this->contentTypeCountsForExpansion($featuredExpansion->key());
+                        $featuredEntryCount = array_sum($featuredCounts);
+                        ?>
+                        <section class="gmrexp-reading-room__feature gmrexp-reading-room__feature--<?php echo $this->escAttr($featuredExpansion->key()); ?>" aria-labelledby="gmrexp-featured-heading">
+                            <div class="gmrexp-reading-room__feature-art">
+                                <?php if ($featuredArtwork !== null): ?>
+                                    <img src="<?php echo $this->escAttr($featuredArtwork); ?>" alt="" loading="eager">
+                                <?php else: ?>
+                                    <div class="gmrexp-reading-room__feature-placeholder" aria-hidden="true"><span>Great MarketRealm</span><strong><?php echo $this->escHtml($featuredExpansion->name()); ?></strong><small>A Realm Expansion</small></div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="gmrexp-reading-room__feature-copy">
+                                <p class="gmrexp-reading-room__kicker">Featured expansion</p>
+                                <h2 id="gmrexp-featured-heading"><?php echo $this->escHtml($featuredExpansion->name()); ?></h2>
+                                <p class="gmrexp-reading-room__feature-subtitle">A Great MarketRealm Almanac</p>
+                                <?php if ($featuredExpansion->description() !== ''): ?><p class="gmrexp-reading-room__feature-description"><?php echo $this->escHtml($featuredExpansion->description()); ?></p><?php endif; ?>
+                                <?php echo $this->renderContentTypeChips($featuredCounts, 5); ?>
+                                <div class="gmrexp-reading-room__feature-actions">
+                                    <a class="gmrexp-reading-room__button gmrexp-reading-room__button--primary" href="<?php echo $this->escAttr($this->expansionUrl($baseUrl, $featuredExpansion->key())); ?>">Explore <?php echo $this->escHtml($featuredExpansion->name()); ?> <span aria-hidden="true">→</span></a>
+                                    <span class="gmrexp-reading-room__feature-meta"><?php echo $this->escHtml((string) $featuredEntryCount); ?> additions · <?php echo $featuredEntry->active() ? 'Active' : 'Available'; ?></span>
+                                </div>
+                                <?php if ($featuredExpansion->key() === 'midnight-menu'): ?><p class="gmrexp-reading-room__feature-whisper">Includes Pizza Rat. Obviously. 🍕🐀</p><?php endif; ?>
+                            </div>
+                        </section>
+                    <?php endif; ?>
 
-                    <?php if ($activeLibraryEntries === []): ?>
-                        <div class="gmrexp-reading-room__empty">
-                            <h3>Your active shelf is waiting.</h3>
-                            <p>No Almanacs are active yet. Browse the available expansions and activate the ones you want this account to use.</p>
-                            <a class="gmrexp-reading-room__back" href="<?php echo $this->escAttr($this->navigationUrl('browse', $baseUrl)); ?>">Browse available expansions →</a>
+                    <section class="gmrexp-reading-room__collection" aria-labelledby="gmrexp-library-heading">
+                        <div class="gmrexp-reading-room__collection-heading">
+                            <div><p class="gmrexp-reading-room__kicker">Your adventures beyond the MarketRealm</p><h2 id="gmrexp-library-heading">Your Library</h2><p>These Almanacs are active for your account and ready to share with your campaigns.</p></div>
+                            <a class="gmrexp-reading-room__text-link" href="<?php echo $this->escAttr($this->navigationUrl('browse', $baseUrl)); ?>">View all expansions <span aria-hidden="true">→</span></a>
                         </div>
-                    <?php else: ?>
-                        <div class="gmrexp-reading-room__shelf">
-                            <?php foreach ($activeLibraryEntries as $expansion): ?>
-                                <?php
-                                $catalogueExpansion = $expansion->expansion();
-                                $report = $this->library->compatibility($catalogueExpansion->key());
-                                $entryCount = count($this->catalogue->contentByExpansion($catalogueExpansion->key()));
-                                ?>
-                                <article class="gmrexp-reading-room__book">
-                                    <div class="gmrexp-reading-room__book-topline">
-                                        <span class="gmrexp-reading-room__pill"><?php echo $this->escHtml($expansion->active() ? 'Active' : 'Inactive'); ?></span>
-                                        <a class="gmrexp-reading-room__compatibility" data-status="<?php echo $this->escAttr($report->status()); ?>" href="<?php echo $this->escAttr($this->compatibilityUrl($baseUrl, $catalogueExpansion->key())); ?>" aria-label="<?php echo $this->escAttr('Explain ' . ucfirst($report->status()) . ' compatibility for ' . $catalogueExpansion->name()); ?>">
-                                            <?php echo $this->escHtml(ucfirst($report->status())); ?>
+                        <div class="gmrexp-reading-room__catalogue-strip" aria-label="Living Library summary">
+                            <span><strong><?php echo $this->escHtml((string) $summary['active']); ?></strong> active</span><span><strong><?php echo $this->escHtml((string) $summary['installed']); ?></strong> Available in Browse</span><span><strong><?php echo $this->escHtml((string) $activeEntryCount); ?></strong> Active Entries</span><span><strong><?php echo $this->escHtml((string) $activeReadyCount); ?></strong> ready</span>
+                        </div>
+                        <?php if ($activeLibraryEntries === []): ?>
+                            <div class="gmrexp-reading-room__empty gmrexp-reading-room__empty--inviting"><h3>Your next adventure is waiting.</h3><p>You have no active Almanacs yet. Discover a realm, activate it, and share it with your campaigns.</p><a class="gmrexp-reading-room__button gmrexp-reading-room__button--primary" href="<?php echo $this->escAttr($this->navigationUrl('browse', $baseUrl)); ?>">Discover expansions →</a></div>
+                        <?php else: ?>
+                            <div class="gmrexp-reading-room__active-list">
+                                <?php foreach ($activeLibraryEntries as $expansion): ?>
+                                    <?php $catalogueExpansion = $expansion->expansion(); $artworkUrl = $this->libraryArtworkUrl($catalogueExpansion); $counts = $this->contentTypeCountsForExpansion($catalogueExpansion->key()); ?>
+                                    <article class="gmrexp-reading-room__active-card gmrexp-reading-room__active-card--<?php echo $this->escAttr($catalogueExpansion->key()); ?>">
+                                        <a class="gmrexp-reading-room__active-art" href="<?php echo $this->escAttr($this->expansionUrl($baseUrl, $catalogueExpansion->key())); ?>" aria-label="<?php echo $this->escAttr('Open Almanac: ' . $catalogueExpansion->name()); ?>">
+                                            <?php if ($artworkUrl !== null): ?><img src="<?php echo $this->escAttr($artworkUrl); ?>" alt="" loading="lazy"><?php else: ?><span class="gmrexp-reading-room__mini-placeholder" aria-hidden="true"><?php echo $this->escHtml($catalogueExpansion->name()); ?></span><?php endif; ?><span class="gmrexp-reading-room__active-ribbon">Active</span>
                                         </a>
-                                    </div>
-                                    <?php $artworkUrl = $this->libraryArtworkUrl($catalogueExpansion); ?>
-                                    <a class="gmrexp-reading-room__cover-link" href="<?php echo $this->escAttr($this->expansionUrl($baseUrl, $catalogueExpansion->key())); ?>" aria-label="<?php echo $this->escAttr('Open Almanac: ' . $catalogueExpansion->name()); ?>">
-                                        <div class="gmrexp-reading-room__book-artwork-frame<?php echo $artworkUrl === null ? ' is-placeholder' : ''; ?>">
-                                            <?php if ($artworkUrl !== null): ?>
-                                                <img class="gmrexp-reading-room__book-artwork" src="<?php echo $this->escAttr($artworkUrl); ?>" alt="" loading="lazy">
-                                            <?php else: ?>
-                                                <span class="gmrexp-reading-room__cover-placeholder" aria-hidden="true"><strong><?php echo $this->escHtml($catalogueExpansion->name()); ?></strong><small>Great MarketRealm Almanac</small></span>
-                                            <?php endif; ?>
-                                            <span class="gmrexp-reading-room__cover-cue" aria-hidden="true">Open Almanac →</span>
-                                        </div>
-                                    </a>
-                                    <div class="gmrexp-reading-room__book-identity-copy gmrexp-reading-room__catalogue-plate">
-                                        <p class="gmrexp-reading-room__book-label">Active Almanac</p>
-                                        <h3><?php echo $this->escHtml($catalogueExpansion->name()); ?></h3>
-                                        <p class="gmrexp-reading-room__version">Version <?php echo $this->escHtml($catalogueExpansion->version()); ?></p>
-                                        <?php if ($catalogueExpansion->description() !== ''): ?><p class="gmrexp-reading-room__book-blurb"><?php echo $this->escHtml($catalogueExpansion->description()); ?></p><?php endif; ?>
-                                    </div>
-                                    <?php echo $this->renderCatalogueEditor($catalogueExpansion); ?>
-                                    <dl class="gmrexp-reading-room__book-facts">
-                                        <div><dt>Canonical key</dt><dd><code><?php echo $this->escHtml($catalogueExpansion->key()); ?></code></dd></div>
-                                        <div><dt>Entries</dt><dd><?php echo $this->escHtml((string) $entryCount); ?></dd></div>
-                                    </dl>
+                                        <div class="gmrexp-reading-room__active-copy"><p class="gmrexp-reading-room__book-label">Active Almanac</p><h3><?php echo $this->escHtml($catalogueExpansion->name()); ?></h3><p class="gmrexp-reading-room__version">Version <?php echo $this->escHtml($catalogueExpansion->version()); ?></p><?php if ($catalogueExpansion->description() !== ''): ?><p><?php echo $this->escHtml($catalogueExpansion->description()); ?></p><?php endif; ?><?php echo $this->renderContentTypeChips($counts, 4); ?></div>
+                                        <div class="gmrexp-reading-room__active-actions"><a class="gmrexp-reading-room__button gmrexp-reading-room__button--primary" href="<?php echo $this->escAttr($this->expansionUrl($baseUrl, $catalogueExpansion->key())); ?>">View details →</a><?php echo $this->renderActivationForm($catalogueExpansion->key(), true); ?><?php echo $this->renderCatalogueEditor($catalogueExpansion); ?><details class="gmrexp-reading-room__keeper-details"><summary>Keeper information</summary><dl><div><dt>Canonical key</dt><dd><code><?php echo $this->escHtml($catalogueExpansion->key()); ?></code></dd></div><div><dt>Entries</dt><dd><?php echo $this->escHtml((string) array_sum($counts)); ?></dd></div><div><dt>Compatibility</dt><dd><?php echo $this->escHtml(ucfirst($this->library->compatibility($catalogueExpansion->key())->status())); ?></dd></div></dl></details></div>
+                                    </article>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    </section>
+
+                    <section class="gmrexp-reading-room__discover-preview" aria-labelledby="gmrexp-discover-heading">
+                        <div class="gmrexp-reading-room__collection-heading"><div><p class="gmrexp-reading-room__kicker">Discover new expansions</p><h2 id="gmrexp-discover-heading">More worlds are waiting</h2><p>Browse every Almanac installed in the Living Library and choose which adventures belong on your active shelf.</p></div><a class="gmrexp-reading-room__text-link" href="<?php echo $this->escAttr($this->navigationUrl('browse', $baseUrl)); ?>">Open Discover <span aria-hidden="true">→</span></a></div>
+                        <div class="gmrexp-reading-room__discover-grid">
+                            <?php foreach (array_slice($browseEntries, 0, 4) as $entry): ?>
+                                <?php $artworkUrl = $this->browseArtworkUrl($entry); $counts = $entry->contentTypes(); ?>
+                                <article class="gmrexp-reading-room__discover-card gmrexp-reading-room__discover-card--<?php echo $this->escAttr($entry->key()); ?>">
+                                    <a class="gmrexp-reading-room__discover-art" href="<?php echo $this->escAttr($this->expansionUrl($baseUrl, $entry->key())); ?>" aria-label="<?php echo $this->escAttr('Open Almanac: ' . $entry->name()); ?>"><?php if ($artworkUrl !== null): ?><img src="<?php echo $this->escAttr($artworkUrl); ?>" alt="" loading="lazy"><?php else: ?><span class="gmrexp-reading-room__mini-placeholder" aria-hidden="true"><?php echo $this->escHtml($entry->name()); ?></span><?php endif; ?></a>
+                                    <div class="gmrexp-reading-room__discover-copy"><h3><?php echo $this->escHtml($entry->name()); ?></h3><p class="gmrexp-reading-room__version"><?php echo $entry->active() ? 'Already in your library' : 'Available to activate'; ?></p><?php if ($entry->description() !== ''): ?><p><?php echo $this->escHtml($entry->description()); ?></p><?php endif; ?><?php echo $this->renderContentTypeChips($counts, 3); ?><a class="gmrexp-reading-room__text-link" href="<?php echo $this->escAttr($this->expansionUrl($baseUrl, $entry->key())); ?>">View details →</a></div>
                                 </article>
                             <?php endforeach; ?>
                         </div>
-                    <?php endif; ?>
-                </section>
-
-                <section class="gmrexp-reading-room__section gmrexp-reading-room__section--quiet" aria-labelledby="gmrexp-next-desks-heading">
-                    <p class="gmrexp-reading-room__kicker">A note from the Librarian</p>
-                    <h2 id="gmrexp-next-desks-heading">One library, several desks</h2>
-                    <p><strong>Your Library</strong> is your active shelf. <strong>Browse</strong> shows every installed Almanac available to activate. Keeper-only Import and Review desks prepare source material without changing canon until publication.</p>
+                    </section>
                 </section>
             <?php endif; ?>
 
             <footer class="gmrexp-reading-room__footer">
+
                 <p><strong>Reading Room rule:</strong> the interface displays state; the underlying APIs continue to own its meaning.</p>
             </footer>
         </main>
@@ -479,6 +486,39 @@ final class ReadingRoomPage
                 <?php endforeach; ?>
             </ul>
         </nav>
+        <?php
+        return trim((string) ob_get_clean());
+    }
+
+    /** @return array<string,int> */
+    private function contentTypeCountsForExpansion(string $expansionKey): array
+    {
+        $counts = [];
+        foreach ($this->catalogue->contentByExpansion($expansionKey) as $content) {
+            $type = $content->type();
+            $counts[$type] = ($counts[$type] ?? 0) + 1;
+        }
+        arsort($counts);
+        return $counts;
+    }
+
+    /** @param array<string,int> $counts */
+    private function renderContentTypeChips(array $counts, int $limit = 5): string
+    {
+        if ($counts === []) {
+            return '';
+        }
+
+        $visible = array_slice($counts, 0, max(1, $limit), true);
+        $remaining = max(0, count($counts) - count($visible));
+        ob_start();
+        ?>
+        <ul class="gmrexp-reading-room__content-chips" aria-label="Expansion contents">
+            <?php foreach ($visible as $type => $count): ?>
+                <li><span><?php echo $this->escHtml($this->contentTypeLabel($type)); ?></span><strong><?php echo $this->escHtml((string) $count); ?></strong></li>
+            <?php endforeach; ?>
+            <?php if ($remaining > 0): ?><li class="is-more"><span>More</span><strong>+<?php echo $this->escHtml((string) $remaining); ?></strong></li><?php endif; ?>
+        </ul>
         <?php
         return trim((string) ob_get_clean());
     }

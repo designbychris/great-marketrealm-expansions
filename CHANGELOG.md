@@ -1,3 +1,12 @@
+## 0.5.0-alpha12.2 — Phase V.12B — Beyond the Reading Room
+
+- Replaces the literal bookshelf experiment with a cinematic expansion-gallery layout inspired by the approved V.12B mockup.
+- Adds a featured-expansion hero, active-library experience, Discover preview, content-family chips, and much stronger expansion-specific visual personality.
+- Keeps technical metadata behind Keeper information while making player/DM-facing discovery copy and artwork the primary surface.
+- Retains the established 3:2 Almanac artwork standard, activation semantics, metadata correction, compatibility diagnostics, and canonical Catalogue ownership.
+- Gives Midnight Menu a restrained neon treatment and an extremely important Pizza Rat callout.
+- Keeps Import and Review as Keeper tools while preserving the same routing and permissions.
+
 ## 0.5.0-alpha12.1 — Phase V.12A — The Librarian Discovers Books
 
 - Recasts Your Library and Browse as face-out sourcebook shelves while preserving the 3:2 Almanac Cover Standard.

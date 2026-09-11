@@ -14,22 +14,22 @@ final class ReadingRoomNavigation
     {
         return [
             'library' => [
-                'label' => 'Your Library',
+                'label' => 'My Expansions',
                 'path' => self::ROOT,
                 'available' => true,
             ],
             'browse' => [
-                'label' => 'Browse',
+                'label' => 'Discover',
                 'path' => self::ROOT . '/browse',
                 'available' => true,
             ],
             'import' => [
-                'label' => 'Import Desk',
+                'label' => 'Import',
                 'path' => self::ROOT . '/import',
                 'available' => true,
             ],
             'review' => [
-                'label' => 'Review Desk',
+                'label' => 'Review',
                 'path' => self::ROOT . '/review',
                 'available' => true,
             ],

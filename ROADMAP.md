@@ -1,5 +1,8 @@
 # Great MarketRealm Expansions Roadmap
 
+## Phase V.12B — Beyond the Reading Room ✅
+Cinematic expansion discovery: featured worlds, active-library panels, Discover gallery cards, sourcebook personality, and quieter Keeper metadata — replacing the literal bookshelf metaphor while preserving all Living Library semantics.
+
 ## Phase V.12A — The Librarian Discovers Books ✅
 Face-out 3:2 sourcebook shelves, catalogue-strip metrics, physical folio treatment, fallback covers and preserved Library/Browse semantics.
 
