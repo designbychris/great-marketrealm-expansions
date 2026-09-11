@@ -1,3 +1,12 @@
+## 0.5.0-alpha12.3 — Phase V.12B.1 — The Reading Room Finds Its Front Door
+
+- Removes the plugin-owned Reading Room page background so Elementor/site artwork can provide the environment behind the shortcode.
+- Widens the Reading Room to a 1480px presentation canvas and gives the masthead a restrained DM-family dark treatment without inheriting the DM desk identity.
+- Removes the decorative masthead side boxes, keeps The Reading Room title on one line where space allows, and switches it to white for stronger contrast.
+- Rebuilds navigation into friendly My Expansions / Discover destinations plus a quieter Keeper Tools group with helper copy.
+- Adds more breathing room between the masthead, navigation, and expansion experience.
+- Adds a pixel-art Pizza Rat cameo to The Midnight Menu featured panel.
+
 ## 0.5.0-alpha12.2 — Phase V.12B — Beyond the Reading Room
 
 - Replaces the literal bookshelf experiment with a cinematic expansion-gallery layout inspired by the approved V.12B mockup.

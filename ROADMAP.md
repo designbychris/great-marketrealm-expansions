@@ -1,3 +1,6 @@
+## Phase V.12B.1 — The Reading Room Finds Its Front Door ✅
+Transparent host-page integration, wider presentation canvas, simplified white-title masthead, friendlier navigation hierarchy, extra breathing room and a pixel Pizza Rat cameo.
+
 # Great MarketRealm Expansions Roadmap
 
 ## Phase V.12B — Beyond the Reading Room ✅

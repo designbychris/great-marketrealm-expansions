@@ -410,7 +410,12 @@ final class ReadingRoomPage
                                     <a class="gmrexp-reading-room__button gmrexp-reading-room__button--primary" href="<?php echo $this->escAttr($this->expansionUrl($baseUrl, $featuredExpansion->key())); ?>">Explore <?php echo $this->escHtml($featuredExpansion->name()); ?> <span aria-hidden="true">→</span></a>
                                     <span class="gmrexp-reading-room__feature-meta"><?php echo $this->escHtml((string) $featuredEntryCount); ?> additions · <?php echo $featuredEntry->active() ? 'Active' : 'Available'; ?></span>
                                 </div>
-                                <?php if ($featuredExpansion->key() === 'midnight-menu'): ?><p class="gmrexp-reading-room__feature-whisper">Includes Pizza Rat. Obviously. 🍕🐀</p><?php endif; ?>
+                                <?php if ($featuredExpansion->key() === 'midnight-menu'): ?>
+                                    <div class="gmrexp-reading-room__pizza-rat">
+                                        <img src="<?php echo $this->escAttr(function_exists('plugins_url') ? plugins_url('assets/images/pizza-rat-pixel.png', GMREXP_FILE) : 'assets/images/pizza-rat-pixel.png'); ?>" alt="Pixel-art Pizza Rat carrying a slice of pizza" loading="lazy">
+                                        <p class="gmrexp-reading-room__feature-whisper">Includes Pizza Rat. Obviously.</p>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </section>
                     <?php endif; ?>
@@ -470,21 +475,41 @@ final class ReadingRoomPage
         ob_start();
         ?>
         <nav class="gmrexp-reading-room__nav" aria-label="Reading Room">
-            <ul>
-                <?php foreach ($this->navigation->items() as $section => $item): ?>
-                    <?php if ($this->access->administratorOnly($section) && !$canManageExpansions) { continue; } ?>
-                    <li>
+            <div class="gmrexp-reading-room__nav-primary">
+                <?php foreach (['library', 'browse'] as $section): ?>
+                    <?php $item = $this->navigation->items()[$section]; ?>
+                    <a
+                        class="gmrexp-reading-room__nav-link gmrexp-reading-room__nav-link--<?php echo $this->escAttr($section); ?>"
+                        href="<?php echo $this->escAttr($this->navigationUrl($section, $baseUrl)); ?>"
+                        <?php echo $section === $current ? 'aria-current="page"' : ''; ?>
+                    >
+                        <span class="gmrexp-reading-room__nav-icon" aria-hidden="true"><?php echo $section === 'library' ? '▤' : '✦'; ?></span>
+                        <span class="gmrexp-reading-room__nav-copy">
+                            <strong><?php echo $this->escHtml($item['label']); ?></strong>
+                            <small><?php echo $section === 'library' ? 'Your active adventures' : 'Explore every available expansion'; ?></small>
+                        </span>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+            <?php if ($canManageExpansions): ?>
+                <div class="gmrexp-reading-room__nav-keeper">
+                    <span class="gmrexp-reading-room__nav-keeper-label">Keeper tools</span>
+                    <?php foreach (['import', 'review'] as $section): ?>
+                        <?php $item = $this->navigation->items()[$section]; ?>
                         <a
+                            class="gmrexp-reading-room__nav-link gmrexp-reading-room__nav-link--keeper gmrexp-reading-room__nav-link--<?php echo $this->escAttr($section); ?>"
                             href="<?php echo $this->escAttr($this->navigationUrl($section, $baseUrl)); ?>"
                             <?php echo $section === $current ? 'aria-current="page"' : ''; ?>
-                            <?php echo !$item['available'] ? 'data-coming-soon="true"' : ''; ?>
                         >
-                            <span><?php echo $this->escHtml($item['label']); ?></span>
-                            <?php if (!$item['available']): ?><small>Coming later</small><?php endif; ?>
+                            <span class="gmrexp-reading-room__nav-icon" aria-hidden="true"><?php echo $section === 'import' ? '⇧' : '▧'; ?></span>
+                            <span class="gmrexp-reading-room__nav-copy">
+                                <strong><?php echo $this->escHtml($item['label']); ?></strong>
+                                <small><?php echo $section === 'import' ? 'Bring in new Almanacs' : 'Check and approve records'; ?></small>
+                            </span>
                         </a>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
         </nav>
         <?php
         return trim((string) ob_get_clean());
