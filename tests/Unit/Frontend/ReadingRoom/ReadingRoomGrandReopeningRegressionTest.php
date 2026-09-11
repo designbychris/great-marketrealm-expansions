@@ -34,8 +34,8 @@ final class ReadingRoomGrandReopeningRegressionTest extends TestCase
         $root = dirname(__DIR__, 4);
         $page = file_get_contents($root . '/src/Frontend/ReadingRoom/ReadingRoomPage.php');
         self::assertIsString($page);
-        self::assertStringContainsString('One library, several desks', $page);
-        self::assertStringContainsString('Your Library</strong> is your active shelf', $page);
+        self::assertStringContainsString('Your adventures beyond the MarketRealm', $page);
+        self::assertStringContainsString('Discover new expansions', $page);
         self::assertStringNotContainsString('Doors prepared for later phases', $page);
     }
 }

@@ -174,7 +174,7 @@ final class ReadingRoomPageTest extends TestCase
     {
         $html = $this->page(false)->render('library');
 
-        self::assertStringContainsString('Your active shelf is waiting.', $html);
+        self::assertStringContainsString('Your next adventure is waiting.', $html);
         self::assertStringContainsString('No Almanacs are active yet.', $html);
     }
 
@@ -198,7 +198,8 @@ final class ReadingRoomPageTest extends TestCase
         $browseHtml = $page->render('browse');
 
         self::assertFalse($library->isActive('inactive-book'));
-        self::assertStringNotContainsString('Inactive Book', $libraryHtml);
+        self::assertStringNotContainsString('gmrexp-reading-room__active-card--inactive-book', $libraryHtml);
+        self::assertStringContainsString('gmrexp-reading-room__discover-card--inactive-book', $libraryHtml);
         self::assertStringContainsString('Inactive Book', $browseHtml);
         self::assertStringContainsString('Browse Available Expansions', $browseHtml);
     }
