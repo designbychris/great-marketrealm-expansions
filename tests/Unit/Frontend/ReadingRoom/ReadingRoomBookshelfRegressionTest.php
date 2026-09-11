@@ -26,8 +26,8 @@ final class ReadingRoomBookshelfRegressionTest extends TestCase
         $page = file_get_contents($root . '/src/Frontend/ReadingRoom/ReadingRoomPage.php');
         self::assertIsString($page);
         self::assertStringContainsString('gmrexp-reading-room__cover-link', $page);
-        self::assertStringContainsString("'Open Almanac: ' . $catalogueExpansion->name()", $page);
-        self::assertStringContainsString("'Open Almanac: ' . $entry->name()", $page);
+        self::assertStringContainsString("'Open Almanac: ' . \$catalogueExpansion->name()", $page);
+        self::assertStringContainsString("'Open Almanac: ' . \$entry->name()", $page);
         self::assertStringContainsString('gmrexp-reading-room__cover-placeholder', $page);
     }
 
