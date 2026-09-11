@@ -534,7 +534,7 @@ final class ReadingRoomPage
         ?>
         <ul class="gmrexp-reading-room__content-chips" aria-label="Expansion contents">
             <?php foreach ($visible as $type => $count): ?>
-                <li data-content-type="<?php echo $this->escAttr($type); ?>"><span><?php echo $this->escHtml($this->contentTypeLabel($type)); ?></span><strong><?php echo $this->escHtml((string) $count); ?></strong></li>
+                <li data-content-type="<?php echo $this->escAttr($type); ?>"><strong><?php echo $this->escHtml((string) $count); ?></strong><span><?php echo $this->escHtml($this->contentTypeLabelForCount($type, (int) $count)); ?></span></li>
             <?php endforeach; ?>
             <?php if ($remaining > 0): ?><li class="is-more"><span>More</span><strong>+<?php echo $this->escHtml((string) $remaining); ?></strong></li><?php endif; ?>
         </ul>
@@ -898,6 +898,25 @@ final class ReadingRoomPage
     private function contentTypeLabel(string $type): string
     {
         return ucwords(str_replace(['-', '_'], ' ', $type));
+    }
+
+    private function contentTypeLabelForCount(string $type, int $count): string
+    {
+        $label = $this->contentTypeLabel($type);
+        if ($count === 1) {
+            return $label;
+        }
+
+        return match ($type) {
+            'race' => 'Races',
+            'class' => 'Classes',
+            'subclass' => 'Subclasses',
+            'background' => 'Backgrounds',
+            'monster' => 'Monsters',
+            'magic-item' => 'Magic Items',
+            'feat' => 'Feats',
+            default => str_ends_with($label, 's') ? $label : $label . 's',
+        };
     }
 
     private function renderImportDesk(?string $baseUrl = null): string

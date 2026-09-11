@@ -706,3 +706,5 @@ Planned sequence:
 - [ ] Wire Companion UI to active expansion races/backgrounds/classes/subclasses/monsters in its own phase.
 - [ ] Wire Tabletop Bestiary/encounter tooling to active expansion monsters in its own phase.
 - [ ] Server-side PHPUnit certification.
+
+- [x] **V.12B.3 — The Signposts Settle Into Place** — equal-width friendly navigation, Keeper-tool tinting, reliable featured-content icons/plurals, and corrected cover focal positioning.

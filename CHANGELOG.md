@@ -1,3 +1,11 @@
+## 0.5.0-alpha12.5 — Phase V.12B.3: The Signposts Settle Into Place
+
+- Equalises the four Reading Room navigation destinations on desktop.
+- Gives Keeper-only Import and Review destinations a quieter parchment tint while retaining permission boundaries.
+- Refines the featured expansion contents strip with reliable symbols, plural labels, and counts beneath each icon.
+- Moves the featured artwork focal point upward so the top of 3:2 covers is no longer clipped by the cinematic crop.
+- Keeps all Catalogue, Library, activation and consumer-bridge behaviour unchanged.
+
 ## 0.5.0-alpha12.4 — Phase V.12B.2 — The Featured Expansion Finds Its Frame
 
 - Rebalances the featured expansion into a shorter cinematic banner so the 3:2 Almanac artwork no longer overwhelms the page.

@@ -42,5 +42,9 @@ final class ReadingRoomFrontDoorRegressionTest extends TestCase
         self::assertStringNotContainsString('gmrexp-reading-room__pizza-rat', $page);
         self::assertStringNotContainsString('pizza-rat-pixel.png', $page);
         self::assertStringContainsString('Phase V.12B.2 — The Featured Expansion Finds Its Frame', $css);
+        self::assertStringContainsString('Phase V.12B.3 — The Signposts Settle Into Place', $css);
+        self::assertStringContainsString('grid-template-columns:repeat(4,minmax(0,1fr))', $css);
+        self::assertStringContainsString('object-position:center 30%', $css);
+        self::assertStringContainsString('contentTypeLabelForCount', $page);
     }
 }
