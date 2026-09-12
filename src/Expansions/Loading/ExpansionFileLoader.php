@@ -12,6 +12,9 @@ use Throwable;
 
 final class ExpansionFileLoader
 {
+    /** @var list<string> */
+    private const RETIRED_BUNDLED_PACKS = ['first-almanac'];
+
     public function __construct(
         private ExpansionRegistry $expansions,
         private ContentRegistry $content,
@@ -106,6 +109,10 @@ final class ExpansionFileLoader
 
         $results = [];
         foreach ($directories as $directory) {
+            $key = basename($directory);
+            if (in_array($key, self::RETIRED_BUNDLED_PACKS, true)) {
+                continue;
+            }
             if (is_readable($directory . DIRECTORY_SEPARATOR . 'manifest.php')) {
                 $results[] = $this->load($directory);
             }
