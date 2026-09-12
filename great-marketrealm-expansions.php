@@ -5,6 +5,7 @@
  * Version: 0.5.0-alpha12.7
  * Requires PHP: 8.1
  * Text Domain: great-marketrealm-expansions
+ * Domain Path: /languages
  */
 
 defined('ABSPATH') || exit;
@@ -23,6 +24,12 @@ use GreatMarketrealmExpansions\Expansions\Loading\ExpansionLoadException;
 use GreatMarketrealmExpansions\Almanac\AlmanacStorage;
 
 add_action('plugins_loaded', static function (): void {
+    load_plugin_textdomain(
+        'great-marketrealm-expansions',
+        false,
+        dirname(plugin_basename(GMREXP_FILE)) . '/languages'
+    );
+
     if (!class_exists(Kernel::class)) {
         return;
     }
