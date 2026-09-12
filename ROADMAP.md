@@ -1,3 +1,6 @@
+## Phase V.12B.5 — The First Almanac Retires ✅
+The original bundled proving Almanac has completed its duty and left the live shelf. Runtime sample content is removed while Phase I.3 history and isolated test fixtures remain intact.
+
 ## Phase V.12B.4 — The Front Door Remembers Who You Are ✅
 Companion Guild Gate login handoff with preserved Reading Room return destinations, deterministic `filemtime` asset cache busting, and repair of the malformed V.12B.3 navigation/feature CSS block.
 

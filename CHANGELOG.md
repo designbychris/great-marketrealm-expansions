@@ -1,3 +1,10 @@
+## 0.5.0-alpha12.7 — Phase V.12B.5: The First Almanac Retires
+
+- Retires the original bundled `first-almanac` proving pack now that the persistent Almanac publication pipeline is established and Midnight Menu is serving as the first real expansion.
+- Removes the bundled Iron Stomach and Milk Carton Mimic sample definitions from the runtime catalogue so they no longer appear in the Reading Room or sibling-plugin bridges.
+- Recasts the original bundled-pack regression test as a retirement guard: the bundled shelf remains valid, `first-almanac` is absent, and startup discovery cannot register it again.
+- Preserves historical Phase I.3 documentation and generic fixture keys used by isolated schema/API tests; those references remain useful project history and test data rather than runtime content.
+
 ## 0.5.0-alpha12.6 — Phase V.12B.4: The Front Door Remembers Who You Are
 
 - Sends logged-out Reading Room visitors through the Great MarketRealm Companion Guild Gate when available, while preserving the requested Reading Room destination for the post-login return.

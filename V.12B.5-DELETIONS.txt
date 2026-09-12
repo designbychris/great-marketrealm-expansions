@@ -1,0 +1,11 @@
+Phase V.12B.5 removes this runtime directory from the repository:
+
+content/expansions/first-almanac/
+
+That directory contained:
+- content/expansions/first-almanac/manifest.php
+- content/expansions/first-almanac/content/feats/iron-stomach.php
+- content/expansions/first-almanac/content/monsters/milk-carton-mimic.php
+
+If applying the amended-files ZIP over an existing checkout, delete the directory above as part of the commit.
+The full-plugin ZIP already has it removed.

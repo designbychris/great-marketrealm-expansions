@@ -13,8 +13,14 @@ use PHPUnit\Framework\TestCase;
 
 final class BundledFirstAlmanacTest extends TestCase
 {
-    public function test_bundled_first_almanac_loads_end_to_end(): void
+    public function test_first_almanac_has_retired_from_the_bundled_shelf(): void
     {
+        $bundledRoot = dirname(__DIR__, 4) . '/content/expansions';
+        $firstAlmanac = $bundledRoot . '/first-almanac';
+
+        self::assertDirectoryExists($bundledRoot);
+        self::assertDirectoryDoesNotExist($firstAlmanac);
+
         $types = new ContentTypeCatalogue();
         foreach (CoreContentTypes::all() as $type) { $types->add($type); }
         $schemas = new SchemaRegistry();
@@ -24,11 +30,7 @@ final class BundledFirstAlmanacTest extends TestCase
         $content = new ContentRegistry($validator);
         $loader = new ExpansionFileLoader($expansions, $content, $validator);
 
-        $result = $loader->load(dirname(__DIR__, 4) . '/content/expansions/first-almanac');
-
-        self::assertSame('first-almanac', $result->pack()->key());
-        self::assertSame(2, $result->total());
-        self::assertSame('Iron Stomach', $content->get('first-almanac', 'feat', 'iron-stomach')?->value('name'));
-        self::assertSame('Milk Carton Mimic', $content->get('first-almanac', 'monster', 'milk-carton-mimic')?->value('name'));
+        self::assertSame([], $loader->loadAll($bundledRoot));
+        self::assertFalse($expansions->has('first-almanac'));
     }
 }
