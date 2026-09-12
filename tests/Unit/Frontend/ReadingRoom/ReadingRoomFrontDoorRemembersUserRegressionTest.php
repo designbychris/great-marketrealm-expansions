@@ -30,7 +30,7 @@ final class ReadingRoomFrontDoorRemembersUserRegressionTest extends TestCase
         self::assertStringContainsString('companionLoginUrl($returnUrl)', $page);
         self::assertStringContainsString("apply_filters('gmrexp/companion_login_url'", $page);
         self::assertStringContainsString("'gmrc_login_url'", $page);
-        self::assertStringContainsString("get_page_by_path($path)", $page);
+        self::assertStringContainsString('get_page_by_path($path)', $page);
         self::assertStringContainsString("home_url('/companion/')", $page);
         self::assertStringContainsString("add_query_arg('redirect_to', $returnUrl, $guildGateUrl)", $page);
         self::assertStringContainsString('wp_login_url($returnUrl)', $page);
