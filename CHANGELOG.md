@@ -1,3 +1,11 @@
+## 0.5.0-alpha12.6 — Phase V.12B.4: The Front Door Remembers Who You Are
+
+- Sends logged-out Reading Room visitors through the Great MarketRealm Companion Guild Gate when available, while preserving the requested Reading Room destination for the post-login return.
+- Keeps the handoff defensive and filterable, with a safe WordPress-login fallback when Companion cannot be resolved.
+- Versions Reading Room CSS and JavaScript from each asset's real modification time so visual changes automatically receive a fresh browser URL.
+- Repairs the V.12B.3 stylesheet block, which had been appended as literal escaped `\n` text and therefore was not being parsed as the intended CSS rules.
+- Restores equal-width desktop navigation cells, a subtle Keeper tint for Import/Review, reliable category-symbol escapes, the featured-art focal adjustment, and the intended feature metadata layout without changing Reading Room behaviour.
+
 ## 0.5.0-alpha12.5 — Phase V.12B.3: The Signposts Settle Into Place
 
 - Equalises the four Reading Room navigation destinations on desktop.

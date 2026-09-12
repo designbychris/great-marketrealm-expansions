@@ -1,3 +1,6 @@
+## Phase V.12B.4 — The Front Door Remembers Who You Are ✅
+Companion Guild Gate login handoff with preserved Reading Room return destinations, deterministic `filemtime` asset cache busting, and repair of the malformed V.12B.3 navigation/feature CSS block.
+
 ## Phase V.12B.2 — The Featured Expansion Finds Its Frame ✅
 Rebalances the cinematic featured-expansion panel into a compact wide banner: controlled artwork crop, darker sourcebook information panel, content-family medallions, a cream/gold primary action, and no mascot cameo while character art direction remains unsettled.
 

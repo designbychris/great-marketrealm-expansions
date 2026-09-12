@@ -157,14 +157,15 @@ final class ReadingRoomPage
             return;
         }
 
-        $version = defined('GMREXP_VERSION') ? GMREXP_VERSION : null;
+        $styleVersion = $this->assetVersion('assets/css/reading-room.css');
+        $scriptVersion = $this->assetVersion('assets/js/reading-room-review.js');
 
         if (function_exists('wp_register_style')) {
             wp_register_style(
                 self::STYLE_HANDLE,
                 plugins_url('assets/css/reading-room.css', GMREXP_FILE),
                 [],
-                $version
+                $styleVersion
             );
         }
 
@@ -173,7 +174,7 @@ final class ReadingRoomPage
                 self::SCRIPT_HANDLE,
                 plugins_url('assets/js/reading-room-review.js', GMREXP_FILE),
                 [],
-                $version,
+                $scriptVersion,
                 true
             );
         }
@@ -336,7 +337,7 @@ final class ReadingRoomPage
         );
 
         if ($state === ReadingRoomAccess::LOGIN_REQUIRED) {
-            return $this->renderLoginRequired();
+            return $this->renderLoginRequired($section, $baseUrl);
         }
 
         if ($state === ReadingRoomAccess::FORBIDDEN) {
@@ -2306,17 +2307,109 @@ final class ReadingRoomPage
         return trim((string) ob_get_clean());
     }
 
-    private function renderLoginRequired(): string
+    private function renderLoginRequired(string $section, ?string $baseUrl = null): string
     {
-        $loginUrl = '#';
-        if (function_exists('wp_login_url')) {
-            $loginUrl = wp_login_url($this->currentHostUrl() ?? $this->urlFor('library'));
+        $returnUrl = $this->readingRoomReturnUrl($section, $baseUrl);
+        $loginUrl = $this->companionLoginUrl($returnUrl);
+
+        if ($loginUrl === null && function_exists('wp_login_url')) {
+            $loginUrl = (string) wp_login_url($returnUrl);
         }
 
         return sprintf(
             '<main class="gmrexp-reading-room gmrexp-reading-room--gate"><section class="gmrexp-reading-room__gate"><p class="gmrexp-reading-room__eyebrow">Great MarketRealm Expansions</p><h1>The Reading Room is closed.</h1><p>Please sign in before entering the Keeper&apos;s Reading Room.</p><a class="gmrexp-reading-room__button" href="%s">Sign in</a></section></main>',
-            $this->escAttr($loginUrl)
+            $this->escAttr($loginUrl ?? '#')
         );
+    }
+
+    private function readingRoomReturnUrl(string $section, ?string $baseUrl = null): string
+    {
+        $returnUrl = $this->navigationUrl($section, $baseUrl ?? $this->currentHostUrl());
+        $args = [];
+
+        foreach ([self::EXPANSION_QUERY_ARG, self::CONTENT_TYPE_QUERY_ARG] as $key) {
+            if (isset($_GET[$key]) && is_string($_GET[$key])) {
+                $value = trim($this->unslash($_GET[$key]));
+                if ($value !== '') {
+                    $args[$key] = $value;
+                }
+            }
+        }
+
+        if ($args === []) {
+            return $returnUrl;
+        }
+
+        if (function_exists('add_query_arg')) {
+            return (string) add_query_arg($args, $returnUrl);
+        }
+
+        foreach ($args as $key => $value) {
+            $separator = str_contains($returnUrl, '?') ? '&' : '?';
+            $returnUrl .= $separator . rawurlencode($key) . '=' . rawurlencode($value);
+        }
+
+        return $returnUrl;
+    }
+
+    private function companionLoginUrl(string $returnUrl): ?string
+    {
+        if (function_exists('apply_filters')) {
+            $filtered = apply_filters('gmrexp/companion_login_url', '', $returnUrl);
+            if (is_string($filtered) && trim($filtered) !== '') {
+                return trim($filtered);
+            }
+        }
+
+        foreach (['gmrc_login_url', 'great_marketrealm_companion_login_url'] as $helper) {
+            if (function_exists($helper)) {
+                try {
+                    $url = $helper($returnUrl);
+                    if (is_string($url) && trim($url) !== '') {
+                        return trim($url);
+                    }
+                } catch (\Throwable) {
+                    // A sibling helper must never make the Reading Room fatal.
+                }
+            }
+        }
+
+        $guildGateUrl = $this->companionGuildGateUrl();
+        if ($guildGateUrl === null) {
+            return null;
+        }
+
+        if (function_exists('add_query_arg')) {
+            return (string) add_query_arg('redirect_to', $returnUrl, $guildGateUrl);
+        }
+
+        $separator = str_contains($guildGateUrl, '?') ? '&' : '?';
+        return $guildGateUrl . $separator . 'redirect_to=' . rawurlencode($returnUrl);
+    }
+
+    private function companionGuildGateUrl(): ?string
+    {
+        if (function_exists('get_page_by_path') && function_exists('get_permalink')) {
+            foreach (['companion', 'guild-gate', 'companion-login'] as $path) {
+                $page = get_page_by_path($path);
+                if ($page !== null && $page !== false) {
+                    $url = get_permalink($page);
+                    if (is_string($url) && trim($url) !== '') {
+                        return trim($url);
+                    }
+                }
+            }
+        }
+
+        $companionLoaded = defined('GMRC_FILE')
+            || defined('GMRC_VERSION')
+            || class_exists('GreatMarketrealmCompanion\Application\Kernel');
+
+        if ($companionLoaded && function_exists('home_url')) {
+            return (string) home_url('/companion/');
+        }
+
+        return null;
     }
 
     private function renderForbidden(): string
@@ -2569,6 +2662,23 @@ final class ReadingRoomPage
         }
 
         return '/' . trim($path, '/') . '/';
+    }
+
+    private function assetVersion(string $relativePath): ?string
+    {
+        $fallback = defined('GMREXP_VERSION') ? (string) GMREXP_VERSION : null;
+
+        if (!defined('GMREXP_PATH')) {
+            return $fallback;
+        }
+
+        $path = rtrim((string) GMREXP_PATH, '/\\') . '/' . ltrim($relativePath, '/\\');
+        if (!is_file($path)) {
+            return $fallback;
+        }
+
+        $modified = filemtime($path);
+        return $modified === false ? $fallback : (string) $modified;
     }
 
     private function enqueueAssets(): void
